@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://xiehuawang_tscn"]
+
+[ext_resource type="Script" uid="uid://xiehuawang123" path="res://角色/怪物/24邪花王·荆冠/邪花王.gd" id="1_xiehuawang"]
+[ext_resource type="SpriteFrames" uid="uid://xiehuawang_tres" path="res://角色/怪物/24邪花王·荆冠/邪花王.tres" id="2_xiehuawang"]
+
+[node name="邪花王·荆冠" type="Node2D"]
+script = ExtResource("1_xiehuawang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_xiehuawang")
+animation = &"idle"

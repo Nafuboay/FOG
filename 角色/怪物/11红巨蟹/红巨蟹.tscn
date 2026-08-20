@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://hongpanxie_tscn"]
+
+[ext_resource type="Script" uid="uid://hongpanxie123" path="res://角色/怪物/11红巨蟹/红巨蟹.gd" id="1_hongpanxie"]
+[ext_resource type="SpriteFrames" uid="uid://hongpanxie_tres" path="res://角色/怪物/11红巨蟹/红巨蟹.tres" id="2_hongpanxie"]
+
+[node name="红巨蟹" type="Node2D"]
+script = ExtResource("1_hongpanxie")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_hongpanxie")
+animation = &"idle"

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://djvp1o02xngxv" path="res://角色/人物/玄戈/玄戈.gd" id="1_xuangego"]
+[ext_resource type="SpriteFrames" path="res://角色/人物/玄戈/玄戈动画.tres" id="2_xuangego"]
+
+[node name="玄戈" type="Node2D"]
+script = ExtResource("1_xuangego")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_xuangego")

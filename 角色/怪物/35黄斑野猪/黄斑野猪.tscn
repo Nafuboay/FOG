@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://c1huangban123"]
+
+[ext_resource type="Script" uid="uid://h0m261f7027v" path="res://角色/怪物/35黄斑野猪/黄斑野猪.gd" id="1_huangban"]
+[ext_resource type="SpriteFrames" uid="uid://huangban_yeshengzhu" path="res://角色/怪物/35黄斑野猪/黄斑野猪.tres" id="2_huangban"]
+
+[node name="黄斑野猪" type="Node2D"]
+script = ExtResource("1_huangban")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_huangban")
+animation = &"idle"

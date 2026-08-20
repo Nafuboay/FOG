@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://yuanwei_tscn"]
+
+[ext_resource type="Script" uid="uid://b0rlaxwuudmot" path="res://角色/NPC/5花精灵·鸢尾/鸢尾.gd" id="1_yuanwei"]
+[ext_resource type="SpriteFrames" uid="uid://yuanwei_tres" path="res://角色/NPC/5花精灵·鸢尾/鸢尾.tres" id="2_yuanwei"]
+
+[node name="鸢尾" type="Node2D"]
+script = ExtResource("1_yuanwei")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_yuanwei")
+animation = &"idle"

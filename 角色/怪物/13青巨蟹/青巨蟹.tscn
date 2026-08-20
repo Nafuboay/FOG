@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://qingpanxie_tscn"]
+
+[ext_resource type="Script" uid="uid://qingpanxie123" path="res://角色/怪物/13青巨蟹/青巨蟹.gd" id="1_qingpanxie"]
+[ext_resource type="SpriteFrames" uid="uid://qingpanxie_tres" path="res://角色/怪物/13青巨蟹/青巨蟹.tres" id="2_qingpanxie"]
+
+[node name="青巨蟹" type="Node2D"]
+script = ExtResource("1_qingpanxie")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_qingpanxie")
+animation = &"idle"

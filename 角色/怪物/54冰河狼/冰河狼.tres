@@ -1,0 +1,37 @@
+[gd_resource type="SpriteFrames" load_steps=23 format=3 uid="uid://binghelang_tres"]
+
+[ext_resource type="Texture2D" uid="uid://brwp2g67177pm" path="res://角色/怪物/54冰河狼/attack/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bddwavpvmorbv" path="res://角色/怪物/54冰河狼/attack/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://dr43f537hsbi2" path="res://角色/怪物/54冰河狼/attack/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dtw2mxkm7jvbg" path="res://角色/怪物/54冰河狼/attack/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://cch82w1588s71" path="res://角色/怪物/54冰河狼/attack/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://cqr6e64uktb28" path="res://角色/怪物/54冰河狼/attack/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://dfojh3yhs6cvv" path="res://角色/怪物/54冰河狼/attack/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://u7dobb1a88x0" path="res://角色/怪物/54冰河狼/attack/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://d2ru0n4uget7o" path="res://角色/怪物/54冰河狼/attack/frame8.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://dxk04qicgoa4k" path="res://角色/怪物/54冰河狼/attack/frame9.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://dvjkq44pqbprx" path="res://角色/怪物/54冰河狼/attack/frame10.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://cia4wd7u2beys" path="res://角色/怪物/54冰河狼/attack/frame11.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://b5fp0cat0joal" path="res://角色/怪物/54冰河狼/attack/frame12.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://ct2wcnl3ejapc" path="res://角色/怪物/54冰河狼/idle/frame0.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://bxcy61wxrgfqf" path="res://角色/怪物/54冰河狼/idle/frame1.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://kydi82r3jedh" path="res://角色/怪物/54冰河狼/idle/frame2.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://ufq7qfvtc8ak" path="res://角色/怪物/54冰河狼/idle/frame3.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://2e4637777cfg" path="res://角色/怪物/54冰河狼/idle/frame4.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://ctiw325ngx3j8" path="res://角色/怪物/54冰河狼/idle/frame5.png" id="19"]
+[ext_resource type="Texture2D" uid="uid://caw0yb0g427y3" path="res://角色/怪物/54冰河狼/idle/frame6.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://wp3egjuw0cb4" path="res://角色/怪物/54冰河狼/idle/frame7.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://d1jjegobv0x28" path="res://角色/怪物/54冰河狼/idle/frame8.png" id="22"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}, {"duration": 1.0, "texture": ExtResource("10")}, {"duration": 1.0, "texture": ExtResource("11")}, {"duration": 1.0, "texture": ExtResource("12")}, {"duration": 1.0, "texture": ExtResource("13")}],
+"loop": false,
+"name": &"attack",
+"speed": 60.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("14")}, {"duration": 1.0, "texture": ExtResource("15")}, {"duration": 1.0, "texture": ExtResource("16")}, {"duration": 1.0, "texture": ExtResource("17")}, {"duration": 1.0, "texture": ExtResource("18")}, {"duration": 1.0, "texture": ExtResource("19")}, {"duration": 1.0, "texture": ExtResource("20")}, {"duration": 1.0, "texture": ExtResource("21")}, {"duration": 1.0, "texture": ExtResource("22")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

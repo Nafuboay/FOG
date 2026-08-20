@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://heruozhanglao_tscn"]
+
+[ext_resource type="Script" uid="uid://heruozhanglao123" path="res://角色/怪物/45褐蠃长老/褐蠃长老.gd" id="1_heruozhanglao"]
+[ext_resource type="SpriteFrames" uid="uid://heruozhanglao_tres" path="res://角色/怪物/45褐蠃长老/褐蠃长老.tres" id="2_heruozhanglao"]
+
+[node name="褐蠃长老" type="Node2D"]
+script = ExtResource("1_heruozhanglao")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_heruozhanglao")
+animation = &"idle"

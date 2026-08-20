@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://d1fmthb6hmpwl"]
+
+[ext_resource type="Script" uid="uid://trdmserqenn0" path="res://角色/NPC/1花精灵·罗兰/罗兰.gd" id="1_lanyan"]
+[ext_resource type="SpriteFrames" path="res://角色/NPC/1花精灵·罗兰/罗兰.tres" id="2_lanyan"]
+
+[node name="罗兰" type="Node2D"]
+script = ExtResource("1_lanyan")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_lanyan")
+animation = &"idle"

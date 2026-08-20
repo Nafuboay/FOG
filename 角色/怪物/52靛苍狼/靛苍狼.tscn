@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://diancanglang_tscn"]
+
+[ext_resource type="Script" uid="uid://diancanglang123" path="res://角色/怪物/52靛苍狼/靛苍狼.gd" id="1_diancanglang"]
+[ext_resource type="SpriteFrames" uid="uid://diancanglang_tres" path="res://角色/怪物/52靛苍狼/靛苍狼.tres" id="2_diancanglang"]
+
+[node name="靛苍狼" type="Node2D"]
+script = ExtResource("1_diancanglang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_diancanglang")
+animation = &"idle"

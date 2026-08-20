@@ -1,0 +1,31 @@
+[gd_resource type="SpriteFrames" load_steps=18 format=3 uid="uid://xielichunhua_tres"]
+
+[ext_resource type="Texture2D" uid="uid://cy7p6me4t7fki" path="res://角色/怪物/21邪嘴唇花/attack/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bwwrt8vnaxsq2" path="res://角色/怪物/21邪嘴唇花/attack/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://cgpwwk7tlcr7k" path="res://角色/怪物/21邪嘴唇花/attack/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://60d7sw68s6dl" path="res://角色/怪物/21邪嘴唇花/attack/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://b7hqkk2g8naso" path="res://角色/怪物/21邪嘴唇花/attack/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://hjaxf1h6vci8" path="res://角色/怪物/21邪嘴唇花/attack/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://dnnvevpxx5ees" path="res://角色/怪物/21邪嘴唇花/attack/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://byxf10nvn65an" path="res://角色/怪物/21邪嘴唇花/attack/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://dwxtvq0a4mn5c" path="res://角色/怪物/21邪嘴唇花/attack/frame8.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://2qh1s4cee5to" path="res://角色/怪物/21邪嘴唇花/idle/frame0.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://dw1ya88l5fxue" path="res://角色/怪物/21邪嘴唇花/idle/frame1.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://dxn74q6asujy5" path="res://角色/怪物/21邪嘴唇花/idle/frame2.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://csiix65abt0cy" path="res://角色/怪物/21邪嘴唇花/idle/frame3.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://844nv6iatacp" path="res://角色/怪物/21邪嘴唇花/idle/frame4.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://ddvsbucvxop8r" path="res://角色/怪物/21邪嘴唇花/idle/frame5.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://ow0snlpxmq8k" path="res://角色/怪物/21邪嘴唇花/idle/frame6.png" id="16"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}],
+"loop": false,
+"name": &"attack",
+"speed": 60.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("10")}, {"duration": 1.0, "texture": ExtResource("11")}, {"duration": 1.0, "texture": ExtResource("12")}, {"duration": 1.0, "texture": ExtResource("13")}, {"duration": 1.0, "texture": ExtResource("14")}, {"duration": 1.0, "texture": ExtResource("15")}, {"duration": 1.0, "texture": ExtResource("16")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://zipanxie_tscn"]
+
+[ext_resource type="Script" uid="uid://zipanxie123" path="res://角色/怪物/14紫巨蟹/紫巨蟹.gd" id="1_zipanxie"]
+[ext_resource type="SpriteFrames" uid="uid://zipanxie_tres" path="res://角色/怪物/14紫巨蟹/紫巨蟹.tres" id="2_zipanxie"]
+
+[node name="紫巨蟹" type="Node2D"]
+script = ExtResource("1_zipanxie")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_zipanxie")
+animation = &"idle"

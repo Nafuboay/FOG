@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://manzhu_tscn"]
+
+[ext_resource type="Script" uid="uid://y66q12dihy3y" path="res://角色/NPC/4花精灵·曼珠/曼珠.gd" id="1_manzhu"]
+[ext_resource type="SpriteFrames" uid="uid://manzhu_tres" path="res://角色/NPC/4花精灵·曼珠/曼珠.tres" id="2_manzhu"]
+
+[node name="曼珠" type="Node2D"]
+script = ExtResource("1_manzhu")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_manzhu")
+animation = &"idle"

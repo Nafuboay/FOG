@@ -1,0 +1,135 @@
+[gd_resource type="SpriteFrames" load_steps=31 format=3 uid="uid://bd0cwkysi7ndw"]
+
+[ext_resource type="Texture2D" uid="uid://onoirenopg5f" path="res://角色/人物/爱丽丝/attack/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://58p25fin2njn" path="res://角色/人物/爱丽丝/attack/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://b4kk4oe3q5gi1" path="res://角色/人物/爱丽丝/attack/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://elha8kmlvko1" path="res://角色/人物/爱丽丝/attack/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://cp5camracqrm5" path="res://角色/人物/爱丽丝/attack/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://dkvee8mw8d5b3" path="res://角色/人物/爱丽丝/attack/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://dw356vhoi054x" path="res://角色/人物/爱丽丝/attack/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://cm3qwok8iuclt" path="res://角色/人物/爱丽丝/attack/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://cu2yuwm4vrync" path="res://角色/人物/爱丽丝/attack/frame8.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://c38hofrppyj4u" path="res://角色/人物/爱丽丝/attack/frame9.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://uguf8l0vbxtt" path="res://角色/人物/爱丽丝/attack/frame10.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://crhqhklvw6myn" path="res://角色/人物/爱丽丝/attack/frame11.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://cp8mm1of8hac0" path="res://角色/人物/爱丽丝/attack/frame12.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://cspaiiiuvi1gq" path="res://角色/人物/爱丽丝/attack/frame13.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://bsefaoyqdr0qu" path="res://角色/人物/爱丽丝/attack/frame14.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://dsm2d882ov5of" path="res://角色/人物/爱丽丝/idle/frame0.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://egnltdhn3av3" path="res://角色/人物/爱丽丝/idle/frame1.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://dudyg6oxgtild" path="res://角色/人物/爱丽丝/idle/frame2.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://b7tnbcv22sqf2" path="res://角色/人物/爱丽丝/idle/frame3.png" id="19"]
+[ext_resource type="Texture2D" uid="uid://hfx0n1up7ldl" path="res://角色/人物/爱丽丝/idle/frame4.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://bg1br0pjq7epr" path="res://角色/人物/爱丽丝/idle/frame5.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://heht0f2nj8vu" path="res://角色/人物/爱丽丝/idle/frame6.png" id="22"]
+[ext_resource type="Texture2D" uid="uid://b8kha5y71skdy" path="res://角色/人物/爱丽丝/idle/frame7.png" id="23"]
+[ext_resource type="Texture2D" uid="uid://crled04y3o078" path="res://角色/人物/爱丽丝/idle/frame8.png" id="24"]
+[ext_resource type="Texture2D" uid="uid://cwhh1e3hyok6u" path="res://角色/人物/爱丽丝/idle/frame9.png" id="25"]
+[ext_resource type="Texture2D" uid="uid://7tg8cpvjdxr5" path="res://角色/人物/爱丽丝/idle/frame10.png" id="26"]
+[ext_resource type="Texture2D" uid="uid://2nggq2j0nf3r" path="res://角色/人物/爱丽丝/idle/frame11.png" id="27"]
+[ext_resource type="Texture2D" uid="uid://calqhonv675je" path="res://角色/人物/爱丽丝/idle/frame12.png" id="28"]
+[ext_resource type="Texture2D" uid="uid://bw8ong1xui46u" path="res://角色/人物/爱丽丝/idle/frame13.png" id="29"]
+[ext_resource type="Texture2D" uid="uid://d33rnfnpsot85" path="res://角色/人物/爱丽丝/idle/frame14.png" id="30"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 60.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

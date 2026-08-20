@@ -1,0 +1,215 @@
+# 掉落物数据
+class_name 掉落物 extends Node
+
+# 引用物品信息的物品名称和图片
+const wu_pin = 物品信息.wu_pin
+const wu_pin_png = 物品信息.wu_pin_png
+
+# 怪物掉落表{怪物名: [[掉落物列表], [权重列表], [次数列表]]}
+const diao_luo = {
+	"红巨蟹":[["蟹钳","彩虹",null],[360,1,99639],[10]],
+	"褐巨蟹":[["蟹钳","彩虹",null],[375,1,99624],[10]],
+	"青巨蟹":[["蟹钳","彩虹",null],[525,1,99474],[10]],
+	"紫巨蟹":[["蟹钳","彩虹",null],[540,1,99459],[10]],
+	"蓝巨蟹":[["蟹钳","彩虹",null],[600,1,99399],[10]],
+	"邪嘴唇花":[["藤蔓","彩虹",null],[189,1,99810],[10]],
+	"橙食人花":[["藤蔓","彩虹",null],[504,1,99495],[10]],
+	"紫食人花":[["藤蔓","彩虹",null],[512,1,99487],[10]],
+	"白鬣野猪":[["野猪皮","彩虹",null],[768,1,99231],[10]],
+	"白鬣赤猪":[["野猪皮","彩虹",null],[768,1,99231],[10]],
+	"茶鬣野猪":[["野猪皮","彩虹",null],[810,1,99189],[10]],
+	"绿鬣野猪":[["野猪皮","彩虹",null],[840,1,99159],[10]],
+	"黄斑野猪":[["野猪皮","彩虹",null],[840,1,99159],[10]],
+	"紫蠃":[["魔核","彩虹",null],[140,1,99859],[10]],
+	"紫蠃贤者":[["魔核","彩虹",null],[200,1,99799],[10]],
+	"蓝蠃勇者":[["魔核","彩虹",null],[750,1,99249],[10]],
+	"紫蠃勇者":[["魔核","彩虹",null],[800,1,99199],[10]],
+	"褐蠃长老":[["魔核","彩虹",null],[840,1,99159],[10]],
+	"黯灰狼":[["狼尾","彩虹",null],[960,1,99039],[10]],
+	"靛苍狼":[["狼尾","彩虹",null],[1050,1,98949],[10]],
+	"粉褐狼":[["狼尾","彩虹",null],[1120,1,98879],[10]],
+	"冰河狼":[["狼尾","彩虹",null],[1134,1,98865],[10]],
+	"猛犸":[["象牙","彩虹",null],[9000,1,90999],[10]]
+}
+
+# BOSS宝箱掉落表{宝箱来源: [[免费开启],[钥匙开启]]}
+const diao_luo_2 = {
+	"邪花王·荆冠": [[["邪藤蔓","彩虹",null],[409920,10,9590070],[100]], [["藤蔓","邪藤蔓"],[9,1],[1]]],
+	"葵花王·槐昂": [[["邪藤蔓","彩虹",null],[437248,10,9562742],[100]], [["藤蔓","邪藤蔓"],[9,1],[1]]],
+	"野猪王·冕笑": [[["野猪王牙","彩虹",null],[473472,10,9526518],[100]], [["野猪皮","野猪王牙"],[9,1],[1]]],
+	"蠃虫王·犄眦": [[["魔王核","彩虹",null],[841728,10,9158262],[100]], [["魔核","魔王核"],[9,1],[1]]],
+	"双狼王·睚狈": [[["狼王尾","彩虹",null],[887760,10,9112230],[100]], [["狼尾","狼王尾"],[9,1],[1]]],
+	"猛犸王·犽翡": [[["绿象牙","彩虹",null],[2432000,10,7567990],[100]], [["象牙","绿象牙"],[9,1],[1]]]
+}
+
+# 怪物描述表{怪物名: 描述}
+const guai_wu_miao_shu = {
+	"红巨蟹":"【蟹钳】×0.036",
+	"褐巨蟹":"【蟹钳】×0.0375",
+	"青巨蟹":"【蟹钳】×0.0525",
+	"紫巨蟹":"【蟹钳】×0.054",
+	"蓝巨蟹":"【蟹钳】×0.06",
+	"邪嘴唇花":"【藤蔓】×0.0189",
+	"橙食人花":"【藤蔓】×0.0504",
+	"紫食人花":"【藤蔓】×0.0512",
+	"白鬣野猪":"【野猪皮】×0.0768",
+	"白鬣赤猪":"【野猪皮】×0.0768",
+	"茶鬣野猪":"【野猪皮】×0.081",
+	"绿鬣野猪":"【野猪皮】×0.084",
+	"黄斑野猪":"【野猪皮】×0.084",
+	"紫蠃":"【魔核】×0.014",
+	"紫蠃贤者":"【魔核】×0.02",
+	"蓝蠃勇者":"【魔核】×0.075",
+	"紫蠃勇者":"【魔核】×0.08",
+	"褐蠃长老":"【魔核】×0.084",
+	"黯灰狼":"【狼尾】×0.096",
+	"靛苍狼":"【狼尾】×0.105",
+	"粉褐狼":"【狼尾】×0.112",
+	"冰河狼":"【狼尾】×0.1134",
+	"猛犸":"【象牙】×0.9",
+	"邪花王·荆冠": "【邪藤蔓】×4.0992\n  【荆棘】受击造成固定反伤",
+	"葵花王·槐昂": "【邪藤蔓】×4.37248\n  【向阳】战斗时回血",
+	"野猪王·冕笑": "【野猪王牙】×4.73472\n  【热血】场上怪物越多生命越高",
+	"蠃虫王·犄眦": "【魔王核】×8.41728\n  【硬化】受击防御增加",
+	"双狼王·睚狈": "【狼王尾】×8.8776\n  【流血】攻击造成流血，可叠加",
+	"猛犸王·犽翡": "【绿象牙】×24.32\n  【重甲】增加防御，受击减少"
+}
+
+# 计算怪物掉落
+static func diao_luo_wu(guan_qia, die_x: int, die_y: int) -> Dictionary:
+	# 获取关卡网格数据
+	var GZ = guan_qia.GZ
+	# 从网格数据中获取怪物名称
+	var guai_wu_ming = GZ[die_y][die_x].get("名字", "")
+	# 如果没有怪物名称，直接返回
+	if guai_wu_ming == "":
+		return {}
+	# 从掉落表中查询该怪物的掉落配置
+	var wu_1 = diao_luo.get(guai_wu_ming)
+	# 如果该怪物没有掉落配置，直接返回
+	if wu_1 == null:
+		return {}
+	# 解析掉落配置
+	var diao_biao = wu_1[0]  # 掉落物列表
+	var diao_lv = wu_1[1]  # 权重列表
+	var diao_n = wu_1[2][0]  # 次数
+	# 计算总权重（用于随机选择）
+	var zong_diao_lv = 0
+	for g in diao_lv:
+		zong_diao_lv += g
+	# 根据次数循环计算每次掉落
+	var diao_luo_n = {}  # 本次击杀的所有掉落，结束后统一显示
+	for i in range(diao_n):
+		# 生成0到总权重-1的随机数
+		var sui_ji = randi() % zong_diao_lv
+		var add = 0  # 累计权重
+		# 遍历掉落物列表，根据权重随机选择
+		for j in range(diao_biao.size()):
+			add += diao_lv[j]
+			# 如果随机数小于累计权重，则选中该物品
+			if sui_ji < add:
+				var wu_ming = diao_biao[j]
+				# 如果不是null，则添加到临时背包
+				if wu_ming != null:
+					# 判断临时背包是否已有该物品
+					if guan_qia.BB_ls.has(wu_ming):
+						# 已有则数量+1
+						guan_qia.BB_ls[wu_ming] += 1
+					else:
+						# 没有则新增
+						guan_qia.BB_ls[wu_ming] = 1
+					# 累计本次掉落数量
+					if diao_luo_n.has(wu_ming):
+						diao_luo_n[wu_ming] += 1
+					else:
+						diao_luo_n[wu_ming] = 1
+				# 选中后退出当前循环
+				break
+	# 返回本次掉落的物品字典
+	return diao_luo_n
+
+# 计算宝箱掉落
+static func diao_luo_wu_2(guan_qia, BX_id: String, is_first: bool) -> Dictionary:
+	# 从宝箱掉落表中查询配置
+	var wu_1 = diao_luo_2.get(BX_id)
+	# 如果没有配置，返回空
+	if wu_1 == null or wu_1.size() < 2:
+		return {}
+	# 选择掉落配置：首次开启用第一个配置，后续用第二个配置
+	var pei_zhi = wu_1[0] if is_first else wu_1[1]
+	# 解析掉落配置
+	var diao_biao = pei_zhi[0]  # 掉落物列表
+	var diao_lv = pei_zhi[1]    # 权重列表
+	var diao_n = pei_zhi[2][0]  # 次数
+	# 计算总权重
+	var zong_diao_lv = 0
+	for g in diao_lv:
+		zong_diao_lv += g
+	# 如果总权重为0，返回空
+	if zong_diao_lv <= 0:
+		return {}
+	# 根据次数循环计算每次掉落
+	var diao_luo_n = {}
+	for i in range(diao_n):
+		# 生成0到总权重-1的随机数
+		var sui_ji = randi() % zong_diao_lv
+		var add = 0  # 累计权重
+		# 遍历掉落物列表，根据权重随机选择
+		for j in range(diao_biao.size()):
+			add += diao_lv[j]
+			# 如果随机数小于累计权重，则选中该物品
+			if sui_ji < add:
+				var wu_ming = diao_biao[j]
+				# 如果不是null，则添加到临时背包
+				if wu_ming != null:
+					# 判断临时背包是否已有该物品
+					if guan_qia.BB_ls.has(wu_ming): # 已有则数量+1
+						guan_qia.BB_ls[wu_ming] += 1
+					else: # 没有则新增
+						guan_qia.BB_ls[wu_ming] = 1
+					if diao_luo_n.has(wu_ming): # 累计本次掉落数量
+						diao_luo_n[wu_ming] += 1
+					else:
+							diao_luo_n[wu_ming] = 1
+					break
+	# 返回本次掉落的物品字典
+	return diao_luo_n
+
+# 检查是否有钥匙
+static func you_yao_shi(guan_qia) -> bool:
+	# 获取存档节点（静态函数中使用Engine获取主循环，通过root检查节点）
+	var main_loop = Engine.get_main_loop()
+	var root = main_loop.get_root()
+	var json = root.get_node_or_null("游戏存档")
+	if json == null:
+		return false
+	# 读取存档数据
+	var data = json.du_qu(guan_qia.json_id)
+	# 获取背包物品（使用BB避免遮蔽wu_pin常量）
+	var BB = data.get("背包", {})
+	# 检查钥匙数量
+	return BB.has("钥匙") and int(BB.get("钥匙", 0)) > 0
+
+# 消耗钥匙
+static func add_yao_shi(guan_qia) -> bool:
+	# 获取存档节点（静态函数中使用Engine获取主循环，通过root检查节点）
+	var main_loop = Engine.get_main_loop()
+	var root = main_loop.get_root()
+	var json = root.get_node_or_null("游戏存档")
+	if json == null:
+		return false
+	# 读取存档数据
+	var data = json.du_qu(guan_qia.json_id)
+	# 获取背包物品（使用BB避免遮蔽wu_pin常量）
+	var BB = data.get("背包", {})
+	# 检查钥匙数量
+	if not BB.has("钥匙") or int(BB.get("钥匙", 0)) <= 0:
+		return false
+	# 消耗钥匙
+	BB["钥匙"] = int(BB["钥匙"]) - 1
+	# 如果数量变为0，删除该物品字段
+	if BB["钥匙"] <= 0:
+		BB.erase("钥匙")
+	data["背包"] = BB
+	json.bao_cun(guan_qia.json_id, data)
+	return true

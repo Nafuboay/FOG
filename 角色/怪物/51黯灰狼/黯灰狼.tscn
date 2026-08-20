@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://anhuilang_tscn"]
+
+[ext_resource type="Script" uid="uid://anhuilang123" path="res://角色/怪物/51黯灰狼/黯灰狼.gd" id="1_anhuilang"]
+[ext_resource type="SpriteFrames" uid="uid://anhuilang_tres" path="res://角色/怪物/51黯灰狼/黯灰狼.tres" id="2_anhuilang"]
+
+[node name="黯灰狼" type="Node2D"]
+script = ExtResource("1_anhuilang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_anhuilang")
+animation = &"idle"

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://luochongwang_tscn"]
+
+[ext_resource type="Script" uid="uid://luochongwang123" path="res://角色/怪物/46蠃虫王·犄眦/蠃虫王.gd" id="1_luochongwang"]
+[ext_resource type="SpriteFrames" uid="uid://luochongwang_tres" path="res://角色/怪物/46蠃虫王·犄眦/蠃虫王.tres" id="2_luochongwang"]
+
+[node name="蠃虫王·犄眦" type="Node2D"]
+script = ExtResource("1_luochongwang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_luochongwang")
+animation = &"idle"

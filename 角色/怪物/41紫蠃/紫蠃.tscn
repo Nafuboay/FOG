@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://ziruo_tscn"]
+
+[ext_resource type="Script" uid="uid://ziruo123" path="res://角色/怪物/41紫蠃/紫蠃.gd" id="1_ziruo"]
+[ext_resource type="SpriteFrames" uid="uid://ziruo_tres" path="res://角色/怪物/41紫蠃/紫蠃.tres" id="2_ziruo"]
+
+[node name="紫蠃" type="Node2D"]
+script = ExtResource("1_ziruo")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_ziruo")
+animation = &"idle"

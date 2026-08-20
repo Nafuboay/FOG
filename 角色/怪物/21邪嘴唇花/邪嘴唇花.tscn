@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://xielichunhua_tscn"]
+
+[ext_resource type="Script" uid="uid://xielichunhua123" path="res://角色/怪物/21邪嘴唇花/邪嘴唇花.gd" id="1_xielichunhua"]
+[ext_resource type="SpriteFrames" uid="uid://xielichunhua_tres" path="res://角色/怪物/21邪嘴唇花/邪嘴唇花.tres" id="2_xielichunhua"]
+
+[node name="邪嘴唇花" type="Node2D"]
+script = ExtResource("1_xielichunhua")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_xielichunhua")
+animation = &"idle"

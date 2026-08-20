@@ -1,0 +1,37 @@
+[gd_resource type="SpriteFrames" load_steps=23 format=3 uid="uid://anhuilang_tres"]
+
+[ext_resource type="Texture2D" uid="uid://kn8n018amsko" path="res://角色/怪物/51黯灰狼/attack/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://dt0ghh7kfo5" path="res://角色/怪物/51黯灰狼/attack/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bb8u4g3a73ds0" path="res://角色/怪物/51黯灰狼/attack/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dtamxbptly5n0" path="res://角色/怪物/51黯灰狼/attack/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dbe01kjt7pfq7" path="res://角色/怪物/51黯灰狼/attack/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://crl8deqg2x7ju" path="res://角色/怪物/51黯灰狼/attack/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://b85t8kj3topum" path="res://角色/怪物/51黯灰狼/attack/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://dmbfavqrkjwou" path="res://角色/怪物/51黯灰狼/attack/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://bg5rcfyoy4m38" path="res://角色/怪物/51黯灰狼/attack/frame8.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://cdv8byejcbqgq" path="res://角色/怪物/51黯灰狼/attack/frame9.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://bypvok7ex1g6g" path="res://角色/怪物/51黯灰狼/attack/frame10.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://cc44avbbq17da" path="res://角色/怪物/51黯灰狼/attack/frame11.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://fjqbsvaco7tj" path="res://角色/怪物/51黯灰狼/attack/frame12.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://whqj7mxpwwd5" path="res://角色/怪物/51黯灰狼/idle/frame0.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://o8vtet66f4nr" path="res://角色/怪物/51黯灰狼/idle/frame1.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://byxwvm5qekqlg" path="res://角色/怪物/51黯灰狼/idle/frame2.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://d3tw7bf5isfst" path="res://角色/怪物/51黯灰狼/idle/frame3.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://ckfjw6m2gmron" path="res://角色/怪物/51黯灰狼/idle/frame4.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://60jcmkg2tfcm" path="res://角色/怪物/51黯灰狼/idle/frame5.png" id="19"]
+[ext_resource type="Texture2D" uid="uid://ur8m67kvstap" path="res://角色/怪物/51黯灰狼/idle/frame6.png" id="20"]
+[ext_resource type="Texture2D" uid="uid://cx2m6of8xymvf" path="res://角色/怪物/51黯灰狼/idle/frame7.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://dm1uo8i04o2bs" path="res://角色/怪物/51黯灰狼/idle/frame8.png" id="22"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}, {"duration": 1.0, "texture": ExtResource("10")}, {"duration": 1.0, "texture": ExtResource("11")}, {"duration": 1.0, "texture": ExtResource("12")}, {"duration": 1.0, "texture": ExtResource("13")}],
+"loop": false,
+"name": &"attack",
+"speed": 60.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("14")}, {"duration": 1.0, "texture": ExtResource("15")}, {"duration": 1.0, "texture": ExtResource("16")}, {"duration": 1.0, "texture": ExtResource("17")}, {"duration": 1.0, "texture": ExtResource("18")}, {"duration": 1.0, "texture": ExtResource("19")}, {"duration": 1.0, "texture": ExtResource("20")}, {"duration": 1.0, "texture": ExtResource("21")}, {"duration": 1.0, "texture": ExtResource("22")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

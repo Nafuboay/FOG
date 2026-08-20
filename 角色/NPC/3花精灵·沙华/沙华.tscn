@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://shahua_tscn"]
+
+[ext_resource type="Script" uid="uid://dvss6knj7j5i2" path="res://角色/NPC/3花精灵·沙华/沙华.gd" id="1_shahua"]
+[ext_resource type="SpriteFrames" uid="uid://shahua_tres" path="res://角色/NPC/3花精灵·沙华/沙华.tres" id="2_shahua"]
+
+[node name="沙华" type="Node2D"]
+script = ExtResource("1_shahua")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_shahua")
+animation = &"idle"

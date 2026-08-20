@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqwjmvb7yc3pl"]
+
+[ext_resource type="Script" uid="uid://111s0obp3f1g" path="res://角色/怪物/014绿鬣野猪/绿鬣野猪.gd" id="1_lvlu"]
+[ext_resource type="SpriteFrames" uid="uid://lvliyesengzhu" path="res://角色/怪物/014绿鬣野猪/绿鬣野猪.tres" id="2_lvlu"]
+
+[node name="绿鬣野猪" type="Node2D"]
+script = ExtResource("1_lvlu")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_lvlu")
+animation = &"idle"

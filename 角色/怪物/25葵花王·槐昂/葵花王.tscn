@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://kuihuawang_tscn"]
+
+[ext_resource type="Script" uid="uid://kuihuawang123" path="res://角色/怪物/25葵花王·槐昂/葵花王.gd" id="1_kuihuawang"]
+[ext_resource type="SpriteFrames" uid="uid://kuihuawang_tres" path="res://角色/怪物/25葵花王·槐昂/葵花王.tres" id="2_kuihuawang"]
+
+[node name="葵花王·槐昂" type="Node2D"]
+script = ExtResource("1_kuihuawang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_kuihuawang")
+animation = &"idle"

@@ -1,0 +1,235 @@
+[gd_scene load_steps=16 format=3 uid="uid://cg1p6v8uw171f"]
+
+[ext_resource type="Texture2D" uid="uid://rpel5sg448u1" path="res://主界面/图片/游戏开始0.jpg" id="1"]
+[ext_resource type="Texture2D" uid="uid://emp0o01kp17h" path="res://主界面/图片/游戏开始1.png" id="2"]
+[ext_resource type="Script" uid="uid://nqpd6qxjp8xk" path="res://主界面/主界面.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://5rxlfbaj1rfj" path="res://主界面/图片/模块0.png" id="4"]
+[ext_resource type="Script" uid="uid://xw3baix6kd3a" path="res://主界面/返回按钮.gd" id="6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6aajp"]
+radius = 200.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bei_jing"]
+texture = ExtResource("4")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5ijne"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ggigi"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dlga3"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_duxce"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fx08e"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cne6s"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cw6yo"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_36hkx"]
+
+[node name="开始游戏" type="Node2D"]
+script = ExtResource("3")
+
+[node name="游戏开始0" type="Sprite2D" parent="."]
+texture = ExtResource("1")
+centered = false
+
+[node name="按钮" type="Sprite2D" parent="."]
+position = Vector2(645, 335)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2")
+
+[node name="感应区域" type="Area2D" parent="按钮"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="按钮/感应区域"]
+shape = SubResource("CircleShape2D_6aajp")
+
+[node name="存档按钮0" type="Button" parent="."]
+offset_left = 64.0
+offset_top = 26.0
+offset_right = 192.0
+offset_bottom = 154.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮1" type="Button" parent="."]
+offset_left = 320.0
+offset_top = 26.0
+offset_right = 448.0
+offset_bottom = 154.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮2" type="Button" parent="."]
+offset_left = 576.0
+offset_top = 26.0
+offset_right = 704.0
+offset_bottom = 154.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮3" type="Button" parent="."]
+offset_left = 64.0
+offset_top = 206.0
+offset_right = 192.0
+offset_bottom = 334.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮4" type="Button" parent="."]
+offset_left = 320.0
+offset_top = 206.0
+offset_right = 448.0
+offset_bottom = 334.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮5" type="Button" parent="."]
+offset_left = 576.0
+offset_top = 206.0
+offset_right = 704.0
+offset_bottom = 334.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档待机0" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_5ijne")
+
+[node name="存档待机1" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ggigi")
+
+[node name="存档待机2" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_dlga3")
+
+[node name="存档待机3" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_duxce")
+
+[node name="存档待机4" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_fx08e")
+
+[node name="存档待机5" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_cne6s")
+
+[node name="删除按钮0" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮1" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮2" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮3" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮4" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮5" type="Button" parent="."]
+visible = false
+
+[node name="二次确定" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="确定按钮" type="Button" parent="二次确定"]
+layout_mode = 1
+offset_left = 416.0
+offset_top = 328.0
+offset_right = 544.0
+offset_bottom = 392.0
+
+[node name="取消按钮" type="Button" parent="二次确定"]
+layout_mode = 1
+offset_left = 736.0
+offset_top = 328.0
+offset_right = 864.0
+offset_bottom = 392.0
+
+[node name="人物选择面板" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="背景" type="Panel" parent="人物选择面板"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="爱丽丝按钮" type="Button" parent="人物选择面板"]
+layout_mode = 1
+offset_left = 200.0
+offset_top = 250.0
+offset_right = 328.0
+offset_bottom = 378.0
+
+[node name="玄戈按钮" type="Button" parent="人物选择面板"]
+layout_mode = 1
+offset_left = 680.0
+offset_top = 250.0
+offset_right = 808.0
+offset_bottom = 378.0
+
+[node name="爱丽丝待机" type="AnimatedSprite2D" parent="人物选择面板"]
+sprite_frames = SubResource("SpriteFrames_cw6yo")
+
+[node name="玄戈待机" type="AnimatedSprite2D" parent="人物选择面板"]
+sprite_frames = SubResource("SpriteFrames_36hkx")
+
+[node name="返回按钮" type="Button" parent="人物选择面板"]
+layout_mode = 1
+script = ExtResource("6")
+
+[connection signal="input_event" from="按钮/感应区域" to="." method="_on_button_input"]
+[connection signal="mouse_entered" from="按钮/感应区域" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="按钮/感应区域" to="." method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="存档按钮0" to="." method="_on_存档按钮0_hover"]
+[connection signal="mouse_exited" from="存档按钮0" to="." method="_on_存档按钮0_exit"]
+[connection signal="pressed" from="存档按钮0" to="." method="_on_存档按钮0_input"]
+[connection signal="mouse_entered" from="存档按钮1" to="." method="_on_存档按钮1_hover"]
+[connection signal="mouse_exited" from="存档按钮1" to="." method="_on_存档按钮1_exit"]
+[connection signal="pressed" from="存档按钮1" to="." method="_on_存档按钮1_input"]
+[connection signal="mouse_entered" from="存档按钮2" to="." method="_on_存档按钮2_hover"]
+[connection signal="mouse_exited" from="存档按钮2" to="." method="_on_存档按钮2_exit"]
+[connection signal="pressed" from="存档按钮2" to="." method="_on_存档按钮2_input"]
+[connection signal="mouse_entered" from="存档按钮3" to="." method="_on_存档按钮3_hover"]
+[connection signal="mouse_exited" from="存档按钮3" to="." method="_on_存档按钮3_exit"]
+[connection signal="pressed" from="存档按钮3" to="." method="_on_存档按钮3_input"]
+[connection signal="mouse_entered" from="存档按钮4" to="." method="_on_存档按钮4_hover"]
+[connection signal="mouse_exited" from="存档按钮4" to="." method="_on_存档按钮4_exit"]
+[connection signal="pressed" from="存档按钮4" to="." method="_on_存档按钮4_input"]
+[connection signal="mouse_entered" from="存档按钮5" to="." method="_on_存档按钮5_hover"]
+[connection signal="mouse_exited" from="存档按钮5" to="." method="_on_存档按钮5_exit"]
+[connection signal="pressed" from="存档按钮5" to="." method="_on_存档按钮5_input"]
+[connection signal="pressed" from="删除按钮0" to="." method="_on_删除按钮0_input"]
+[connection signal="pressed" from="删除按钮1" to="." method="_on_删除按钮1_input"]
+[connection signal="pressed" from="删除按钮2" to="." method="_on_删除按钮2_input"]
+[connection signal="pressed" from="删除按钮3" to="." method="_on_删除按钮3_input"]
+[connection signal="pressed" from="删除按钮4" to="." method="_on_删除按钮4_input"]
+[connection signal="pressed" from="删除按钮5" to="." method="_on_删除按钮5_input"]
+[connection signal="pressed" from="二次确定/确定按钮" to="." method="_on_确定按钮_input"]
+[connection signal="pressed" from="二次确定/取消按钮" to="." method="_on_取消按钮_input"]
+[connection signal="mouse_entered" from="人物选择面板/爱丽丝按钮" to="." method="_on_爱丽丝按钮_hover"]
+[connection signal="mouse_exited" from="人物选择面板/爱丽丝按钮" to="." method="_on_爱丽丝按钮_exit"]
+[connection signal="pressed" from="人物选择面板/爱丽丝按钮" to="." method="_on_爱丽丝按钮_input"]
+[connection signal="mouse_entered" from="人物选择面板/玄戈按钮" to="." method="_on_玄戈按钮_hover"]
+[connection signal="mouse_exited" from="人物选择面板/玄戈按钮" to="." method="_on_玄戈按钮_exit"]
+[connection signal="pressed" from="人物选择面板/玄戈按钮" to="." method="_on_玄戈按钮_input"]
+[connection signal="fan_hui" from="人物选择面板/返回按钮" to="." method="_on_返回按钮_input"]

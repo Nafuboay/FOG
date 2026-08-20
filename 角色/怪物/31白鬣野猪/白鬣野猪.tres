@@ -1,0 +1,34 @@
+[gd_resource type="SpriteFrames" load_steps=20 format=3 uid="uid://dlcw8xgd4t0fq"]
+
+[ext_resource type="Texture2D" uid="uid://bmn2m0ae2w5ub" path="res://角色/怪物/011白鬣野猪/attack/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://dj4w7282wyisn" path="res://角色/怪物/011白鬣野猪/attack/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://ltwkc5y6dmrv" path="res://角色/怪物/011白鬣野猪/attack/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://buoeqpjldqo01" path="res://角色/怪物/011白鬣野猪/attack/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://bl0wu006qg00y" path="res://角色/怪物/011白鬣野猪/attack/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://ct0x3jt6q3uax" path="res://角色/怪物/011白鬣野猪/attack/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://dyya8bt6co28b" path="res://角色/怪物/011白鬣野猪/attack/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://cnf85udb0y1op" path="res://角色/怪物/011白鬣野猪/attack/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://besr3r1m2raek" path="res://角色/怪物/011白鬣野猪/attack/frame8.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://cnjs5yeevbh28" path="res://角色/怪物/011白鬣野猪/idle/frame0.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://vwyu8g02u124" path="res://角色/怪物/011白鬣野猪/idle/frame1.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://bouq2s0ch7jaj" path="res://角色/怪物/011白鬣野猪/idle/frame2.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://cookeaf2jjwc" path="res://角色/怪物/011白鬣野猪/idle/frame3.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://df8xt48gkdqr8" path="res://角色/怪物/011白鬣野猪/idle/frame4.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://3p714pfb45u4" path="res://角色/怪物/011白鬣野猪/idle/frame5.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://b0jwf5au2ep2w" path="res://角色/怪物/011白鬣野猪/idle/frame6.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://bofapnmvax31n" path="res://角色/怪物/011白鬣野猪/idle/frame7.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://dij2xcoyeql2h" path="res://角色/怪物/011白鬣野猪/idle/frame8.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://dh216pn278lgr" path="res://角色/怪物/011白鬣野猪/idle/frame9.png" id="19"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}],
+"loop": false,
+"name": &"attack",
+"speed": 60.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("10")}, {"duration": 1.0, "texture": ExtResource("11")}, {"duration": 1.0, "texture": ExtResource("12")}, {"duration": 1.0, "texture": ExtResource("13")}, {"duration": 1.0, "texture": ExtResource("14")}, {"duration": 1.0, "texture": ExtResource("15")}, {"duration": 1.0, "texture": ExtResource("16")}, {"duration": 1.0, "texture": ExtResource("17")}, {"duration": 1.0, "texture": ExtResource("18")}, {"duration": 1.0, "texture": ExtResource("19")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

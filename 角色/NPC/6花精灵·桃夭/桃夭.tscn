@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://taoyao_tscn"]
+
+[ext_resource type="Script" uid="uid://bvwcn8pgpu4mt" path="res://角色/NPC/6花精灵·桃夭/桃夭.gd" id="1_taoyao"]
+[ext_resource type="SpriteFrames" uid="uid://taoyao_tres" path="res://角色/NPC/6花精灵·桃夭/桃夭.tres" id="2_taoyao"]
+
+[node name="桃夭" type="Node2D"]
+script = ExtResource("1_taoyao")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_taoyao")
+animation = &"idle"

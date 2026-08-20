@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3vjxh5c2mpt"]
+
+[ext_resource type="Script" uid="uid://db84633icgf4e" path="res://角色/怪物/013茶鬣野猪/茶鬣野猪.gd" id="1_lk4dq"]
+[ext_resource type="SpriteFrames" uid="uid://bq3vjxh5c2mpt" path="res://角色/怪物/013茶鬣野猪/茶鬣野猪.tres" id="2_gtuds"]
+
+[node name="茶鬣野猪" type="Node2D"]
+script = ExtResource("1_lk4dq")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_gtuds")
+animation = &"idle"
+frame = 9
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animation_finished"]

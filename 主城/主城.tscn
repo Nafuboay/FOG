@@ -1,0 +1,356 @@
+[gd_scene load_steps=39 format=3 uid="uid://b8kv5x6y7dad0"]
+
+[ext_resource type="Texture2D" uid="uid://d3duk056bdfo2" path="res://主城/图片/主城1.png" id="2_a44fm"]
+[ext_resource type="Script" uid="uid://drtm53y717h1w" path="res://主城/主城.gd" id="3"]
+[ext_resource type="Texture2D" uid="uid://oupahvf024nm" path="res://主城/图片/浮空岛.png" id="3_85drr"]
+[ext_resource type="Script" uid="uid://ieyvtt6t10n5" path="res://主城/选关面板.gd" id="4"]
+[ext_resource type="Script" uid="uid://xw3baix6kd3a" path="res://主界面/返回按钮.gd" id="5"]
+[ext_resource type="PackedScene" uid="uid://d1fmthb6hmpwl" path="res://角色/NPC/1花精灵·罗兰/罗兰.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://角色/NPC/2花精灵·琥珀/琥珀.tscn" id="7"]
+[ext_resource type="AudioStream" uid="uid://d2wi8pkljbtht" path="res://音乐/魔法学院奇幻乐.mp3" id="8"]
+[ext_resource type="Texture2D" uid="uid://brc5ey88bpg16" path="res://主城/图片/树屋.png" id="9"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nodmh"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_85drr"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_02xe8"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wsxrc"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_we2nm"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aleby"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a44fm"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hfl4e"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_e1dqq"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_155dh"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dwpao"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_moyxc"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7no3k"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5j0fi"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_65mpo"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x4mai"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dvawc"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_eidse"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_np43i"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qc343"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dhuda"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ijepr"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jjurg"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_28bny"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nlad1"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_76yq1"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4bj2k"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bswyw"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_w3d7u"]
+
+[node name="主城" type="Node2D"]
+script = ExtResource("3")
+
+[node name="背景音乐" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8")
+autoplay = true
+parameters/looping = true
+
+[node name="游戏背景" type="Sprite2D" parent="."]
+position = Vector2(2, 1)
+texture = ExtResource("2_a44fm")
+centered = false
+
+[node name="选关按钮" type="TextureRect" parent="."]
+offset_left = 415.0
+offset_top = 143.0
+offset_right = 562.0
+offset_bottom = 325.0
+texture = ExtResource("3_85drr")
+
+[node name="树屋按钮" type="TextureRect" parent="."]
+offset_left = 734.0
+offset_top = 200.0
+offset_right = 982.0
+offset_bottom = 448.0
+texture = ExtResource("9")
+
+[node name="选关面板" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4")
+
+[node name="背景" type="Panel" parent="选关面板"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="关卡按钮0" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮1" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮2" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮3" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮4" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮5" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮6" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮7" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮8" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮9" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮10" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮11" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮12" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮13" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮14" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮15" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮16" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮17" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮18" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮19" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮20" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮21" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮22" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮23" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮24" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮25" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮26" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮27" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮28" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡按钮29" type="Button" parent="选关面板"]
+layout_mode = 1
+
+[node name="关卡待机0" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_nodmh")
+
+[node name="关卡待机1" type="Sprite2D" parent="选关面板"]
+
+[node name="关卡待机2" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_85drr")
+
+[node name="关卡待机3" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_02xe8")
+
+[node name="关卡待机4" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_wsxrc")
+
+[node name="关卡待机5" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_we2nm")
+
+[node name="关卡待机6" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_aleby")
+
+[node name="关卡待机7" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_a44fm")
+
+[node name="关卡待机8" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_hfl4e")
+
+[node name="关卡待机9" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_e1dqq")
+
+[node name="关卡待机10" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_155dh")
+
+[node name="关卡待机11" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_dwpao")
+
+[node name="关卡待机12" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_moyxc")
+
+[node name="关卡待机13" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_7no3k")
+
+[node name="关卡待机14" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_5j0fi")
+
+[node name="关卡待机15" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_65mpo")
+
+[node name="关卡待机16" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_x4mai")
+
+[node name="关卡待机17" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_dvawc")
+
+[node name="关卡待机18" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_eidse")
+
+[node name="关卡待机19" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_np43i")
+
+[node name="关卡待机20" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_qc343")
+
+[node name="关卡待机21" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_dhuda")
+
+[node name="关卡待机22" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_ijepr")
+
+[node name="关卡待机23" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_jjurg")
+
+[node name="关卡待机24" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_28bny")
+
+[node name="关卡待机25" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_nlad1")
+
+[node name="关卡待机26" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_76yq1")
+
+[node name="关卡待机27" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_4bj2k")
+
+[node name="关卡待机28" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_bswyw")
+
+[node name="关卡待机29" type="AnimatedSprite2D" parent="选关面板"]
+sprite_frames = SubResource("SpriteFrames_w3d7u")
+
+[node name="返回按钮" type="Button" parent="选关面板"]
+layout_mode = 1
+script = ExtResource("5")
+
+[node name="主城返回按钮" type="Button" parent="."]
+script = ExtResource("5")
+tscn = "res://主界面/主界面.tscn"
+
+[node name="返回初始状态按钮" type="Button" parent="."]
+visible = false
+script = ExtResource("5")
+
+[node name="商店NPC" type="Node2D" parent="."]
+visible = false
+z_index = 1
+position = Vector2(924, 592)
+
+[node name="罗兰" parent="商店NPC" instance=ExtResource("6")]
+z_index = 2
+
+[node name="强化NPC" type="Node2D" parent="."]
+visible = false
+z_index = 1
+position = Vector2(322, 592)
+
+[node name="琥珀" parent="强化NPC" instance=ExtResource("7")]
+z_index = 2
+
+[connection signal="gui_input" from="选关按钮" to="." method="_on_选关按钮_gui_input"]
+[connection signal="gui_input" from="树屋按钮" to="." method="_on_树屋按钮_gui_input"]
+[connection signal="pressed" from="选关面板/关卡按钮0" to="." method="_on_关卡按钮0_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮1" to="." method="_on_关卡按钮1_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮2" to="." method="_on_关卡按钮2_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮3" to="." method="_on_关卡按钮3_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮4" to="." method="_on_关卡按钮4_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮5" to="." method="_on_关卡按钮5_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮6" to="." method="_on_关卡按钮6_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮7" to="." method="_on_关卡按钮7_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮8" to="." method="_on_关卡按钮8_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮9" to="." method="_on_关卡按钮9_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮10" to="." method="_on_关卡按钮10_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮11" to="." method="_on_关卡按钮11_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮12" to="." method="_on_关卡按钮12_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮13" to="." method="_on_关卡按钮13_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮14" to="." method="_on_关卡按钮14_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮15" to="." method="_on_关卡按钮15_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮16" to="." method="_on_关卡按钮16_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮17" to="." method="_on_关卡按钮17_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮18" to="." method="_on_关卡按钮18_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮19" to="." method="_on_关卡按钮19_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮20" to="." method="_on_关卡按钮20_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮21" to="." method="_on_关卡按钮21_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮22" to="." method="_on_关卡按钮22_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮23" to="." method="_on_关卡按钮23_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮24" to="." method="_on_关卡按钮24_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮25" to="." method="_on_关卡按钮25_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮26" to="." method="_on_关卡按钮26_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮27" to="." method="_on_关卡按钮27_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮28" to="." method="_on_关卡按钮28_pressed"]
+[connection signal="pressed" from="选关面板/关卡按钮29" to="." method="_on_关卡按钮29_pressed"]
+[connection signal="fan_hui" from="选关面板/返回按钮" to="." method="_on_选关返回按钮_pressed"]
+[connection signal="fan_hui" from="返回初始状态按钮" to="." method="_on_返回初始状态按钮_pressed"]

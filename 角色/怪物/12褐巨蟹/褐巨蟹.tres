@@ -1,0 +1,33 @@
+[gd_resource type="SpriteFrames" load_steps=20 format=3 uid="uid://heipanxie_tres"]
+
+[ext_resource type="Texture2D" uid="uid://c7vhqs37csm5j" path="res://角色/怪物/12褐巨蟹/attack/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://cwelfv7r6hbh2" path="res://角色/怪物/12褐巨蟹/attack/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bij1ht1uenwio" path="res://角色/怪物/12褐巨蟹/attack/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://2y7jqrgq2e5x" path="res://角色/怪物/12褐巨蟹/attack/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://h1it6cq3upvd" path="res://角色/怪物/12褐巨蟹/attack/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://b7rb6whm4cmxb" path="res://角色/怪物/12褐巨蟹/attack/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://cxwhvqymmhjj7" path="res://角色/怪物/12褐巨蟹/attack/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://edm4iuul3xry" path="res://角色/怪物/12褐巨蟹/attack/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://dkryerb7n1si5" path="res://角色/怪物/12褐巨蟹/attack/frame8.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://q1b2ngw4sjnl" path="res://角色/怪物/12褐巨蟹/idle/frame0.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://c4l1rinmd0imi" path="res://角色/怪物/12褐巨蟹/idle/frame1.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://jycgld3cqiky" path="res://角色/怪物/12褐巨蟹/idle/frame2.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://c78nghkfigb38" path="res://角色/怪物/12褐巨蟹/idle/frame3.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://klorkt84c7ou" path="res://角色/怪物/12褐巨蟹/idle/frame4.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://cld7oposjm7do" path="res://角色/怪物/12褐巨蟹/idle/frame5.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://c14w4kocr5dpk" path="res://角色/怪物/12褐巨蟹/idle/frame6.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://cvo10tgcy5ab7" path="res://角色/怪物/12褐巨蟹/idle/frame7.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://dgbflxmhfote6" path="res://角色/怪物/12褐巨蟹/idle/frame8.png" id="18"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}],
+"loop": false,
+"name": &"attack",
+"speed": 60.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("10")}, {"duration": 1.0, "texture": ExtResource("11")}, {"duration": 1.0, "texture": ExtResource("12")}, {"duration": 1.0, "texture": ExtResource("13")}, {"duration": 1.0, "texture": ExtResource("14")}, {"duration": 1.0, "texture": ExtResource("15")}, {"duration": 1.0, "texture": ExtResource("16")}, {"duration": 1.0, "texture": ExtResource("17")}, {"duration": 1.0, "texture": ExtResource("18")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://ziruoxianzhe_tscn"]
+
+[ext_resource type="Script" uid="uid://ziruoxianzhe123" path="res://角色/怪物/42紫蠃贤者/紫蠃贤者.gd" id="1_ziruoxianzhe"]
+[ext_resource type="SpriteFrames" uid="uid://ziruoxianzhe_tres" path="res://角色/怪物/42紫蠃贤者/紫蠃贤者.tres" id="2_ziruoxianzhe"]
+
+[node name="紫蠃贤者" type="Node2D"]
+script = ExtResource("1_ziruoxianzhe")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_ziruoxianzhe")
+animation = &"idle"

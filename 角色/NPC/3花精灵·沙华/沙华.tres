@@ -1,0 +1,19 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://shahua_tres"]
+
+[ext_resource type="Texture2D" uid="uid://bybqu06wn7gss" path="res://角色/NPC/3花精灵·沙华/idle/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://biqwwfk5iqpnf" path="res://角色/NPC/3花精灵·沙华/idle/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://b52ce4lryhiot" path="res://角色/NPC/3花精灵·沙华/idle/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://bm07vnqnaqvsd" path="res://角色/NPC/3花精灵·沙华/idle/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://bdqhkxtxdyq2b" path="res://角色/NPC/3花精灵·沙华/idle/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://b5wk73xcn7uyb" path="res://角色/NPC/3花精灵·沙华/idle/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://clggn3sq5f75" path="res://角色/NPC/3花精灵·沙华/idle/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://dp8muvg5fjed0" path="res://角色/NPC/3花精灵·沙华/idle/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://crofu8kcxq8wr" path="res://角色/NPC/3花精灵·沙华/idle/frame8.png" id="9"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://zishirenhua_tscn"]
+
+[ext_resource type="Script" uid="uid://zishirenhua123" path="res://角色/怪物/23紫食人花/紫食人花.gd" id="1_zishirenhua"]
+[ext_resource type="SpriteFrames" uid="uid://zishirenhua_tres" path="res://角色/怪物/23紫食人花/紫食人花.tres" id="2_zishirenhua"]
+
+[node name="紫食人花" type="Node2D"]
+script = ExtResource("1_zishirenhua")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_zishirenhua")
+animation = &"idle"

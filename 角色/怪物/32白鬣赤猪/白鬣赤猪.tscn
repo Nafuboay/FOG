@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0fjvpxr5m4d"]
+
+[ext_resource type="Script" uid="uid://hswj12yxpkbe" path="res://角色/怪物/012白鬣赤猪/白鬣赤猪.gd" id="1_hswe"]
+[ext_resource type="SpriteFrames" uid="uid://bvyh2x7d8mnp" path="res://角色/怪物/012白鬣赤猪/白鬣赤猪.tres" id="2_bvyh"]
+
+[node name="白鬣赤猪" type="Node2D"]
+script = ExtResource("1_hswe")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_bvyh")
+animation = &"idle"

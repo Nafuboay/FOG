@@ -1,0 +1,19 @@
+[gd_resource type="SpriteFrames" load_steps=10 format=3 uid="uid://taoyao_tres"]
+
+[ext_resource type="Texture2D" uid="uid://b6pm27bm7v7be" path="res://角色/NPC/6花精灵·桃夭/idle/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bbtmrdfeat8sj" path="res://角色/NPC/6花精灵·桃夭/idle/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://d15de7sndcjc" path="res://角色/NPC/6花精灵·桃夭/idle/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://8e1wqiexkx2e" path="res://角色/NPC/6花精灵·桃夭/idle/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://bmtliglf4pfup" path="res://角色/NPC/6花精灵·桃夭/idle/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://cofmai66cab5e" path="res://角色/NPC/6花精灵·桃夭/idle/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://gdpv4ipv5qjs" path="res://角色/NPC/6花精灵·桃夭/idle/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://cdunkfa4lqvpb" path="res://角色/NPC/6花精灵·桃夭/idle/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://u7nvcmmdu6xd" path="res://角色/NPC/6花精灵·桃夭/idle/frame8.png" id="9"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://fenhelang_tscn"]
+
+[ext_resource type="Script" uid="uid://fenhelang123" path="res://角色/怪物/53粉褐狼/粉褐狼.gd" id="1_fenhelang"]
+[ext_resource type="SpriteFrames" uid="uid://fenhelang_tres" path="res://角色/怪物/53粉褐狼/粉褐狼.tres" id="2_fenhelang"]
+
+[node name="粉褐狼" type="Node2D"]
+script = ExtResource("1_fenhelang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_fenhelang")
+animation = &"idle"

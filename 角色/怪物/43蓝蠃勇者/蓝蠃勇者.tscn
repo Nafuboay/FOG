@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://lanruoyongzhe_tscn"]
+
+[ext_resource type="Script" uid="uid://lanruoyongzhe123" path="res://角色/怪物/43蓝蠃勇者/蓝蠃勇者.gd" id="1_lanruoyongzhe"]
+[ext_resource type="SpriteFrames" uid="uid://lanruoyongzhe_tres" path="res://角色/怪物/43蓝蠃勇者/蓝蠃勇者.tres" id="2_lanruoyongzhe"]
+
+[node name="蓝蠃勇者" type="Node2D"]
+script = ExtResource("1_lanruoyongzhe")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_lanruoyongzhe")
+animation = &"idle"

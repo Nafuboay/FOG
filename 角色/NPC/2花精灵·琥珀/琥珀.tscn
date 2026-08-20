@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://hupo_tscn"]
+
+[ext_resource type="Script" uid="uid://3qvctgflmkpl" path="res://角色/NPC/2花精灵·琥珀/琥珀.gd" id="1_hupo"]
+[ext_resource type="SpriteFrames" uid="uid://hupo_tres" path="res://角色/NPC/2花精灵·琥珀/琥珀.tres" id="2_hupo"]
+
+[node name="琥珀" type="Node2D"]
+script = ExtResource("1_hupo")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_hupo")
+animation = &"idle"

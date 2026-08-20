@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://binghelang_tscn"]
+
+[ext_resource type="Script" uid="uid://binghelang123" path="res://角色/怪物/54冰河狼/冰河狼.gd" id="1_binghelang"]
+[ext_resource type="SpriteFrames" uid="uid://binghelang_tres" path="res://角色/怪物/54冰河狼/冰河狼.tres" id="2_binghelang"]
+
+[node name="冰河狼" type="Node2D"]
+script = ExtResource("1_binghelang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_binghelang")
+animation = &"idle"

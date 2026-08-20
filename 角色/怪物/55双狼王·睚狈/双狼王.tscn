@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://shuanglangwang_tscn"]
+
+[ext_resource type="Script" uid="uid://shuanglangwang123" path="res://角色/怪物/55双狼王·睚狈/双狼王.gd" id="1_shuanglangwang"]
+[ext_resource type="SpriteFrames" uid="uid://shuanglangwang_tres" path="res://角色/怪物/55双狼王·睚狈/双狼王.tres" id="2_shuanglangwang"]
+
+[node name="双狼王·睚狈" type="Node2D"]
+script = ExtResource("1_shuanglangwang")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_shuanglangwang")
+animation = &"idle"

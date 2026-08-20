@@ -1,0 +1,34 @@
+[gd_resource type="SpriteFrames" load_steps=21 format=3 uid="uid://lanpanxie_tres"]
+
+[ext_resource type="Texture2D" uid="uid://dxppvgifjdyix" path="res://角色/怪物/15蓝巨蟹/attack/frame0.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://xecmdlsk8cfq" path="res://角色/怪物/15蓝巨蟹/attack/frame1.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://wkm38exuufld" path="res://角色/怪物/15蓝巨蟹/attack/frame2.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://2faa2yg5sg6l" path="res://角色/怪物/15蓝巨蟹/attack/frame3.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://dcg6o6bwrb183" path="res://角色/怪物/15蓝巨蟹/attack/frame4.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://betoo1hsvpc53" path="res://角色/怪物/15蓝巨蟹/attack/frame5.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://bv6cm2flkkng" path="res://角色/怪物/15蓝巨蟹/attack/frame6.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://dd8ookhq5ynvi" path="res://角色/怪物/15蓝巨蟹/attack/frame7.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://cbfbt25kwbpag" path="res://角色/怪物/15蓝巨蟹/attack/frame8.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://c2ibc4uiq7xd7" path="res://角色/怪物/15蓝巨蟹/attack/frame9.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://cv8p1nd1s88mk" path="res://角色/怪物/15蓝巨蟹/idle/frame0.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://lkbtnoyywqyy" path="res://角色/怪物/15蓝巨蟹/idle/frame1.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://ctjnqunui1dey" path="res://角色/怪物/15蓝巨蟹/idle/frame2.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://clyupcmkdewjt" path="res://角色/怪物/15蓝巨蟹/idle/frame3.png" id="14"]
+[ext_resource type="Texture2D" uid="uid://dpqbg5ayfs5dq" path="res://角色/怪物/15蓝巨蟹/idle/frame4.png" id="15"]
+[ext_resource type="Texture2D" uid="uid://cdxo6s3y2opv4" path="res://角色/怪物/15蓝巨蟹/idle/frame5.png" id="16"]
+[ext_resource type="Texture2D" uid="uid://ciln26m4pqkw0" path="res://角色/怪物/15蓝巨蟹/idle/frame6.png" id="17"]
+[ext_resource type="Texture2D" uid="uid://bkl7f5os21sek" path="res://角色/怪物/15蓝巨蟹/idle/frame7.png" id="18"]
+[ext_resource type="Texture2D" uid="uid://jkvjgoambb64" path="res://角色/怪物/15蓝巨蟹/idle/frame8.png" id="19"]
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": ExtResource("1")}, {"duration": 1.0, "texture": ExtResource("2")}, {"duration": 1.0, "texture": ExtResource("3")}, {"duration": 1.0, "texture": ExtResource("4")}, {"duration": 1.0, "texture": ExtResource("5")}, {"duration": 1.0, "texture": ExtResource("6")}, {"duration": 1.0, "texture": ExtResource("7")}, {"duration": 1.0, "texture": ExtResource("8")}, {"duration": 1.0, "texture": ExtResource("9")}, {"duration": 1.0, "texture": ExtResource("10")}],
+"loop": false,
+"name": &"attack",
+"speed": 60.0
+}, {
+"frames": [{"duration": 1.0, "texture": ExtResource("11")}, {"duration": 1.0, "texture": ExtResource("12")}, {"duration": 1.0, "texture": ExtResource("13")}, {"duration": 1.0, "texture": ExtResource("14")}, {"duration": 1.0, "texture": ExtResource("15")}, {"duration": 1.0, "texture": ExtResource("16")}, {"duration": 1.0, "texture": ExtResource("17")}, {"duration": 1.0, "texture": ExtResource("18")}, {"duration": 1.0, "texture": ExtResource("19")}],
+"loop": true,
+"name": &"idle",
+"speed": 60.0
+}]

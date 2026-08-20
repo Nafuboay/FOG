@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://lanpanxie_tscn"]
+
+[ext_resource type="Script" uid="uid://lanpanxie123" path="res://角色/怪物/15蓝巨蟹/蓝巨蟹.gd" id="1_lanpanxie"]
+[ext_resource type="SpriteFrames" uid="uid://lanpanxie_tres" path="res://角色/怪物/15蓝巨蟹/蓝巨蟹.tres" id="2_lanpanxie"]
+
+[node name="蓝巨蟹" type="Node2D"]
+script = ExtResource("1_lanpanxie")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_lanpanxie")
+animation = &"idle"

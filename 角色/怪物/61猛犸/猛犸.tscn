@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://w7rvnoe63ece"]
+
+[ext_resource type="Script" uid="uid://bxuuekeoget4s" path="res://角色/怪物/猛犸/猛犸.gd" id="1_mengma"]
+[ext_resource type="SpriteFrames" uid="uid://mengma" path="res://角色/怪物/猛犸/猛犸.tres" id="2_mengma"]
+
+[node name="猛犸" type="Node2D"]
+script = ExtResource("1_mengma")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_mengma")
+animation = &"idle"
