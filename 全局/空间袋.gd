@@ -179,10 +179,6 @@ func cao_zuo_3(event: InputEvent, amount: int) -> void:
 		if shu_liang <= 0:
 			提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
 			return
-		# 检查物品数量是否足够出售指定数量
-		if shu_liang < amount:
-			提示弹幕.wen_ben("物品不足！只有%d件！" % shu_liang, 0)
-			return
 		# 获取物品售价
 		var XX = 物品信息.get_XX(wu_ming)
 		var shou_jia = XX.get("背包售价", 0)

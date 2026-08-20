@@ -29,12 +29,12 @@ var VOL: Control = null
 
 # 场景就绪时执行的初始化函数
 func _ready() -> void:
-	# 初始隐藏选关按钮（透明度为0）
-	xuan_guan_btn.modulate = Color(0.03,0.03,0.03,0.03)
+	# 初始隐藏选关按钮
+	xuan_guan_btn.modulate = Color(2,2,2,0.1)
 	# 鼠标悬停时显示按钮
 	xuan_guan_btn.mouse_entered.connect(func(): xuan_guan_btn.modulate = Color(2, 2, 2, 1))
 	# 鼠标移出时隐藏按钮
-	xuan_guan_btn.mouse_exited.connect(func(): xuan_guan_btn.modulate = Color(0.03,0.03,0.03,0.03))
+	xuan_guan_btn.mouse_exited.connect(func(): xuan_guan_btn.modulate = Color(2,2,2,0.1))
 	# 确保游戏存档节点存在
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json == null:
@@ -83,7 +83,7 @@ func _ready() -> void:
 	# 鼠标悬停时显示按钮（变亮）
 	shu_wu_btn.mouse_entered.connect(func(): shu_wu_btn.modulate = Color(2, 2, 2, 1))
 	# 鼠标移出时恢复虚化效果
-	shu_wu_btn.mouse_exited.connect(func(): shu_wu_btn.modulate = Color(0.03,0.03,0.03,0.03))
+	shu_wu_btn.mouse_exited.connect(func(): shu_wu_btn.modulate = Color(2,2,2,0.1))
 
 # 输入处理
 func _input(_event: InputEvent) -> void:
@@ -182,7 +182,7 @@ func _on_选关按钮_pressed() -> void:
 		chu_shi_btn.visible = true
 		# 显示树屋按钮（虚化效果）
 		shu_wu_btn.visible = true
-		shu_wu_btn.modulate = Color(0.03,0.03,0.03,0.03)
+		shu_wu_btn.modulate = Color(2,2,2,0.1)
 		# 显示NPC
 		shop.on_npc()
 		QH.on_npc()

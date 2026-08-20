@@ -1,6 +1,3 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
-
-# 玩家存档（每台电脑/每位玩家不同，不上传）
-/迷雾存档/

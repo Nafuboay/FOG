@@ -82,10 +82,10 @@ texture = ExtResource("2_a44fm")
 centered = false
 
 [node name="选关按钮" type="TextureRect" parent="."]
-offset_left = 415.0
-offset_top = 143.0
-offset_right = 562.0
-offset_bottom = 325.0
+offset_left = 408.0
+offset_top = 137.0
+offset_right = 555.0
+offset_bottom = 319.0
 texture = ExtResource("3_85drr")
 
 [node name="树屋按钮" type="TextureRect" parent="."]
