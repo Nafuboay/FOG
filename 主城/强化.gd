@@ -578,6 +578,7 @@ func QH_upd_1() -> void:
 	# 如果已满级
 	if QH_lv >= QH_MAX:
 		SR_lbl.text = "强化已满级！"
+		SR_lbl.add_theme_color_override("font_color", Color("#FFFFFF"))
 		S_add_lbl.text = "无需消耗！"
 		QH_btn.visible = false
 		return
