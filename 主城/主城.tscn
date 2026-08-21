@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://b8kv5x6y7dad0"]
+[gd_scene load_steps=45 format=3 uid="uid://b8kv5x6y7dad0"]
 
 [ext_resource type="Texture2D" uid="uid://d3duk056bdfo2" path="res://主城/图片/主城1.png" id="2_a44fm"]
 [ext_resource type="Script" uid="uid://drtm53y717h1w" path="res://主城/主城.gd" id="3"]
@@ -9,6 +9,11 @@
 [ext_resource type="PackedScene" path="res://角色/NPC/2花精灵·琥珀/琥珀.tscn" id="7"]
 [ext_resource type="AudioStream" uid="uid://d2wi8pkljbtht" path="res://音乐/魔法学院奇幻乐.mp3" id="8"]
 [ext_resource type="Texture2D" uid="uid://brc5ey88bpg16" path="res://主城/图片/树屋.png" id="9"]
+[ext_resource type="Texture2D" uid="uid://bfe3w6so16w4x" path="res://主城/图片/主线1.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://h2urggnnsy8d" path="res://主城/图片/主线2.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://dn5y57lk8gan6" path="res://主城/图片/诛邪1.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://cw5hddpjaci4s" path="res://主城/图片/诛邪2.png" id="13"]
+[ext_resource type="Script" uid="uid://ybkehmh75dam" path="res://主城/关卡模式.gd" id="14"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_nodmh"]
 
@@ -291,6 +296,12 @@ sprite_frames = SubResource("SpriteFrames_bswyw")
 
 [node name="关卡待机29" type="AnimatedSprite2D" parent="选关面板"]
 sprite_frames = SubResource("SpriteFrames_w3d7u")
+
+[node name="模式切换按钮" type="TextureRect" parent="选关面板"]
+layout_mode = 1
+texture = ExtResource("10")
+mouse_filter = 0
+script = ExtResource("14")
 
 [node name="返回按钮" type="Button" parent="选关面板"]
 layout_mode = 1
