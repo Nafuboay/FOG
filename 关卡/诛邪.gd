@@ -1,11 +1,9 @@
 # 【诛邪模式】关卡逻辑
 # 继承关卡基类，覆盖网格生成和怪物生成等方法
 extends 关卡基类
-
 # 诛邪模式特有变量
 var zx_lv: int = 1  # 诛邪模式下当前关卡的等级
 var zx_monster_name: String = ""  # 诛邪模式下该关的怪物名称
-
 # 每关对应的新怪物名称（与选关面板guai_wu_dong_hua数组顺序一致）
 # 索引0=第1关，索引1=第2关（禁用），以此类推
 const ZX_GUAI_WU_MING = [
@@ -23,7 +21,6 @@ func _ready() -> void:
 	var is_zx = false
 	if has_node("/root/数据管理"):
 		is_zx = get_node("/root/数据管理").mode == 1
-	
 	if is_zx:
 		# 诛邪模式：手动加载关卡数据（跳过主线剧情弹幕）
 		_zx_du_qu_guan_kia()

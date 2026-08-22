@@ -938,10 +938,8 @@ func guai_wu_die() -> void:
 	print("%.2f秒 怪物死亡" % shi_jian)
 	# 计算掉落并显示弹幕
 	var diao_luo_ing = 掉落物.diao_luo_wu(guan_qia, die_x, die_y)
-	# 在背包中显示掉落的物品（诛邪模式下可能不存在背包节点）
-	var bao_bei = guan_qia.get_node_or_null("背包")
-	if bao_bei != null:
-		bao_bei.xian_shi_wu_pin(guan_qia.BB_ls)
+	# 在背包中显示掉落的物品
+	guan_qia.get_node("背包").xian_shi_wu_pin(guan_qia.BB_ls)
 	for wu_ming in diao_luo_ing:
 		var n = diao_luo_ing[wu_ming]
 		提示弹幕.wen_ben("获得【" + wu_ming + "】×" + str(n) + "！", 0)
