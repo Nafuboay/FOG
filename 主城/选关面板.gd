@@ -64,12 +64,34 @@ class_name 选关面板 extends Control
 var btn: Array[Button] = []
 var idle: Array[Node] = []
 var guan: int = 30
+var current_mode: int = 0 # 0=主线, 1=诛邪
+# 诛邪模式下禁用的关卡ID列表（第2关为魔法树关，无新怪物）
+const ZX_DISABLED_GUAN: Array[int] = [1]
 
 func _ready() -> void:
 	btn = [btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9, btn_10, btn_11, btn_12, btn_13, btn_14, btn_15, btn_16, btn_17, btn_18, btn_19, btn_20, btn_21, btn_22, btn_23, btn_24, btn_25, btn_26, btn_27, btn_28, btn_29]
 	idle = [idle_0, idle_1, idle_2, idle_3, idle_4, idle_5, idle_6, idle_7, idle_8, idle_9, idle_10, idle_11, idle_12, idle_13, idle_14, idle_15, idle_16, idle_17, idle_18, idle_19, idle_20, idle_21, idle_22, idle_23, idle_24, idle_25, idle_26, idle_27, idle_28, idle_29]
 	visible = false
 	chu_shi_hua()
+
+# 获取当前模式
+func get_mode() -> int:
+	if has_node("/root/数据管理"):
+		current_mode = get_node("/root/数据管理").mode
+	return current_mode
+
+# 更新模式并刷新显示
+func set_mode(mode: int) -> void:
+	current_mode = mode
+	xian_shi()
+
+# 检查关卡在当前模式下是否可进入
+func is_guan_ke_jin(guan_kia_id: int) -> bool:
+	if current_mode == 1:
+		# 诛邪模式：检查关卡是否被禁用
+		if guan_kia_id in ZX_DISABLED_GUAN:
+			return false
+	return true
 
 # 初始化
 func chu_shi_hua() -> void:
@@ -111,11 +133,15 @@ func xian_shi() -> void:
 	var win_y = win_size.y
 	var hang_shu = 4
 	var lie_shu = 8
-	# 读取存档进度
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	# 读取当前模式
+	get_mode()
+	# 读取存档进度（保证stg至少为1）
+	var json = get_node_or_null("/root/游戏存档")
 	var stg = 1
 	if json != null:
-		stg = json.get_stg()
+		var s = json.get_stg()
+		if s > 0:
+			stg = s
 	var guai_wu_dong_hua = [
 		load("res://角色/怪物/41紫蠃/紫蠃.tres"),
 		null,
@@ -161,8 +187,25 @@ func xian_shi() -> void:
 			var y = (2.0 * n + 2.0) / (hang_shu * 2.0 + 2.0) * win_y - 64
 			btn[i].visible = true
 			btn[i].text = "关卡"+str(i+1)+"\n\n\n\n\n\n\n"
-			if i + 1 > stg:
+			# 检查关卡是否可进入
+			var ke_jin = true
+			var guan_num = i + 1  # 关卡编号（1~30）
+			if current_mode == 1:
+				# 诛邪模式
+				# 第2关禁用（魔法树关，无新怪物）
+				if guan_num == 2:
+					ke_jin = false
+				# 需要主线先通关该关才能进入诛邪
+				elif guan_num > stg:
+					ke_jin = false
+			else:
+				# 主线模式
+				if guan_num > stg:
+					ke_jin = false
+			if not ke_jin:
 				btn[i].modulate = Color(0.5, 0.5, 0.5, 1)
+			else:
+				btn[i].modulate = Color(1, 1, 1, 1)
 			if idle[i] is Sprite2D and guai_wu_tu_pian[i] != null:
 				var s = idle[i] as Sprite2D
 				s.position = Vector2(x+64,y+64)

@@ -1,6 +1,6 @@
 class_name 关卡UI extends Node
 # 父节点引用（关卡节点）
-var guan_qia: Node2D
+var guan_qia: Node
 # 撤退按钮
 var che_tui: TextureRect
 # 撤退图片引用
@@ -26,7 +26,8 @@ var png2: Texture2D = null  # 怪物按钮图片
 # 获取父节点
 func _ready() -> void:
 	var parent = get_parent()
-	if parent.name != "关卡":
+	# 父节点不是关卡基类时向上查找（兼容诛邪等子类场景）
+	if not (parent is 关卡基类):
 		parent = parent.get_parent()
 	guan_qia = parent
 	# 实例化背包系统

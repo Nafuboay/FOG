@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://bujie10xqwyjc"]
+
+[ext_resource type="Script" path="res://关卡/诛邪.gd" id="1_zhu_xie"]
+[ext_resource type="Script" uid="uid://xw3baix6kd3a" path="res://主界面/返回按钮.gd" id="2"]
+[ext_resource type="AudioStream" uid="uid://bqt22gpy2xjyx" path="res://音乐/张力.mp3" id="3"]
+
+[node name="诛邪" type="Node2D"]
+script = ExtResource("1_zhu_xie")
+
+[node name="背景音乐" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3")
+autoplay = true
+parameters/looping = true
+
+[node name="返回按钮" type="Button" parent="."]
+script = ExtResource("2")
+tscn = "res://主城/主城.tscn"

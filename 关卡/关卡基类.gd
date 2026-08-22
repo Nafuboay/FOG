@@ -1,4 +1,5 @@
 # 【关卡基类】
+class_name 关卡基类
 extends Node2D
 # 信息面板刷新信号
 signal shu_wu_upd

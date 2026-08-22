@@ -133,3 +133,20 @@ func chk_lv(data: Dictionary) -> int:
 	# 更新数据中的等级
 	data["等级"] = lv
 	return lv
+
+# 获取指定关卡的诛邪等级
+func get_zx_lv(guan_kia_id: int) -> int:
+	get_dang_wei()
+	var data = du_qu(id)
+	var zx_data = data.get("诛邪等级", {})
+	return int(zx_data.get(str(guan_kia_id), 1))
+
+# 更新指定关卡的诛邪等级并保存
+func upd_zx_lv(guan_kia_id: int) -> void:
+	get_dang_wei()
+	var data = du_qu(id)
+	var zx_data = data.get("诛邪等级", {})
+	var old_lv = int(zx_data.get(str(guan_kia_id), 1))
+	zx_data[str(guan_kia_id)] = old_lv + 1
+	data["诛邪等级"] = zx_data
+	bao_cun(id, data)

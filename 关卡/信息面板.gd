@@ -1,13 +1,14 @@
 class_name 信息面板 extends Node
 # 父节点引用
-var guan_qia: Node2D
+var guan_qia: Node
 # 背景图资源
 var kuai: Texture2D
 
 # 获取父节点
 func _ready() -> void:
 	var parent = get_parent()
-	if parent.name != "关卡":
+	# 父节点不是关卡基类时向上查找（兼容诛邪等子类场景）
+	if not (parent is 关卡基类):
 		parent = parent.get_parent()
 	guan_qia = parent
 	# 预加载背景图

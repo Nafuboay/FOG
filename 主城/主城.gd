@@ -356,13 +356,37 @@ func jin_ru_guan_kia(guan_kia_id: int) -> void:
 		json.name = "游戏存档"
 		get_tree().root.add_child(json)
 	var stg = json.get_stg()
-	# 判断关卡是否已解锁（关卡ID+1 <= 进度）
-	if guan_kia_id + 1 > stg:
-		return
+	var guan_num = guan_kia_id + 1
+	# 获取当前模式
+	var cur_mode = 0
+	if has_node("/root/数据管理"):
+		cur_mode = get_node("/root/数据管理").mode
+	# 诛邪模式下检查关卡
+	if cur_mode == 1:
+		# 第2关禁用（魔法树关）
+		if guan_num == 2:
+			提示弹幕.wen_ben("此关卡为魔法树关，不支持诛邪模式！", 1)
+			return
+		# 需要主线先通关该关
+		if guan_num > stg:
+			提示弹幕.wen_ben("请先通关主线第%d关！" % guan_num, 1)
+			return
+	else:
+		# 主线模式：检查是否已解锁
+		if guan_num > stg:
+			提示弹幕.wen_ben("请先通关前一关！", 1)
+			return
 	# 检查并创建存档文件夹
 	json.wen_jian_jia()
-	# 将关卡ID保存到数据管理节点
+	# 将关卡ID和模式保存到数据管理节点
 	if has_node("/root/数据管理"):
-		get_node("/root/数据管理").stg = guan_kia_id
+		var dm = get_node("/root/数据管理")
+		dm.stg = guan_kia_id
+		dm.zx_guan_kia_id = guan_num
 	# 切换到关卡场景
-	get_tree().change_scene_to_file("res://关卡/关卡.tscn")
+	if cur_mode == 1:
+		# 诛邪模式使用诛邪场景
+		get_tree().change_scene_to_file("res://关卡/诛邪.tscn")
+	else:
+		# 主线模式使用主线场景
+		get_tree().change_scene_to_file("res://关卡/关卡.tscn")

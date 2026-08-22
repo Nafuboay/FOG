@@ -31,6 +31,12 @@ func _on_click(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		# 模式循环切换：主线 ↔ 诛邪
 		current_mode = Mode.ZHU_XIE if current_mode == Mode.ZHU_XIAN else Mode.ZHU_XIAN
+		# 通知数据管理节点模式变化
+		if has_node("/root/数据管理"):
+			get_node("/root/数据管理").mode = current_mode
+		# 通知选关面板刷新显示
+		if get_parent() and get_parent().has_method("set_mode"):
+			get_parent().set_mode(current_mode)
 		# 切换后刷新按钮显示贴图
 		_upd()
 
@@ -38,6 +44,9 @@ func _on_click(event: InputEvent) -> void:
 func _reset() -> void:
 	current_mode = Mode.ZHU_XIAN
 	is_hover = false
+	# 通知数据管理节点模式变化
+	if has_node("/root/数据管理"):
+		get_node("/root/数据管理").mode = 0
 	_upd()
 
 # 更新按钮贴图：根据【当前模式】+【是否悬浮】赋值对应预加载纹理

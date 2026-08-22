@@ -1,6 +1,6 @@
 class_name PC输入 extends Node
 # 父节点引用（关卡节点）
-var guan_qia: Node2D
+var guan_qia: Node
 # 当前移动的目标网格位置（用于动态更新）
 var target_grid_x: int = -1
 var target_grid_y: int = -1
@@ -10,7 +10,8 @@ var current_tween: Tween = null
 # 获取父节点引用并启用输入处理
 func _ready() -> void:
 	var parent = get_parent()
-	if parent.name != "关卡":
+	# 父节点不是关卡基类时向上查找（兼容诛邪等子类场景）
+	if not (parent is 关卡基类):
 		parent = parent.get_parent()
 	guan_qia = parent
 	set_process_input(true)
