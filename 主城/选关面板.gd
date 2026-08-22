@@ -195,8 +195,8 @@ func xian_shi() -> void:
 				# 第2关禁用（魔法树关，无新怪物）
 				if guan_num == 2:
 					ke_jin = false
-				# 需要主线先通关该关才能进入诛邪
-				elif guan_num > stg:
+				# 诛邪比主线少一关：主线n关通过，诛邪最多能打到n-1关
+				elif guan_num >= stg:
 					ke_jin = false
 			else:
 				# 主线模式

@@ -369,7 +369,7 @@ func jin_ru_guan_kia(guan_kia_id: int) -> void:
 			return
 		# 诛邪模式：主线n关通过，诛邪最多能打到n-1关
 		if guan_num >= stg:
-			提示弹幕.wen_ben("请先通过该关主线！" % stg, 1)
+			提示弹幕.wen_ben("请先通过主线该关！", 1)
 			return
 	else:
 		# 主线模式：检查是否已解锁

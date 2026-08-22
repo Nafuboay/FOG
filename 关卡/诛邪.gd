@@ -133,6 +133,12 @@ func _zhu_xie_ready() -> void:
 	guan_ui.C_rong_qi()
 	# 创建重新挑战按钮
 	guan_ui.C_again()
+	# 诛邪模式：地图默认缩放为317%档位
+	var zx_suo_fang = pow(2.0, 5.0 / 3.0)
+	rong_qi.scale = Vector2(zx_suo_fang, zx_suo_fang)
+	suo_fang_lal.text = "画面比例：%d%%" % round(zx_suo_fang * 100)
+	# 诛邪模式：按等级比例调整人物和怪物大小
+	_zhu_xie_scale()
 
 # 重写C_GZ()：诛邪模式下只生成1只怪物
 func C_GZ() -> void:
@@ -220,6 +226,27 @@ func _zhu_xie_guai_wu() -> void:
 		var dong_hua = guai_wu1.get_node("AnimatedSprite2D")
 		if dong_hua.sprite_frames and dong_hua.sprite_frames.has_animation("idle"):
 			dong_hua.play("idle")
+
+# 诛邪模式：按等级比例调整人物和怪物大小
+func _zhu_xie_scale() -> void:
+	# 怪物等级（从网格数据读取）
+	var monster_lv = 1
+	if guai_wu_xy.size() > 0:
+		var xy = guai_wu_xy[0]
+		monster_lv = GZ[int(xy.y)][int(xy.x)].get("lv", 1)
+	# 人物等级
+	var helo_lv_now = helo_lv
+	# 等级大的显示1倍，等级小的显示 m/n 倍
+	if monster_lv >= helo_lv_now:
+		# 怪物等级大：怪物1倍，人物 m/n 倍
+		if guai_wu.size() > 0:
+			guai_wu[0].scale = Vector2(1, 1)
+		helo.scale = Vector2(helo_lv_now / float(monster_lv), helo_lv_now / float(monster_lv))
+	else:
+		# 人物等级大：人物1倍，怪物 m/n 倍
+		helo.scale = Vector2(1, 1)
+		if guai_wu.size() > 0:
+			guai_wu[0].scale = Vector2(monster_lv / float(helo_lv_now), monster_lv / float(helo_lv_now))
 
 # 击败怪物后提升等级并保存
 func _zhu_xie_win() -> void:
