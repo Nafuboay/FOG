@@ -236,17 +236,30 @@ func _zhu_xie_scale() -> void:
 		monster_lv = GZ[int(xy.y)][int(xy.x)].get("lv", 1)
 	# 人物等级
 	var helo_lv_now = helo_lv
-	# 等级大的显示1倍，等级小的显示 m/n 倍
-	if monster_lv >= helo_lv_now:
-		# 怪物等级大：怪物1倍，人物 m/n 倍
-		if guai_wu.size() > 0:
-			guai_wu[0].scale = Vector2(1, 1)
-		helo.scale = Vector2(helo_lv_now / float(monster_lv), helo_lv_now / float(monster_lv))
+	# 计算等级比例：大等级 = 1倍，小等级 = m/n倍
+	if monster_lv > helo_lv_now:
+		# 怪物等级大：人物缩小，同步调整偏移量
+		var bi_li = helo_lv_now / float(monster_lv)
+		helo.scale = helo.scale * bi_li
+		role_pian_yi_x = 17 * bi_li
+		role_pian_yi_y = 46 * bi_li
+		# 重设人物初始位置（用调整后的偏移量）
+		var helo_x0 = helo_x - 1
+		var helo_y0 = helo_y - 1
+		var GZ_z = GZ_zhong(helo_x0, helo_y0)
+		helo.position = Vector2(GZ_z.x + role_pian_yi_x, GZ_z.y - role_pian_yi_y)
 	else:
-		# 人物等级大：人物1倍，怪物 m/n 倍
-		helo.scale = Vector2(1, 1)
+		# 人物等级大或相等：怪物缩小，同步重设位置
+		var bi_li = monster_lv / float(helo_lv_now)
 		if guai_wu.size() > 0:
-			guai_wu[0].scale = Vector2(monster_lv / float(helo_lv_now), monster_lv / float(helo_lv_now))
+			# 先按新缩放计算位置（与主线创建逻辑一致）
+			var xy = guai_wu_xy[0]
+			var GZ_z = GZ_zhong(int(xy.x), int(xy.y))
+			var pian_yi_x1 = role_pian_yi_x * bi_li
+			var pian_yi_y1 = role_pian_yi_y * bi_li
+			guai_wu[0].position = Vector2(GZ_z.x - pian_yi_x1, GZ_z.y - pian_yi_y1)
+			# 再设置缩放
+			guai_wu[0].scale = Vector2(bi_li, bi_li)
 
 # 击败怪物后提升等级并保存
 func _zhu_xie_win() -> void:
