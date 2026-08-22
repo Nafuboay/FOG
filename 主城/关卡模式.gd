@@ -12,6 +12,21 @@ var is_hover: bool = false
 func _ready() -> void:
 	# 设置按钮位置（选关面板右侧，之后可自行调整）
 	position = Vector2(1000, 600)
+	# 从存档恢复模式
+	var json = get_node_or_null("/root/游戏存档")
+	if json == null:
+		json = load("res://主界面/游戏存档.gd").new()
+		json.name = "游戏存档"
+		get_tree().root.add_child(json)
+	json.get_dang_wei()
+	var saved_mode = json.get_mode()
+	if saved_mode == 1:
+		current_mode = Mode.ZHU_XIE
+	else:
+		current_mode = Mode.ZHU_XIAN
+	# 同步到数据管理节点
+	if has_node("/root/数据管理"):
+		get_node("/root/数据管理").mode = saved_mode
 	# 鼠标进入按钮区域，开启悬浮标记，刷新按钮贴图
 	mouse_entered.connect(func(): is_hover = true; _upd())
 	# 鼠标离开按钮区域，关闭悬浮标记，刷新按钮贴图
@@ -20,10 +35,13 @@ func _ready() -> void:
 	gui_input.connect(_on_click)
 	# 如果父节点存在，监听父节点显示状态变化
 	if get_parent():
-		# 父节点变为可见时，强制重置回主线模式（不保存上次选择）
-		get_parent().visibility_changed.connect(func(): if get_parent().visible: _reset())
-	# 初始化重置按钮状态
-	_reset()
+		# 父节点变为可见时，同步当前模式到选关面板
+		get_parent().visibility_changed.connect(func(): if get_parent().visible: _sync_mode())
+	# 初始化刷新按钮状态
+	_upd()
+	# 同步模式到选关面板
+	if get_parent() and get_parent().has_method("set_mode"):
+		get_parent().set_mode(current_mode)
 
 # 处理按钮鼠标点击事件
 func _on_click(event: InputEvent) -> void:
@@ -34,11 +52,24 @@ func _on_click(event: InputEvent) -> void:
 		# 通知数据管理节点模式变化
 		if has_node("/root/数据管理"):
 			get_node("/root/数据管理").mode = current_mode
+		# 保存模式到存档
+		var json = get_node_or_null("/root/游戏存档")
+		if json == null:
+			json = load("res://主界面/游戏存档.gd").new()
+			json.name = "游戏存档"
+			get_tree().root.add_child(json)
+		json.upd_mode(current_mode)
 		# 通知选关面板刷新显示
 		if get_parent() and get_parent().has_method("set_mode"):
 			get_parent().set_mode(current_mode)
 		# 切换后刷新按钮显示贴图
 		_upd()
+
+# 同步当前模式到选关面板（父节点显示时调用）
+func _sync_mode() -> void:
+	if get_parent() and get_parent().has_method("set_mode"):
+		get_parent().set_mode(current_mode)
+	_upd()
 
 # 重置按钮状态：恢复默认主线模式，清除悬浮标记
 func _reset() -> void:

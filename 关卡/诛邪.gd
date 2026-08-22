@@ -6,38 +6,75 @@ extends 关卡基类
 var zx_lv: int = 1  # 诛邪模式下当前关卡的等级
 var zx_monster_name: String = ""  # 诛邪模式下该关的怪物名称
 
+# 每关对应的新怪物名称（与选关面板guai_wu_dong_hua数组顺序一致）
+# 索引0=第1关，索引1=第2关（禁用），以此类推
+const ZX_GUAI_WU_MING = [
+	"紫蠃", "", "邪嘴唇花", "紫蠃贤者", "红巨蟹",
+	"褐巨蟹", "橙食人花", "紫食人花", "青巨蟹", "紫巨蟹",
+	"蓝巨蟹", "蓝蠃勇者", "白鬣野猪", "白鬣赤猪", "紫蠃勇者",
+	"茶鬣野猪", "褐蠃长老", "绿鬣野猪", "黄斑野猪", "黯灰狼",
+	"靛苍狼", "粉褐狼", "冰河狼", "邪花王·荆冠", "葵花王·槐昂",
+	"野猪王·冕笑", "蠃虫王·犄眦", "双狼王·睚狈", "猛犸", "猛犸王·犽翡"
+]
+
 # 重写_ready()：诛邪模式使用5×3网格
 func _ready() -> void:
-	# 先调用关卡基类的数据读取方法（加载guan_kia_id, guan_kia等）
-	du_qu_guan_kia()
 	# 检查是否为诛邪模式
+	var is_zx = false
 	if has_node("/root/数据管理"):
-		var mode = get_node("/root/数据管理").mode
-		if mode == 1:
-			# 诛邪模式：设置固定网格
-			GZ_x = 5
-			GZ_y = 3
-			# 英雄初始位置：(2,2) → 网格索引(1,1)，1-based所以设为2
-			helo_x = 2
-			helo_y = 2
-			# 清空怪物数量配置
-			guai_wu_n = []
-			# 获取诛邪等级（从场景树获取已有的游戏存档节点）
-			var json = get_node_or_null("/root/游戏存档")
-			if json == null:
-				json = load("res://主界面/游戏存档.gd").new()
-				json.name = "游戏存档"
-				get_tree().root.add_child(json)
-			json.get_dang_wei()
-			zx_lv = json.get_zx_lv(guan_kia_id + 1)
-			# 第一关强行固定为紫蠃，保证不依赖数据加载
-			if guan_kia_id == 0:
-				zx_monster_name = "紫蠃"
-			else:
-				# 其他关卡从关卡数据获取第一个怪物
-				zx_monster_name = guan_kia.get("guai_wu", ["紫蠃"])[0]
-	# 调用诛邪模式的_ready()后续逻辑
+		is_zx = get_node("/root/数据管理").mode == 1
+	
+	if is_zx:
+		# 诛邪模式：手动加载关卡数据（跳过主线剧情弹幕）
+		_zx_du_qu_guan_kia()
+		# 诛邪模式：设置固定网格
+		GZ_x = 5
+		GZ_y = 3
+		# 英雄初始位置：(2,2) → 网格索引(1,1)，1-based所以设为2
+		helo_x = 2
+		helo_y = 2
+		# 清空怪物数量配置
+		guai_wu_n = []
+		# 获取诛邪等级（从场景树获取已有的游戏存档节点）
+		var json = get_node_or_null("/root/游戏存档")
+		if json == null:
+			json = load("res://主界面/游戏存档.gd").new()
+			json.name = "游戏存档"
+			get_tree().root.add_child(json)
+		json.get_dang_wei()
+		zx_lv = json.get_zx_lv(guan_kia_id + 1)
+		# 从映射表获取该关的新怪物（每关首次解锁的怪物）
+		if guan_kia_id >= 0 and guan_kia_id < ZX_GUAI_WU_MING.size():
+			zx_monster_name = ZX_GUAI_WU_MING[guan_kia_id]
+		else:
+			zx_monster_name = "紫蠃"
+	else:
+		# 主线模式：正常调用基类方法
+		du_qu_guan_kia()
+	# 调用后续逻辑
 	_zhu_xie_ready()
+
+# 诛邪模式专用的数据读取（跳过主线剧情弹幕）
+func _zx_du_qu_guan_kia() -> void:
+	# 检查并创建存档文件夹
+	var json = load("res://主界面/游戏存档.gd").new()
+	json.wen_jian_jia()
+	json.free()
+	# 从数据管理节点读取关卡ID
+	if has_node("/root/数据管理"):
+		guan_kia_id = get_node("/root/数据管理").stg
+	# 获取关卡数据
+	guan_kia = 关卡数据.guan_kia(guan_kia_id)
+	# 设置网格大小
+	GZ_x = guan_kia.get("x", 9)
+	GZ_y = guan_kia.get("y", 9)
+	# 获取怪物生成数量
+	guai_wu_n = guan_kia.get("guai_wu_n", [10])
+	# 获取障碍物数量
+	zhang_ai_n0 = guan_kia.get("zhang_ai_n", 0)
+	# 获取BOSS生成数量
+	BOSS = guan_kia.get("BOSS", [])
+	BOSS_n = guan_kia.get("BOSS_n", [0])
 
 # 诛邪模式的_ready()后续逻辑（复制关卡基类_ready()的剩余部分）
 func _zhu_xie_ready() -> void:
@@ -150,13 +187,18 @@ func _zhu_xie_guai_wu() -> void:
 	# 怪物位置固定在(4,2) → 网格索引(3,1)
 	var monster_x = 3
 	var monster_y = 1
-	# 标记该格子为怪物
+	# 标记该格子为怪物，并设置相关属性
 	GZ[monster_y][monster_x]["guai_wu"] = true
 	GZ[monster_y][monster_x]["guai_wu_id"] = zx_monster_name
+	GZ[monster_y][monster_x]["名字"] = zx_monster_name  # 信息面板读取此字段
+	GZ[monster_y][monster_x]["kong_bai"] = false  # 怪物格不可直接进入
 	guai_wu_xy.append(Vector2(monster_x, monster_y))
 	# 读取怪物基础属性
 	var lu_jing = 关卡数据.get_tscn(zx_monster_name)
 	var guai_wu1 = load(lu_jing).instantiate()
+	# 存储网格坐标到怪物节点（战斗系统通过此查找怪物）
+	guai_wu1.set_meta("grid_x", monster_x)
+	guai_wu1.set_meta("grid_y", monster_y)
 	# 诛邪模式下怪物等级 = 基础等级 × 诛邪等级
 	GZ[monster_y][monster_x]["lv"] = guai_wu1.LV * zx_lv
 	GZ[monster_y][monster_x]["shp"] = guai_wu1.HP * zx_lv

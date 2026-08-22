@@ -990,7 +990,9 @@ func guai_wu_die() -> void:
 			if GZ1.get("BOSS", false) == true:
 				n_4 += 1
 	guan_qia.guai_wu_xian = n_1 + int(n_4 / 4.0)
-	guan_qia.guai_wu_lbl.text = "怪物数量：" + str(guan_qia.guai_wu_xian) + "/" + str(guan_qia.guai_wu_zong)
+	# 更新怪物数量标签（诛邪模式下可能不存在）
+	if guan_qia.guai_wu_lbl != null:
+		guan_qia.guai_wu_lbl.text = "怪物数量：" + str(guan_qia.guai_wu_xian) + "/" + str(guan_qia.guai_wu_zong)
 	# 野猪王【热血】技能：场上怪物越多生命越高
 	for boss_xy in guan_qia.BOSS_xy:
 		var x = int(boss_xy.x)
@@ -1015,7 +1017,9 @@ func guai_wu_die() -> void:
 			break
 	# 检查胜利条件：人物存活且怪物数量为0
 	if guan_qia.helo_hp > 0 and guan_qia.guai_wu_xian == 0:
-		guan_qia.guan_ui.C_sheng_li()
+		# 诛邪模式下跳过胜利UI（由_zhu_xie_win处理）
+		if guan_qia.guan_ui != null:
+			guan_qia.guan_ui.C_sheng_li()
 	# 怪物死亡特殊：先结束战斗，再清除朝向标记，最后人物移动到该格
 	zhan_dou_end()
 	fan1 = false

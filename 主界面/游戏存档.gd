@@ -150,3 +150,16 @@ func upd_zx_lv(guan_kia_id: int) -> void:
 	zx_data[str(guan_kia_id)] = old_lv + 1
 	data["诛邪等级"] = zx_data
 	bao_cun(id, data)
+
+# 获取存档的模式（0=主线，1=诛邪）
+func get_mode() -> int:
+	get_dang_wei()
+	var data = du_qu(id)
+	return int(data.get("模式", 0))
+
+# 更新存档的模式并保存
+func upd_mode(mode: int) -> void:
+	get_dang_wei()
+	var data = du_qu(id)
+	data["模式"] = mode
+	bao_cun(id, data)
