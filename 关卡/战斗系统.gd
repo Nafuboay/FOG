@@ -938,8 +938,10 @@ func guai_wu_die() -> void:
 	print("%.2f秒 怪物死亡" % shi_jian)
 	# 计算掉落并显示弹幕
 	var diao_luo_ing = 掉落物.diao_luo_wu(guan_qia, die_x, die_y)
-	# 在背包中显示掉落的物品
-	guan_qia.get_node("背包").xian_shi_wu_pin(guan_qia.BB_ls)
+	# 在背包中显示掉落的物品（诛邪模式下可能不存在背包节点）
+	var bao_bei = guan_qia.get_node_or_null("背包")
+	if bao_bei != null:
+		bao_bei.xian_shi_wu_pin(guan_qia.BB_ls)
 	for wu_ming in diao_luo_ing:
 		var n = diao_luo_ing[wu_ming]
 		提示弹幕.wen_ben("获得【" + wu_ming + "】×" + str(n) + "！", 0)
@@ -1017,7 +1019,11 @@ func guai_wu_die() -> void:
 			break
 	# 检查胜利条件：人物存活且怪物数量为0
 	if guan_qia.helo_hp > 0 and guan_qia.guai_wu_xian == 0:
-		# 诛邪模式下跳过胜利UI（由_zhu_xie_win处理）
+		# 诛邪模式下：保存等级并重新进入关卡
+		if guan_qia.has_method("_zhu_xie_win"):
+			guan_qia._zhu_xie_win()
+			return  # 不执行后续的helo_move等
+		# 主线模式：显示胜利UI
 		if guan_qia.guan_ui != null:
 			guan_qia.guan_ui.C_sheng_li()
 	# 怪物死亡特殊：先结束战斗，再清除朝向标记，最后人物移动到该格

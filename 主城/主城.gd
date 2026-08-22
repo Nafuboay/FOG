@@ -365,16 +365,16 @@ func jin_ru_guan_kia(guan_kia_id: int) -> void:
 	if cur_mode == 1:
 		# 第2关禁用（魔法树关）
 		if guan_num == 2:
-			提示弹幕.wen_ben("此关卡为魔法树关，不支持诛邪模式！", 1)
+			提示弹幕.wen_ben("此关不支持诛邪模式！", 1)
 			return
 		# 诛邪模式：主线n关通过，诛邪最多能打到n-1关
 		if guan_num >= stg:
-			提示弹幕.wen_ben("请先通关主线第%d关！" % stg, 1)
+			提示弹幕.wen_ben("请先通过该关主线！" % stg, 1)
 			return
 	else:
 		# 主线模式：检查是否已解锁
 		if guan_num > stg:
-			提示弹幕.wen_ben("请先通关前一关！", 1)
+			提示弹幕.wen_ben("请先通过前一关！", 1)
 			return
 	# 检查并创建存档文件夹
 	json.wen_jian_jia()
