@@ -103,8 +103,15 @@ func C_guan_kia_lbl() -> void:
 	# 创建Label对象
 	guan_qia.guan_kia_lbl = Label.new()
 	guan_qia.guan_kia_lbl.size = Vector2(166, 32)
-	# 设置文本内容
-	guan_qia.guan_kia_lbl.text = "关卡" + str(guan_qia.guan_kia_id + 1)
+	# 根据模式设置标题：诛邪为「诛邪·m级」，主线为「主线·n关」
+	var cur_mode = 0
+	if has_node("/root/数据管理"):
+		cur_mode = get_node("/root/数据管理").mode
+	var zx_lv = guan_qia.get("zx_lv")
+	if cur_mode == 1 and zx_lv != null:
+		guan_qia.guan_kia_lbl.text = "诛邪·" + str(int(zx_lv)) + "级"
+	else:
+		guan_qia.guan_kia_lbl.text = "主线·" + str(guan_qia.guan_kia_id + 1) + "关"
 	# 设置文字颜色为纯黑色
 	guan_qia.guan_kia_lbl.add_theme_color_override("font_color", Color.BLACK)
 	# 文本层级

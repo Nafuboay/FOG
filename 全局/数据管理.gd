@@ -6,7 +6,7 @@ var zx_guan_kia_id: int = 1 # 诛邪模式关卡ID
 
 # 重置数据（游戏结束时调用）
 func reset() -> void:
-    json = 1
-    stg = 1
-    mode = 0
-    zx_guan_kia_id = 1
+	json = 1
+	stg = 1
+	mode = 0
+	zx_guan_kia_id = 1

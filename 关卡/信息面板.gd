@@ -39,6 +39,12 @@ func look_helo_upd() -> void:
 	# 如果面板不存在则跳过
 	if guan_qia.look_helo == null:
 		return
+	# 人物节点已移除（如死亡流程置空）时跳过，防止访问空实例
+	if guan_qia.helo == null or not is_instance_valid(guan_qia.helo):
+		return
+	# 本节点已不在场景树中（如场景切换瞬间收到刷新信号）时跳过
+	if not is_inside_tree():
+		return
 	# 清空旧标签
 	for child in guan_qia.look_helo.get_children():
 		child.queue_free()
@@ -58,7 +64,10 @@ func look_helo_upd() -> void:
 	var helo_name = guan_qia.helo.get_name() if guan_qia.helo else "未知"
 	# 获取当前等级和经验
 	var lv = guan_qia.helo_lv
-	var json = get_node("/root/游戏存档")
+	# 获取存档节点（与战斗系统保护模式一致，防止场景切换瞬间空实例崩溃）
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return
 	var data = json.du_qu(guan_qia.json_id)
 	var exp_0 = data.get("经验", 0)
 	# 计算升级所需经验和经验占比

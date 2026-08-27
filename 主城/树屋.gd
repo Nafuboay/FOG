@@ -126,11 +126,11 @@ func C_tsk(T_id: int, F: bool) -> Control:
 	lbl.name = "任务文本"
 	# 根据关卡显示不同奖励
 	if T_id > 23:
-		lbl.text = "通过关卡%d      奖励：金条×1" % T_id
+		lbl.text = "通过主线·%d关   奖励：金条×1" % T_id
 	elif T_id > 9:
-		lbl.text = "通过关卡%d      奖励：100银币" % T_id
+		lbl.text = "通过主线·%d关   奖励：100银币" % T_id
 	else:
-		lbl.text = "通过关卡%d       奖励：100银币" % T_id
+		lbl.text = "通过主线·%d关    奖励：100银币" % T_id
 	lbl.size = Vector2(280,54) # 任务文本范围
 	lbl.position = Vector2(24,17) # 任务文本位置
 	var kai_ti = 提示弹幕.get_kai_ti_font()

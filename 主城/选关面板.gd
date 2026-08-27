@@ -117,6 +117,10 @@ func chu_shi_hua() -> void:
 		btn[i].add_theme_stylebox_override("hover", cao_yuan_1)
 		btn[i].add_theme_color_override("font_color", Color.BLACK)
 		btn[i].add_theme_color_override("font_hover_color", Color.BLACK)
+		# 按下/聚焦状态文字颜色（不覆盖会用默认浅色，导致点击后关卡名在浅色背景上不可见）
+		btn[i].add_theme_color_override("font_pressed_color", Color.BLACK)
+		btn[i].add_theme_color_override("font_focus_color", Color.BLACK)
+		btn[i].add_theme_color_override("font_hover_pressed_color", Color.BLACK)
 		# 设置楷体字体
 		get_kai_ti(btn[i])
 
@@ -186,7 +190,15 @@ func xian_shi() -> void:
 			var x = (2.0 * m + 3.0) / (lie_shu * 2.0 + 4.0) * win_x - 64
 			var y = (2.0 * n + 2.0) / (hang_shu * 2.0 + 2.0) * win_y - 64
 			btn[i].visible = true
-			btn[i].text = "关卡"+str(i+1)+"\n\n\n\n\n\n\n"
+			if current_mode == 1:
+				# 诛邪模式：读取该关存档中的当前级别（get_zx_lv参数为1-based关卡ID）
+				var zx_lv_btn = 1
+				if json != null:
+					zx_lv_btn = json.get_zx_lv(i + 1)
+				btn[i].text = "诛邪·"+str(zx_lv_btn)+"级"+"\n\n\n\n\n\n\n"
+			else:
+				# 主线模式
+				btn[i].text = "主线·"+str(i+1)+"关"+"\n\n\n\n\n\n\n"
 			# 检查关卡是否可进入
 			var ke_jin = true
 			var guan_num = i + 1  # 关卡编号（1~30）

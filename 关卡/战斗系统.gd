@@ -520,6 +520,9 @@ func helo_shang_hai_0() -> void:
 	var time_interval: float = 0.2 / helo_attack_n
 	for i in range(helo_attack_n):
 		await get_tree().create_timer(time_interval).timeout
+		# 场景已切换/释放中时终止协程
+		if not is_inside_tree():
+			return
 		# 检查战斗是否还在进行
 		if not zhan_dou_ing:
 			return
@@ -530,6 +533,9 @@ func helo_shang_hai_0() -> void:
 				# 计算剩余攻击需要的时间，等待最后一次攻击完成后再触发怪物攻击
 				var yan_chi = time_interval * (helo_attack_n - i - 1)
 				await get_tree().create_timer(yan_chi).timeout
+				# 场景已切换/释放中时不再触发怪物攻击
+				if not is_inside_tree():
+					return
 				guai_wu_shang_hai_0(0)
 			return
 		# 检查怪物是否有效
@@ -619,6 +625,9 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 		var fan_shang = GZ[guai_wu_y][guai_wu_x].get("lv", 1)
 		# 延后执行反伤
 		await get_tree().create_timer(0.05).timeout
+		# 场景已切换/释放中时终止协程
+		if not is_inside_tree():
+			return
 		# 检查战斗是否还在进行
 		if not zhan_dou_ing:
 			return
@@ -649,6 +658,9 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 # 计算怪物对人物的伤害
 func guai_wu_shang_hai_0(yan_chi: float = 0.2) -> void:
 	await get_tree().create_timer(yan_chi).timeout
+	# 场景已切换/释放中时终止协程
+	if not is_inside_tree():
+		return
 	# 检查战斗是否还在进行
 	if not zhan_dou_ing:
 		return
@@ -730,6 +742,9 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 		# 调用通用结束战斗底层
 		zhan_dou_end()
 	else:
+		# 场景已切换/释放中时不再使用恢复符
+		if not is_inside_tree():
+			return
 		# 人物未死亡，延迟0.5秒后尝试使用恢复符
 		await get_tree().create_timer(0.5).timeout
 		# 检查战斗是否还在进行中
@@ -887,6 +902,9 @@ func zhan_dou_hui() -> void:
 		if che_tui_ing and helo_hui > che_tui_hui:
 			# 1秒后执行撤退
 			await get_tree().create_timer(1.0).timeout
+			# 场景已切换/释放中时不再执行撤退
+			if not is_inside_tree():
+				return
 			che_tui_1()
 
 # 完成撤退
@@ -1019,6 +1037,8 @@ func guai_wu_die() -> void:
 	if guan_qia.helo_hp > 0 and guan_qia.guai_wu_xian == 0:
 		# 诛邪模式下：保存等级并重新进入关卡
 		if guan_qia.has_method("_zhu_xie_win"):
+			# 先结束战斗状态（重置zhan_dou_ing），防止挂起的攻击协程在场景切换后继续执行导致崩溃
+			zhan_dou_end()
 			guan_qia._zhu_xie_win()
 			return  # 不执行后续的helo_move等
 		# 主线模式：显示胜利UI
@@ -1034,6 +1054,9 @@ func guai_wu_die() -> void:
 # 葵花王【向阳】技能协程：战斗时回血
 func hp_add(x: int, y: int) -> void:
 	await get_tree().create_timer(0.5).timeout
+	# 场景已切换/释放中时终止协程
+	if not is_inside_tree():
+		return
 	# 检查战斗是否还在进行
 	if not zhan_dou_ing:
 		return
@@ -1055,6 +1078,9 @@ func hp_add(x: int, y: int) -> void:
 # 双狼王【流血】技能：攻击造成流血，可叠加
 func liu_xue() -> void:
 	await get_tree().create_timer(0.7).timeout
+	# 场景已切换/释放中时终止协程
+	if not is_inside_tree():
+		return
 	# 检查战斗是否还在进行
 	if not zhan_dou_ing:
 		return

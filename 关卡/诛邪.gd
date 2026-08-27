@@ -112,8 +112,8 @@ func _zhu_xie_ready() -> void:
 	pc_input.name = "PC输入"
 	add_child(pc_input)
 	# 诛邪模式特殊初始化：显示提示
-	var ti_shi = "诛邪模式 - 第%d关 - 等级%d" % [guan_kia_id + 1, zx_lv]
-	提示弹幕.wen_ben(ti_shi, 1)
+	var ti_shi = "诛邪·%d级" % [zx_lv]
+	提示弹幕.wen_ben(ti_shi, 0)
 	# 创建游戏数据网格（使用重写的C_GZ）
 	C_GZ()
 	# 连接伤害信号到面板刷新
@@ -267,6 +267,19 @@ func _zhu_xie_win() -> void:
 		get_tree().root.add_child(json)
 	json.get_dang_wei()
 	json.upd_zx_lv(guan_kia_id + 1)
+	# 将临时背包掉落物合并写入存档（重进关卡前保存，防止掉落丢失）
+	if not BB_ls.is_empty():
+		var data = json.du_qu(json.id)
+		var wu_pin = data.get("背包", {})
+		for wu_ming in BB_ls:
+			var n = int(BB_ls[wu_ming])
+			# 已有该物品则累加，没有则新增
+			if wu_pin.has(wu_ming):
+				wu_pin[wu_ming] = int(wu_pin[wu_ming]) + n
+			else:
+				wu_pin[wu_ming] = n
+		data["背包"] = wu_pin
+		json.bao_cun(json.id, data)
 	zx_lv += 1
 	# 刷新显示（重新进入关卡）
 	get_tree().change_scene_to_file("res://关卡/诛邪.tscn")
