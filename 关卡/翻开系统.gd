@@ -199,8 +199,31 @@ func fan_kai_n() -> int:
 				n += 1
 	return n
 
+# 一键开屏：反复执行自动排雷与和弦，直到没有新格子被翻开（收敛）
+func yi_jian_kai_ping() -> void:
+	# 循环收敛，直到翻开数量不再变化
+	while true:
+		var bian_hua = false
+		# 记录当前已翻开数量
+		var qian_n = guan_qia.fan_kai.fan_kai_n()
+		# 自动排雷
+		guan_qia.fan_kai.pai_lei()
+		# 自动和弦开雷
+		guan_qia.fan_kai.he_xian()
+		# 记录当前已翻开数量
+		var hou_n = guan_qia.fan_kai.fan_kai_n()
+		# 如果有新格子被翻开，继续循环
+		if hou_n > qian_n:
+			bian_hua = true
+		else:
+			break
+		# 防止无限循环
+		if not bian_hua:
+			break
+
 # 翻开格子
-func kai_ge_zi(x: int, y: int, cai: bool = false) -> void:
+# zi_dong：是否在翻开后自动执行一键开屏（批量翻开时传false，全部翻完后由调用方统一收敛一次）
+func kai_ge_zi(x: int, y: int, cai: bool = false, zi_dong: bool = true) -> void:
 	# 检查坐标是否在网格范围内
 	if x < 0 or x >= guan_qia.GZ_x or y < 0 or y >= guan_qia.GZ_y:
 		return
@@ -255,22 +278,6 @@ func kai_ge_zi(x: int, y: int, cai: bool = false) -> void:
 		guan_qia.GZs[y][x].texture = guan_qia.tile_fan_kai
 		# 递归展开周围格子
 		guan_qia.fan_kai.flood_fill(x, y)
-	# 一键开屏
-	while true:
-		var bian_hua = false
-		# 记录当前已翻开数量
-		var qian_n = guan_qia.fan_kai.fan_kai_n()
-		# 自动排雷
-		guan_qia.fan_kai.pai_lei()
-		# 自动和弦开雷
-		guan_qia.fan_kai.he_xian()
-		# 记录当前已翻开数量
-		var hou_n = guan_qia.fan_kai.fan_kai_n()
-		# 如果有新格子被翻开，继续循环
-		if hou_n > qian_n:
-			bian_hua = true
-		else:
-			break
-		# 防止无限循环
-		if not bian_hua:
-			break
+	# 一键开屏（批量翻开时关闭，避免每格重复全图扫描造成卡顿）
+	if zi_dong:
+		guan_qia.fan_kai.yi_jian_kai_ping()

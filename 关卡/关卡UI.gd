@@ -365,12 +365,14 @@ func Tan_ce_qi(wu_ming: String) -> void:
 		wu_pin.erase(wu_ming)
 	data["背包"] = wu_pin
 	json.bao_cun(guan_qia.json_id, data)
-	# 遍历范围内的格子并翻开
+	# 遍历范围内的格子并翻开（批量翻开时关闭每格自动排雷/和弦，避免重复全图扫描造成卡顿）
 	for y in range(max(0, helo_y - fan_wei), min(guan_qia.GZ_y, helo_y + fan_wei + 1)):
 		for x in range(max(0, helo_x - fan_wei), min(guan_qia.GZ_x, helo_x + fan_wei + 1)):
-			# 如果格子未翻开，则翻开
+			# 如果格子未翻开，则翻开（空白格的洪水填充仍会立即执行）
 			if not guan_qia.GZ[y][x]["fan_kai"]:
-				guan_qia.fan_kai.kai_ge_zi(x, y, false)
+				guan_qia.fan_kai.kai_ge_zi(x, y, false, false)
+	# 全部翻完后统一执行一次自动排雷与和弦收敛，结果与逐格翻开完全一致
+	guan_qia.fan_kai.yi_jian_kai_ping()
 	# 刷新道具显示
 	dao_ju_upd()
 	# 显示提示弹幕（显示探测器配置的名义边长）
