@@ -33,7 +33,7 @@ const diao_luo = {
 }
 
 # 诛邪模式怪物掉落表{怪物名: [[掉落物列表], [权重列表], [次数列表]]}
-# 基础1级掉落表：每次击杀判定1次，实际次数由怪物等级n决定（n^5次判定）
+# 基础1级掉落表：每次击杀判定1次，实际次数由怪物等级决定
 const diao_luo_zx = {
 	"红巨蟹":[["蟹钳",null],[360,9640],[1]],
 	"褐巨蟹":[["蟹钳",null],[375,9625],[1]],
@@ -118,7 +118,7 @@ static func diao_luo_wu(guan_qia, die_x: int, die_y: int) -> Dictionary:
 	# 如果没有怪物名称，直接返回
 	if guai_wu_ming == "":
 		return {}
-	# 根据模式选择掉落表：诛邪模式用诛邪表且次数=怪物等级^5，主线模式用主线表
+	# 根据模式选择掉落表：诛邪模式用诛邪表，主线模式用主线表
 	var diao_biao: Array  # 掉落物列表
 	var diao_lv: Array  # 权重列表
 	var diao_n: int  # 判定次数
@@ -127,8 +127,8 @@ static func diao_luo_wu(guan_qia, die_x: int, die_y: int) -> Dictionary:
 		var zx_biao = diao_luo_zx[guai_wu_ming]
 		diao_biao = zx_biao[0]
 		diao_lv = zx_biao[1]
-		# 掉落次数=怪物等级n的5次方（1级=1次，2级=32次…），基础表为1级（1次）
-		diao_n = int(pow(float(GZ[die_y][die_x].get("lv", 1)), 5.0))
+		# 掉落次数=怪物等级n的2次方，基础表为1级（1次）
+		diao_n = int(pow(float(GZ[die_y][die_x].get("lv", 1)), 2.0))
 	else:
 		# 主线模式：读取主线掉落配置
 		var wu_1 = diao_luo.get(guai_wu_ming)
