@@ -12,7 +12,7 @@ var BB: Control = null
 var YL: Control = null
 # 道具容器
 var dao_ju: Control = null
-# 选定恢复等级（0表示未选定，1-4对应等级）
+# 选定恢复等级（0表示未选定，1-6对应等级）
 var hui_fu_lv: int = 0
 # 恢复符启用中
 var hui_fu_ing: TextureRect = null
@@ -249,7 +249,7 @@ func dao_ju_upd() -> void:
 	# 获取背包物品
 	var wu_pin = data.get("背包", {})
 	# 道具列表
-	var dao_ju_list = ["1级恢复符", "2级恢复符", "3级恢复符", "4级恢复符", "1级探测器", "2级探测器"]
+	var dao_ju_list = ["1级恢复符","2级恢复符","3级恢复符","4级恢复符","5级恢复符","6级恢复符","优秀探测器","精良探测器","史诗探测器","神话探测器"]
 	var p_x = 110
 	var p_y = 631
 	var p_1 = 50  # 物品宽度
@@ -270,7 +270,7 @@ func dao_ju_upd() -> void:
 					wu_pin_tu.position = Vector2(p_x+idx*p_2,p_y)
 					wu_pin_tu.z_index = 1000
 					# 为探测器添加点击事件
-					if wu_ming == "1级探测器" or wu_ming == "2级探测器":
+					if wu_ming in ["优秀探测器","精良探测器","史诗探测器","神话探测器"]:
 						wu_pin_tu.gui_input.connect(func(event):
 							if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 								Tan_ce_qi(wu_ming)
@@ -335,10 +335,13 @@ func Tan_ce_qi(wu_ming: String) -> void:
 	# 检查道具数量
 	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
 		return
-	# 获取探测器等级
-	var lv = 1 if wu_ming == "1级探测器" else 2
-	# 计算探测范围
-	var fan_wei = 1 if lv == 1 else 2
+	# 探测器探测半径配置{名称: 半径}，实际边长=半径×2+1
+	var fan_wei_biao = {"优秀探测器": 1, "精良探测器": 2, "史诗探测器": 4, "神话探测器": 49}
+	# 获取当前探测器的探测半径（神话半径49，超出地图边界遍历时自动截断，等同探明全图）
+	var fan_wei = int(fan_wei_biao.get(wu_ming, -1))
+	# 非探测器物品直接返回
+	if fan_wei < 0:
+		return
 	# 获取人物当前位置（转换为0开始索引）
 	var helo_x = guan_qia.helo_x - 1
 	var helo_y = guan_qia.helo_y - 1
@@ -370,8 +373,8 @@ func Tan_ce_qi(wu_ming: String) -> void:
 				guan_qia.fan_kai.kai_ge_zi(x, y, false)
 	# 刷新道具显示
 	dao_ju_upd()
-	# 显示提示弹幕
-	var shi_ji_fan_wei = lv * 2 + 1
+	# 显示提示弹幕（显示探测器配置的名义边长）
+	var shi_ji_fan_wei = fan_wei * 2 + 1
 	提示弹幕.wen_ben("使用【" + wu_ming + "】探明了" + str(shi_ji_fan_wei) + "×" + str(shi_ji_fan_wei) + "及周边区域！", 0)
 
 # 重新挑战按钮点击事件

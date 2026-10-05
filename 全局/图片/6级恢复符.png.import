@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c28yn2y8d65i4"
-path="res://.godot/imported/3级恢复符.png-b541f1e9543913d4fbec7a6dc49d3174.ctex"
+uid="uid://cglc411fp7hm3"
+path="res://.godot/imported/6级恢复符.png-116bf5246991f27d6354664a8cf84d03.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://全局/图片/3级恢复符.png"
-dest_files=["res://.godot/imported/3级恢复符.png-b541f1e9543913d4fbec7a6dc49d3174.ctex"]
+source_file="res://全局/图片/6级恢复符.png"
+dest_files=["res://.godot/imported/6级恢复符.png-116bf5246991f27d6354664a8cf84d03.ctex"]
 
 [params]
 

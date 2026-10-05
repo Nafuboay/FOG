@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c28yn2y8d65i4"
-path="res://.godot/imported/3级恢复符.png-b541f1e9543913d4fbec7a6dc49d3174.ctex"
+uid="uid://bebqya7lbl8kx"
+path="res://.godot/imported/精良探测器.png-e6f1de4dd7218bcada3fcfc641a66357.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://全局/图片/3级恢复符.png"
-dest_files=["res://.godot/imported/3级恢复符.png-b541f1e9543913d4fbec7a6dc49d3174.ctex"]
+source_file="res://全局/图片/精良探测器.png"
+dest_files=["res://.godot/imported/精良探测器.png-e6f1de4dd7218bcada3fcfc641a66357.ctex"]
 
 [params]
 

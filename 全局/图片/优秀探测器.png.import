@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tl44awsipujt"
-path="res://.godot/imported/2级探测器.png-6a1f3d80ad6468486f002e0a65ab36a1.ctex"
+uid="uid://j1hs3nei3hm4"
+path="res://.godot/imported/优秀探测器.png-9e015e1f880777a071840f99f9a32778.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://全局/图片/2级探测器.png"
-dest_files=["res://.godot/imported/2级探测器.png-6a1f3d80ad6468486f002e0a65ab36a1.ctex"]
+source_file="res://全局/图片/优秀探测器.png"
+dest_files=["res://.godot/imported/优秀探测器.png-9e015e1f880777a071840f99f9a32778.ctex"]
 
 [params]
 

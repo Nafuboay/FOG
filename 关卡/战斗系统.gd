@@ -46,6 +46,8 @@ var xue_tiao_5: AtlasTexture
 var piao_zi_s: Array[Texture2D] = []
 # 是否找到BOSS战斗位置的标记
 var is_BOSS_xy: bool = false
+# 各等级恢复符的单个回血量（下标0未使用，1-6对应1-6级恢复符）
+const hui_fu_zhi_biao: Array[int] = [0, 1, 3, 7, 20, 55, 148]
 
 # 获取父节点，如果父节点是容器则继续往上找真正的关卡节点
 func _ready() -> void:
@@ -751,6 +753,13 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 		if zhan_dou_ing:
 			hui_fu_fu()
 
+# 获取指定等级恢复符的单个回血量
+func get_hui_fu_zhi(lv: int) -> int:
+	# 等级超出1-6范围时返回0
+	if lv < 1 or lv > hui_fu_zhi_biao.size() - 1:
+		return 0
+	return hui_fu_zhi_biao[lv]
+
 # 战斗开始时自动使用恢复符（血量不足时）
 func hui_fu_n() -> void:
 	# 获取当前选定的恢复符等级
@@ -770,16 +779,10 @@ func hui_fu_n() -> void:
 	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
 		return
 	# 获取恢复符回血量
-	var hui_fu_zhi = 0
-	match lv:
-		1:
-			hui_fu_zhi = 1
-		2:
-			hui_fu_zhi = 3
-		3:
-			hui_fu_zhi = 7
-		4:
-			hui_fu_zhi = 20
+	var hui_fu_zhi = get_hui_fu_zhi(lv)
+	# 等级无效时不使用恢复符
+	if hui_fu_zhi <= 0:
+		return
 	# 计算需要使用的恢复符数量
 	var hp_que_que = guan_qia.helo_shp - guan_qia.helo_hp
 	if hp_que_que <= 0:
@@ -833,16 +836,10 @@ func hui_fu_fu() -> void:
 	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
 		return
 	# 获取恢复符回血量
-	var hui_fu_zhi = 0
-	match lv:
-		1:
-			hui_fu_zhi = 1
-		2:
-			hui_fu_zhi = 3
-		3:
-			hui_fu_zhi = 7
-		4:
-			hui_fu_zhi = 20
+	var hui_fu_zhi = get_hui_fu_zhi(lv)
+	# 等级无效时不使用恢复符
+	if hui_fu_zhi <= 0:
+		return
 	# 检查是否值得使用恢复符
 	if (guan_qia.helo_shp - guan_qia.helo_hp) < hui_fu_zhi:
 		return
