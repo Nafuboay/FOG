@@ -1,6 +1,8 @@
 # 【诛邪模式】关卡逻辑
 # 继承关卡基类，覆盖网格生成和怪物生成等方法
 extends 关卡基类
+# BOSS特殊技能脚本（preload路径引用，不依赖全局class_name注册）
+const 特殊技能_SCRIPT = preload("res://关卡/特殊技能.gd")
 # 诛邪模式特有变量
 var zx_lv: int = 1  # 诛邪模式下当前关卡的等级
 var zx_monster_name: String = ""  # 诛邪模式下该关的怪物名称
@@ -209,8 +211,8 @@ func _zhu_xie_guai_wu() -> void:
 	GZ[monster_y][monster_x]["ll"] = guai_wu1.LL * zx_lv
 	GZ[monster_y][monster_x]["fy"] = guai_wu1.FY * zx_lv
 	GZ[monster_y][monster_x]["ct"] = guai_wu1.CT * zx_lv
-	# BOSS技能初始化（主线与诛邪通用：猛犸王【重甲】等依赖初始字段的技能）
-	BOSS_ji_neng_chu_shi(GZ[monster_y][monster_x], zx_monster_name, GZ[monster_y][monster_x]["lv"])
+	# BOSS技能初始化（主线与诛邪通用，逻辑在特殊技能.gd：猛犸王【重甲】等依赖初始字段的技能）
+	特殊技能_SCRIPT.BOSS_ji_neng_chu_shi(GZ[monster_y][monster_x], zx_monster_name, GZ[monster_y][monster_x]["lv"])
 	# 计算怪物显示位置
 	var GZ_z = GZ_zhong(monster_x, monster_y)
 	var suo_fang = 1.0

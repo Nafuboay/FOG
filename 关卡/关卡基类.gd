@@ -1,6 +1,8 @@
 # 【关卡基类】
 class_name 关卡基类
 extends Node2D
+# BOSS特殊技能脚本（preload路径引用，不依赖全局class_name注册）
+const 特殊技能_SCRIPT = preload("res://关卡/特殊技能.gd")
 # 信息面板刷新信号
 signal shu_wu_upd
 # 返回按钮目标场景
@@ -657,8 +659,8 @@ func BOSS_xian_shi() -> void:
 				GZ[by][bx]["ll"] = boss_ll
 				GZ[by][bx]["fy"] = boss_fy
 				GZ[by][bx]["ct"] = boss_ct
-				# BOSS技能初始化（主线与诛邪通用）
-				BOSS_ji_neng_chu_shi(GZ[by][bx], guai_wu_id, boss_lv)
+				# BOSS技能初始化（主线与诛邪通用，逻辑在特殊技能.gd）
+				特殊技能_SCRIPT.BOSS_ji_neng_chu_shi(GZ[by][bx], guai_wu_id, boss_lv)
 		# 计算显示位置（格子中心）
 		var GZ_z = GZ_zhong(x, y)
 		# 缩放比例1.5倍（比大怪物更大）
@@ -685,16 +687,6 @@ func BOSS_xian_shi() -> void:
 		for ny in range(y, y + 2):
 			for nx in range(x, x + 2):
 				GZs[ny][nx].texture = tile_fan_kai
-
-# BOSS技能初始化：设置依赖初始字段的技能数据（主线BOSS_xian_shi与诛邪_zhu_xie_guai_wu通用）
-func BOSS_ji_neng_chu_shi(cell: Dictionary, guai_wu_id: String, boss_lv: int) -> void:
-	# 猛犸王【重甲】技能：增加防御，受击减少
-	var fy_add_4 = 0
-	if guai_wu_id == "猛犸王·犽翡":
-		fy_add_4 = 32 * boss_lv
-		cell["fy"] += fy_add_4
-	# 写入重甲防御加成（供战斗系统受击减防和信息面板读取）
-	cell["fy_add_4"] = fy_add_4
 
 # 创建人物等
 func C_helo() -> void:

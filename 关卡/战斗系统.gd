@@ -2,6 +2,9 @@
 class_name 战斗系统 extends Node
 # 父节点引用（关卡节点），通过此属性访问关卡的数据和方法
 var guan_qia: Node2D
+# BOSS特殊技能处理器脚本（技能逻辑集中在特殊技能.gd，主线与诛邪通用）
+const 特殊技能_SCRIPT = preload("res://关卡/特殊技能.gd")
+var ji_neng
 # 战斗秒杀倍率
 var zhan_dou_ming: float = 1.0
 # 战斗进行中状态
@@ -55,6 +58,8 @@ func _ready() -> void:
 	if parent.name != "关卡":
 		parent = parent.get_parent()
 	guan_qia = parent
+	# 创建BOSS特殊技能处理器（用preload路径引用，不依赖全局class_name注册）
+	ji_neng = 特殊技能_SCRIPT.new(guan_qia, self)
 
 # 加载血条资源
 func load_xue_tiao_zi_yuan() -> void:
@@ -585,71 +590,10 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 	print("%.2f秒 英雄造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷%d"%[time_1,ji_shu,helo_ll,helo_ct,guan_qia.GZ[guai_wu_y][guai_wu_x]["fy"],guan_qia.GZ[guai_wu_y][guai_wu_x]["lv"],helo_lv, helo_attack_n])
 	# 使用统一函数处理伤害（包含血条更新和飘字显示）
 	shang_hai(guai_wu_x, guai_wu_y, ji_shu, false)
-	# 猛犸王【重甲】技能：受击减少防御
-	var GZ = guan_qia.GZ
-	# 检查当前攻击的怪物是否是猛犸王
-	if GZ[guai_wu_y][guai_wu_x].get("guai_wu_id", "") == "猛犸王·犽翡":
-		# 获取当前重甲防御加成
-		var fy_add_4 = GZ[guai_wu_y][guai_wu_x].get("fy_add_4", 0)
-		# 如果还有重甲加成
-		if fy_add_4 > 0:
-			# 获取BOSS等级
-			var boss_lv = GZ[guai_wu_y][guai_wu_x].get("lv", 1)
-			# 减少防御加成，最低为0
-			fy_add_4 = max(0, fy_add_4 - boss_lv)
-			# 获取BOSS左上角坐标
-			var boss_x = int(GZ[guai_wu_y][guai_wu_x].get("BOSS_x", guai_wu_x))
-			var boss_y = int(GZ[guai_wu_y][guai_wu_x].get("BOSS_y", guai_wu_y))
-			# 更新猛犸王4个格子的防御加成和实际防御值
-			for by in range(boss_y, boss_y + 2):
-				for bx in range(boss_x, boss_x + 2):
-					GZ[by][bx]["fy_add_4"] = fy_add_4  # 更新重甲加成
-					GZ[by][bx]["fy"] -= boss_lv  # 减少实际防御
-	# 蠃虫王【硬化】技能：受击增加防御
-	if GZ[guai_wu_y][guai_wu_x].get("guai_wu_id", "") == "蠃虫王·犄眦":
-		# 获取BOSS等级
-		var boss_lv = GZ[guai_wu_y][guai_wu_x].get("lv", 1)
-		# 获取当前硬化防御加成
-		var fy_add_5 = GZ[guai_wu_y][guai_wu_x].get("fy_add_5", 0)
-		# 增加防御加成
-		fy_add_5 += boss_lv
-		# 获取BOSS左上角坐标（BOSS占用2x2区域）
-		var boss_x = int(GZ[guai_wu_y][guai_wu_x].get("BOSS_x", guai_wu_x))
-		var boss_y = int(GZ[guai_wu_y][guai_wu_x].get("BOSS_y", guai_wu_y))
-		# 更新蠃虫王4个格子的防御加成和实际防御值
-		for by in range(boss_y, boss_y + 2):
-			for bx in range(boss_x, boss_x + 2):
-				GZ[by][bx]["fy_add_5"] = fy_add_5  # 更新石肤加成
-				GZ[by][bx]["fy"] += boss_lv  # 增加实际防御
-	# 邪花王【荆棘】技能：受击造成固定反伤
-	if GZ[guai_wu_y][guai_wu_x].get("guai_wu_id", "") == "邪花王·荆冠":
-		# 获取BOSS等级作为反伤伤害
-		var fan_shang = GZ[guai_wu_y][guai_wu_x].get("lv", 1)
-		# 延后执行反伤
-		await get_tree().create_timer(0.05).timeout
-		# 场景已切换/释放中时终止协程
-		if not is_inside_tree():
-			return
-		# 检查战斗是否还在进行
-		if not zhan_dou_ing:
-			return
-		# 检查人物是否有效
-		if guan_qia.helo == null or not is_instance_valid(guan_qia.helo):
-			return
-		# 打印反伤信息
-		var time_2 = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-		print("%.2f秒 怪物造成反伤：%d" % [time_2, fan_shang])
-		# 对人物造成反伤
-		shang_hai(0, 0, fan_shang, true)
-		# 发出伤害信号刷新面板
-		guan_qia.shu_wu_upd.emit()
-		# 检查人物是否被反伤击杀
-		if guan_qia.helo_hp <= 0:
-			guan_qia.helo_hp = 0
-			# 统一处理人物死亡（含失败弹窗与结束战斗）
-			helo_si_wang()
-			# 人物已死亡，跳过后续怪物死亡判定等流程
-			return
+	# BOSS受击类技能（猛犸王重甲/蠃虫王硬化/邪花王反伤）
+	# 返回true表示人物已被反伤击杀，战斗已结束
+	if await ji_neng.shou_ji_ji_neng(guai_wu_x, guai_wu_y):
+		return
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# 调用伤害后处理（玄戈力量加成）
@@ -713,10 +657,8 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 	shang_hai(0, 0, ji_shu, true)
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
-	if GZ[guai_wu_y][guai_wu_x].get("guai_wu_id", "") == "葵花王·槐昂":
-		hp_add(guai_wu_x, guai_wu_y)
-	if GZ[guai_wu_y][guai_wu_x].get("guai_wu_id", "") == "双狼王·睚狈":
-		liu_xue()
+	# BOSS攻击类技能（葵花王向阳/双狼王流血）
+	ji_neng.gong_ji_ji_neng(guai_wu_x, guai_wu_y)
 	# 检查人物是否死亡
 	if guan_qia.helo_hp <= 0:
 		guan_qia.helo_hp = 0
@@ -1021,28 +963,8 @@ func guai_wu_die() -> void:
 	# 更新怪物数量标签（诛邪模式下可能不存在）
 	if guan_qia.guai_wu_lbl != null:
 		guan_qia.guai_wu_lbl.text = "怪物数量：" + str(guan_qia.guai_wu_xian) + "/" + str(guan_qia.guai_wu_zong)
-	# 野猪王【热血】技能：场上怪物越多生命越高
-	for boss_xy in guan_qia.BOSS_xy:
-		var x = int(boss_xy.x)
-		var y = int(boss_xy.y)
-		# 检查是否是野猪王
-		if guan_qia.GZ[y][x].get("guai_wu_id", "") == "野猪王·冕笑":
-			# 获取基础生命值和BOSS等级
-			var shp_1 = guan_qia.GZ[y][x].get("shp_1", 0)
-			var boss_lv = guan_qia.GZ[y][x].get("lv", 1)
-			# 重新计算生命值 = 基础生命 + (场上怪物数 - 1) × BOSS等级
-			var xin_shp = shp_1 + (guan_qia.guai_wu_xian - 1) * boss_lv
-			# 当前HP不能超过新的上限（防止血量溢出）
-			var xin_hp = min(guan_qia.GZ[y][x]["hp"], xin_shp)
-			# 更新野猪王4个格子的生命值（BOSS占用2x2区域）
-			for by in range(y, y + 2):
-				for bx in range(x, x + 2):
-					guan_qia.GZ[by][bx]["shp"] = xin_shp
-					guan_qia.GZ[by][bx]["hp"] = xin_hp
-			# 如果正在查看野猪王面板，刷新显示
-			if guan_qia.guai_wu_x_ing >= x and guan_qia.guai_wu_x_ing < x + 2 and guan_qia.guai_wu_y_ing >= y and guan_qia.guai_wu_y_ing < y + 2:
-				guan_qia.XX.look(false, x, y)
-			break
+	# 怪物死亡类技能（野猪王热血：场上怪物越多生命越高）
+	ji_neng.guai_wu_die_ji_neng()
 	# 检查胜利条件：人物存活且怪物数量为0
 	if guan_qia.helo_hp > 0 and guan_qia.guai_wu_xian == 0:
 		# 诛邪模式下：保存等级并重新进入关卡
@@ -1060,65 +982,6 @@ func guai_wu_die() -> void:
 	fan2 = false
 	guan_qia.helo_move(die_x, die_y)
 	print("%.2f秒 战斗胜利\n" % ((Time.get_ticks_msec() - zhan_dou_time) / 1000.0))
-
-# 葵花王【向阳】技能协程：战斗时回血
-func hp_add(x: int, y: int) -> void:
-	await get_tree().create_timer(0.5).timeout
-	# 场景已切换/释放中时终止协程
-	if not is_inside_tree():
-		return
-	# 检查战斗是否还在进行
-	if not zhan_dou_ing:
-		return
-	var GZ = guan_qia.GZ
-	# 检查怪物是否有效
-	if GZ[y][x].get("si_wang", false) == true:
-		return
-	# 计算恢复量：min(剩余生命上限, 等级×3)
-	var hp_sheng_yu = GZ[y][x]["shp"] - GZ[y][x]["hp"]
-	var hui_fu_liang = min(hp_sheng_yu, GZ[y][x]["lv"] * 3)
-	if hui_fu_liang > 0:
-		# 打印恢复信息
-		print("%.2f秒 怪物恢复生命：%d" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0, hui_fu_liang])
-		# 恢复怪物生命
-		hui_fu(x, y, hui_fu_liang, false)
-		# 发出伤害信号刷新面板
-		guan_qia.shu_wu_upd.emit()
-
-# 双狼王【流血】技能：攻击造成流血，可叠加
-func liu_xue() -> void:
-	await get_tree().create_timer(0.7).timeout
-	# 场景已切换/释放中时终止协程
-	if not is_inside_tree():
-		return
-	# 检查战斗是否还在进行
-	if not zhan_dou_ing:
-		return
-	# 检查人物是否有效
-	if guan_qia.helo == null or not is_instance_valid(guan_qia.helo):
-		return
-	var GZ = guan_qia.GZ
-	# 获取当前流血层数（使用get_meta支持默认值）
-	var liu_xue_n = guan_qia.helo.get_meta("liu_xue_n", 0)
-	# 获取怪物等级作为最高叠加次数
-	var zui_gao_ceng_shu = GZ[guai_wu_y][guai_wu_x]["lv"]
-	# 增加流血层数（不超过最高层数）
-	liu_xue_n = min(liu_xue_n + 1, zui_gao_ceng_shu)
-	# 更新流血层数（使用set_meta存储自定义属性）
-	guan_qia.helo.set_meta("liu_xue_n", liu_xue_n)
-	# 计算流血伤害：2 × 层数
-	var shui_xue_shang_hai = 2 * liu_xue_n
-	# 打印流血信息
-	print("%.2f秒 怪物造成流血：%d（层数：%d）" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0, shui_xue_shang_hai, liu_xue_n])
-	# 对人物造成流血伤害
-	shang_hai(0, 0, shui_xue_shang_hai, true)
-	# 发出伤害信号刷新面板
-	guan_qia.shu_wu_upd.emit()
-	# 检查人物是否因流血死亡
-	if guan_qia.helo_hp <= 0:
-		guan_qia.helo_hp = 0
-		# 统一处理人物死亡（含失败弹窗与结束战斗）
-		helo_si_wang()
 
 # BOSS死亡后生成宝箱
 func C_BX(boss_x: int, boss_y: int) -> void:
@@ -1178,12 +1041,6 @@ func zhan_dou_end() -> void:
 	var helo = guan_qia.helo
 	if helo != null and is_instance_valid(helo):
 		helo.play_idle()
-		# 如果是爱丽丝，战斗结束后生命回满
-		if helo.name == "爱丽丝":
-			var hui_fu_zhi = guan_qia.helo_shp - guan_qia.helo_hp
-			hui_fu(0, 0, hui_fu_zhi, true)
-			guan_qia.shu_wu_upd.emit()
-		# 如果是玄戈，战斗结束后重置战斗临时力量加成
-		if helo.name == "玄戈":
-			guan_qia.helo.ll_add_1 = 0
-			guan_qia.shu_wu_upd.emit()
+		# 英雄战斗结束特殊技能（在角色文件中实现：爱丽丝回满血、玄戈重置战斗临时力量等）
+		if helo.has_method("zhan_dou_end_ji_neng"):
+			helo.zhan_dou_end_ji_neng(self)
