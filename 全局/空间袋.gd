@@ -167,7 +167,69 @@ func get_cao_zuo_png1() -> Texture2D:
 func yao_xian_shi_cao_zuo_btn() -> bool:
 	return is_zhu
 
+# 创建出售操作按钮（重写基类：一件/10%/全部）
+func create_cao_zuo_buttons() -> void:
+	var font_file = 提示弹幕.get_kai_ti_font()
+	# 一件按钮（出售1件，amount=1）
+	cao_zuo_btn1 = TextureRect.new()
+	cao_zuo_btn1.texture = get_cao_zuo_png0()
+	cao_zuo_btn1.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	cao_zuo_btn1.size = Vector2(64, 64)
+	cao_zuo_btn1.position = Vector2(96, 192)
+	cao_zuo_btn1.mouse_entered.connect(func(): if cao_zuo_btn1 != null: cao_zuo_btn1.texture = get_cao_zuo_png1())
+	cao_zuo_btn1.mouse_exited.connect(func(): if cao_zuo_btn1 != null: cao_zuo_btn1.texture = get_cao_zuo_png0())
+	cao_zuo_btn1.gui_input.connect(func(event): cao_zuo_3(event, 1))
+	wu_pin_kuai.add_child(cao_zuo_btn1)
+	# 一件文本
+	cao_zuo_text10 = Label.new()
+	cao_zuo_text10.text = "一件"
+	cao_zuo_text10.add_theme_color_override("font_color", Color.BLACK)
+	cao_zuo_text10.add_theme_font_size_override("font_size", 24)
+	if font_file != null:
+		cao_zuo_text10.add_theme_font_override("font", font_file)
+	cao_zuo_text10.position = Vector2(160, 212)
+	wu_pin_kuai.add_child(cao_zuo_text10)
+	# 10%按钮（出售当前数量10%向上取整，amount=0）
+	cao_zuo_btn10 = TextureRect.new()
+	cao_zuo_btn10.texture = get_cao_zuo_png0()
+	cao_zuo_btn10.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	cao_zuo_btn10.size = Vector2(64, 64)
+	cao_zuo_btn10.position = Vector2(96, 288)
+	cao_zuo_btn10.mouse_entered.connect(func(): if cao_zuo_btn10 != null: cao_zuo_btn10.texture = get_cao_zuo_png1())
+	cao_zuo_btn10.mouse_exited.connect(func(): if cao_zuo_btn10 != null: cao_zuo_btn10.texture = get_cao_zuo_png0())
+	cao_zuo_btn10.gui_input.connect(func(event): cao_zuo_3(event, 0))
+	wu_pin_kuai.add_child(cao_zuo_btn10)
+	# 10%文本
+	cao_zuo_text100 = Label.new()
+	cao_zuo_text100.text = "10%"
+	cao_zuo_text100.add_theme_color_override("font_color", Color.BLACK)
+	cao_zuo_text100.add_theme_font_size_override("font_size", 24)
+	if font_file != null:
+		cao_zuo_text100.add_theme_font_override("font", font_file)
+	cao_zuo_text100.position = Vector2(160, 308)
+	wu_pin_kuai.add_child(cao_zuo_text100)
+	# 全部按钮（出售全部，amount=-1）
+	cao_zuo_btn100 = TextureRect.new()
+	cao_zuo_btn100.texture = get_cao_zuo_png0()
+	cao_zuo_btn100.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	cao_zuo_btn100.size = Vector2(64, 64)
+	cao_zuo_btn100.position = Vector2(96, 384)
+	cao_zuo_btn100.mouse_entered.connect(func(): if cao_zuo_btn100 != null: cao_zuo_btn100.texture = get_cao_zuo_png1())
+	cao_zuo_btn100.mouse_exited.connect(func(): if cao_zuo_btn100 != null: cao_zuo_btn100.texture = get_cao_zuo_png0())
+	cao_zuo_btn100.gui_input.connect(func(event): cao_zuo_3(event, -1))
+	wu_pin_kuai.add_child(cao_zuo_btn100)
+	# 全部文本
+	var text_all = Label.new()
+	text_all.text = "全部"
+	text_all.add_theme_color_override("font_color", Color.BLACK)
+	text_all.add_theme_font_size_override("font_size", 24)
+	if font_file != null:
+		text_all.add_theme_font_override("font", font_file)
+	text_all.position = Vector2(160, 404)
+	wu_pin_kuai.add_child(text_all)
+
 # 出售按钮点击处理
+# amount 为出售模式：1=一件，0=当前数量10%向上取整，-1=全部
 func cao_zuo_3(event: InputEvent, amount: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		# 获取当前选中物品名称
@@ -177,6 +239,21 @@ func cao_zuo_3(event: InputEvent, amount: int) -> void:
 		# 获取物品数量
 		var shu_liang = wu_pin_ing.get(wu_ming, 0)
 		if shu_liang <= 0:
+			提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
+			return
+		# 根据出售模式计算实际出售数量
+		var actual: int
+		match amount:
+			1:
+				actual = 1
+			0:  # 10%向上取整
+				actual = int(ceil(shu_liang * 0.1))
+			-1:  # 全部
+				actual = shu_liang
+			_:
+				actual = amount
+		actual = min(actual, shu_liang)
+		if actual <= 0:
 			提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
 			return
 		# 获取物品售价
@@ -191,7 +268,7 @@ func cao_zuo_3(event: InputEvent, amount: int) -> void:
 		var BB = data.get("背包", {})
 		var S_1 = int(data.get("银币", 0))
 		# 执行批量出售
-		chu_shou_batch(wu_ming, shu_liang, shou_jia, BB, S_1, json, amount)
+		chu_shou_batch(wu_ming, shu_liang, shou_jia, BB, S_1, json, actual)
 
 # 批量出售物品
 func chu_shou_batch(wu_ming: String, shu_liang: int, shou_jia: int, BB: Dictionary, S_1: int, json, amount: int) -> void:
