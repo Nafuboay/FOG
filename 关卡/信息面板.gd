@@ -79,9 +79,9 @@ func look_helo_upd() -> void:
 	else:
 		exp_str = "%d(%d%%)" % [exp_0, exp_pct]
 	# 组装显示文本
-	var text = "\n  【英雄】%s\n  【战力】%d\n  【等级】%d\n  【经验】%s\n  【生命】%d/%d（%d%%）
+	var text = "\n  【英雄】%s\n  【战力】%s\n  【等级】%d\n  【经验】%s\n  【生命】%d/%d（%d%%）
 	  【力量】%s\n  【防御】%s\n  【穿透】%s\n  【位置】（%d，%d）" % [
-		helo_name, helo_zl, lv, exp_str, guan_qia.helo_hp, guan_qia.helo_shp, hp_pct,
+		helo_name, ge_shi_zl(helo_zl), lv, exp_str, guan_qia.helo_hp, guan_qia.helo_shp, hp_pct,
 		ll_str, fy_str, ct_str, guan_qia.helo_x, guan_qia.helo_y
 	]
 	# 创建标签
@@ -188,8 +188,8 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 	if guai_wu_miao_shu != "":
 		miao_shu_str = "\n  %s" % [guai_wu_miao_shu]
 	# 组装显示文本
-	var text = "\n  【怪物】%s\n  【战力】%d\n  【等级】%d\n  【生命】%d/%d（%d%%）\n  【力量】%s\n  【防御】%s\n  【穿透】%s\n  【位置】（%d，%d）%s" % [
-		guai_wu_name, guai_wu_zl, lv, hp, shp, hp_pct, ll_str, fy_str, ct_str, x1 + 1, y1 + 1, miao_shu_str
+	var text = "\n  【怪物】%s\n  【战力】%s\n  【等级】%d\n  【生命】%d/%d（%d%%）\n  【力量】%s\n  【防御】%s\n  【穿透】%s\n  【位置】（%d，%d）%s" % [
+		guai_wu_name, ge_shi_zl(guai_wu_zl), lv, hp, shp, hp_pct, ll_str, fy_str, ct_str, x1 + 1, y1 + 1, miao_shu_str
 	]
 	# 创建标签
 	C_label(text, guan_qia.look_guai_wu)
@@ -281,3 +281,34 @@ func get_str(ji_chu: int, add: int) -> String:
 		return str(ji_chu)
 	else:
 		return str(ji_chu) + str(add)
+
+# 格式化战力显示（小于1万纯数字，万/亿参照银币简写，1万亿以上科学计数法）
+func ge_shi_zl(zl: int) -> String:
+	# 小于1万直接显示纯数字
+	if zl < 10000:
+		return str(zl)
+	# 达到1万亿（含）使用科学计数法，固定保留3位小数（去尾法，与万/亿一致）
+	if zl >= 1000000000000:
+		# 指数为数字位数减1；系数取最高位及后三位数字，字符串截取天然去尾且无浮点误差
+		var s = str(zl)
+		var zhi_shu = s.length() - 1
+		var xi_str = "%s.%s" % [s.substr(0, 1), s.substr(1, 3)]
+		return "%s×10^%d" % [xi_str, zhi_shu]
+	# 1万~1万亿：参照背包银币格式，按万/亿单位简写
+	var is_yi = zl >= 100000000
+	var unit = "亿" if is_yi else "万"
+	var wei_4 = 100000000 if is_yi else 10000
+	var d_1 = int(zl / float(wei_4))
+	var f_1 = zl % wei_4
+	var f_2 = ""
+	# 整数部分越大小数位越少：1位整数带3位小数，2位带2位，3位带1位，4位不显示小数
+	if d_1 < 10:
+		var f_3 = int(f_1 * 1000 / float(wei_4))
+		f_2 = ".%03d" % f_3
+	elif d_1 < 100:
+		var f_3 = int(f_1 * 100 / float(wei_4))
+		f_2 = ".%02d" % f_3
+	elif d_1 < 1000:
+		var f_3 = int(f_1 * 10 / float(wei_4))
+		f_2 = ".%01d" % f_3
+	return "%d%s%s" % [d_1, f_2, unit]

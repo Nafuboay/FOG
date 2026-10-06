@@ -643,6 +643,13 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 		shang_hai(0, 0, fan_shang, true)
 		# 发出伤害信号刷新面板
 		guan_qia.shu_wu_upd.emit()
+		# 检查人物是否被反伤击杀
+		if guan_qia.helo_hp <= 0:
+			guan_qia.helo_hp = 0
+			# 统一处理人物死亡（含失败弹窗与结束战斗）
+			helo_si_wang()
+			# 人物已死亡，跳过后续怪物死亡判定等流程
+			return
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# 调用伤害后处理（玄戈力量加成）
@@ -713,36 +720,8 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 	# 检查人物是否死亡
 	if guan_qia.helo_hp <= 0:
 		guan_qia.helo_hp = 0
-		print("%.2f秒 英雄死亡\n" % shi_jian)
-		# 人物死亡时添加破损稻草人到永久背包
-		var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-		if json != null:
-			var data = json.du_qu(guan_qia.json_id)
-			var bei_bao = data.get("背包", {})
-			if bei_bao.has("破损稻草人"):
-				bei_bao["破损稻草人"] += 1
-			else:
-				bei_bao["破损稻草人"] = 1
-			data["背包"] = bei_bao
-			json.bao_cun(guan_qia.json_id, data)
-		var helo = guan_qia.helo
-		if helo != null:
-			helo.queue_free()
-			# 立即清除人物引用
-			guan_qia.helo = null
-		# 画面变暗并显示失败图片
-		guan_qia.modulate = Color(0.5, 0.5, 0.5)
-		for c in guan_qia.get_children():
-			if c is CanvasLayer:
-				for yun in c.get_children():
-					yun.modulate = Color(0.5, 0.5, 0.5)
-		var shi_bai = TextureRect.new()
-		shi_bai.texture = load("res://关卡/信息/失败.png")
-		shi_bai.position = Vector2(384, 104)
-		shi_bai.z_index = 1000
-		guan_qia.add_child(shi_bai)
-		# 调用通用结束战斗底层
-		zhan_dou_end()
+		# 统一处理人物死亡（含失败弹窗与结束战斗）
+		helo_si_wang()
 	else:
 		# 场景已切换/释放中时不再使用恢复符
 		if not is_inside_tree():
@@ -752,6 +731,40 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 		# 检查战斗是否还在进行中
 		if zhan_dou_ing:
 			hui_fu_fu()
+
+# 人物死亡统一处理：添加破损稻草人、清除人物、显示失败图片并结束战斗
+func helo_si_wang() -> void:
+	var shi_jian = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
+	print("%.2f秒 英雄死亡\n" % shi_jian)
+	# 人物死亡时添加破损稻草人到永久背包
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json != null:
+		var data = json.du_qu(guan_qia.json_id)
+		var bei_bao = data.get("背包", {})
+		if bei_bao.has("破损稻草人"):
+			bei_bao["破损稻草人"] += 1
+		else:
+			bei_bao["破损稻草人"] = 1
+		data["背包"] = bei_bao
+		json.bao_cun(guan_qia.json_id, data)
+	var helo = guan_qia.helo
+	if helo != null:
+		helo.queue_free()
+		# 立即清除人物引用
+		guan_qia.helo = null
+	# 画面变暗并显示失败图片
+	guan_qia.modulate = Color(0.5, 0.5, 0.5)
+	for c in guan_qia.get_children():
+		if c is CanvasLayer:
+			for yun in c.get_children():
+				yun.modulate = Color(0.5, 0.5, 0.5)
+	var shi_bai = TextureRect.new()
+	shi_bai.texture = load("res://关卡/信息/失败.png")
+	shi_bai.position = Vector2(384, 104)
+	shi_bai.z_index = 1000
+	guan_qia.add_child(shi_bai)
+	# 调用通用结束战斗底层
+	zhan_dou_end()
 
 # 获取指定等级恢复符的单个回血量
 func get_hui_fu_zhi(lv: int) -> int:
@@ -1101,6 +1114,11 @@ func liu_xue() -> void:
 	shang_hai(0, 0, shui_xue_shang_hai, true)
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
+	# 检查人物是否因流血死亡
+	if guan_qia.helo_hp <= 0:
+		guan_qia.helo_hp = 0
+		# 统一处理人物死亡（含失败弹窗与结束战斗）
+		helo_si_wang()
 
 # BOSS死亡后生成宝箱
 func C_BX(boss_x: int, boss_y: int) -> void:
