@@ -209,6 +209,8 @@ func _zhu_xie_guai_wu() -> void:
 	GZ[monster_y][monster_x]["ll"] = guai_wu1.LL * zx_lv
 	GZ[monster_y][monster_x]["fy"] = guai_wu1.FY * zx_lv
 	GZ[monster_y][monster_x]["ct"] = guai_wu1.CT * zx_lv
+	# BOSS技能初始化（主线与诛邪通用：猛犸王【重甲】等依赖初始字段的技能）
+	BOSS_ji_neng_chu_shi(GZ[monster_y][monster_x], zx_monster_name, GZ[monster_y][monster_x]["lv"])
 	# 计算怪物显示位置
 	var GZ_z = GZ_zhong(monster_x, monster_y)
 	var suo_fang = 1.0
