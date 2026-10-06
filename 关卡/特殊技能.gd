@@ -41,12 +41,14 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 			var boss_lv = GZ[y][x].get("lv", 1)
 			# 减少防御加成，最低为0
 			fy_add_4 = max(0, fy_add_4 - boss_lv)
-			# 获取BOSS左上角坐标
-			var boss_x = int(GZ[y][x].get("BOSS_x", x))
-			var boss_y = int(GZ[y][x].get("BOSS_y", y))
-			# 更新猛犸王4个格子的防御加成和实际防御值
-			for by in range(boss_y, boss_y + 2):
-				for bx in range(boss_x, boss_x + 2):
+			# 根据怪物占位决定更新范围：主线BOSS(2x2)更新4格，诛邪单格只更新当前格
+			var is_boss = GZ[y][x].get("BOSS", false)
+			var boss_x = int(GZ[y][x].get("BOSS_x", x)) if is_boss else x
+			var boss_y = int(GZ[y][x].get("BOSS_y", y)) if is_boss else y
+			var range_n = 2 if is_boss else 1
+			# 更新猛犸王格子的防御加成和实际防御值
+			for by in range(boss_y, boss_y + range_n):
+				for bx in range(boss_x, boss_x + range_n):
 					GZ[by][bx]["fy_add_4"] = fy_add_4  # 更新重甲加成
 					GZ[by][bx]["fy"] -= boss_lv  # 减少实际防御
 	# 蠃虫王【硬化】技能：受击增加防御
@@ -57,12 +59,14 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 		var fy_add_5 = GZ[y][x].get("fy_add_5", 0)
 		# 增加防御加成
 		fy_add_5 += boss_lv
-		# 获取BOSS左上角坐标（BOSS占用2x2区域）
-		var boss_x = int(GZ[y][x].get("BOSS_x", x))
-		var boss_y = int(GZ[y][x].get("BOSS_y", y))
-		# 更新蠃虫王4个格子的防御加成和实际防御值
-		for by in range(boss_y, boss_y + 2):
-			for bx in range(boss_x, boss_x + 2):
+		# 根据怪物占位决定更新范围：主线BOSS(2x2)更新4格，诛邪单格只更新当前格
+		var is_boss = GZ[y][x].get("BOSS", false)
+		var boss_x = int(GZ[y][x].get("BOSS_x", x)) if is_boss else x
+		var boss_y = int(GZ[y][x].get("BOSS_y", y)) if is_boss else y
+		var range_n = 2 if is_boss else 1
+		# 更新蠃虫王格子的防御加成和实际防御值
+		for by in range(boss_y, boss_y + range_n):
+			for bx in range(boss_x, boss_x + range_n):
 				GZ[by][bx]["fy_add_5"] = fy_add_5  # 更新石肤加成
 				GZ[by][bx]["fy"] += boss_lv  # 增加实际防御
 	# 邪花王【荆棘】技能：受击造成固定反伤

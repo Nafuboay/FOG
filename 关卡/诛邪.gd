@@ -1,8 +1,6 @@
 # 【诛邪模式】关卡逻辑
 # 继承关卡基类，覆盖网格生成和怪物生成等方法
 extends 关卡基类
-# BOSS特殊技能脚本（preload路径引用，不依赖全局class_name注册）
-const 特殊技能_SCRIPT = preload("res://关卡/特殊技能.gd")
 # 诛邪模式特有变量
 var zx_lv: int = 1  # 诛邪模式下当前关卡的等级
 var zx_monster_name: String = ""  # 诛邪模式下该关的怪物名称
