@@ -575,7 +575,8 @@ func helo_shang_hai_0() -> void:
 
 # 玄戈专用：每次伤害后力量+1
 func shang_hai_hou() -> void:
-	if guan_qia.helo.has_method("shang_hai_hou"):
+	# 人物可能因场景切换/死亡被释放，需做空检查
+	if guan_qia.helo != null and is_instance_valid(guan_qia.helo) and guan_qia.helo.has_method("shang_hai_hou"):
 		guan_qia.helo.shang_hai_hou()
 
 # 应用人物对怪物的伤害
@@ -593,6 +594,9 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 	# BOSS受击类技能（猛犸王重甲/蠃虫王硬化/邪花王反伤）
 	# 返回true表示人物已被反伤击杀，战斗已结束
 	if await ji_neng.shou_ji_ji_neng(guai_wu_x, guai_wu_y):
+		return
+	# 场景切换或人物死亡时跳过后续流程（反伤延迟期间可能触发怪物死亡→场景切换）
+	if guan_qia.helo == null or not is_instance_valid(guan_qia.helo):
 		return
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
