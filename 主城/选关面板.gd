@@ -63,10 +63,15 @@ class_name 选关面板 extends Control
 @onready var idle_29 = $关卡待机29
 var btn: Array[Button] = []
 var idle: Array[Node] = []
+# 各关卡右上角的诛邪重置×按钮（与btn一一对应）
+var chong_zhi_btns: Array[Button] = []
 var guan: int = 30
 var current_mode: int = 0 # 0=主线, 1=诛邪
 # 诛邪模式下禁用的关卡ID列表（第2关为魔法树关，无新怪物）
 const ZX_DISABLED_GUAN: Array[int] = [1]
+# 重置×按钮贴图（与主界面存档删除按钮同款）
+const TEX_CHONG_ZHI_0: Texture2D = preload("res://主界面/图片/×号0.png")
+const TEX_CHONG_ZHI_1: Texture2D = preload("res://主界面/图片/×号1.png")
 
 func _ready() -> void:
 	btn = [btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9, btn_10, btn_11, btn_12, btn_13, btn_14, btn_15, btn_16, btn_17, btn_18, btn_19, btn_20, btn_21, btn_22, btn_23, btn_24, btn_25, btn_26, btn_27, btn_28, btn_29]
@@ -123,6 +128,39 @@ func chu_shi_hua() -> void:
 		btn[i].add_theme_color_override("font_hover_pressed_color", Color.BLACK)
 		# 设置楷体字体
 		get_kai_ti(btn[i])
+	# 创建诛邪重置×按钮
+	chuang_jian_chong_zhi()
+
+# 创建每个关卡右上角的诛邪重置×按钮（32×32，贴图/位置与存档界面删除按钮一致）
+func chuang_jian_chong_zhi() -> void:
+	for i in range(btn.size()):
+		var b = Button.new()
+		b.custom_minimum_size = Vector2(32, 32)
+		b.size = Vector2(32, 32)
+		# 关卡模块为128×128，×位于其右上角（与主界面存档删除按钮同偏移）
+		b.position = btn[i].position + Vector2(104, -8)
+		var cao_yuan_0 = StyleBoxTexture.new()
+		cao_yuan_0.texture = TEX_CHONG_ZHI_0
+		var cao_yuan_1 = StyleBoxTexture.new()
+		cao_yuan_1.texture = TEX_CHONG_ZHI_1
+		b.add_theme_stylebox_override("normal", cao_yuan_0)
+		b.add_theme_stylebox_override("hover", cao_yuan_1)
+		b.add_theme_stylebox_override("pressed", cao_yuan_1)
+		# 去掉焦点框，避免点击后残留虚线框
+		b.focus_mode = Control.FOCUS_NONE
+		b.visible = false
+		# 绑定1-based关卡编号，点击后直接重置（无二次确认）
+		b.pressed.connect(_on_chong_zhi.bind(i + 1))
+		add_child(b)
+		chong_zhi_btns.append(b)
+
+# 点击某关的×按钮：删除该关诛邪记录并立即刷新面板
+func _on_chong_zhi(guan_num: int) -> void:
+	var json = get_node_or_null("/root/游戏存档")
+	if json != null:
+		json.rst_zx_lv(guan_num)
+	# 重新刷新：该关恢复“诛邪·1级”、可进入，×同时消失
+	xian_shi()
 
 # 设置控件使用楷体字体
 func get_kai_ti(control: Control) -> void:
@@ -190,12 +228,13 @@ func xian_shi() -> void:
 			var x = (2.0 * m + 3.0) / (lie_shu * 2.0 + 4.0) * win_x - 64
 			var y = (2.0 * n + 2.0) / (hang_shu * 2.0 + 2.0) * win_y - 64
 			btn[i].visible = true
+			# 该关当前诛邪等级（供按钮文字和重置×显隐判断共用）
+			var zx_lv_dang_qian = 1
 			if current_mode == 1:
 				# 诛邪模式：读取该关存档中的当前级别（get_zx_lv参数为1-based关卡ID）
-				var zx_lv_btn = 1
 				if json != null:
-					zx_lv_btn = json.get_zx_lv(i + 1)
-				btn[i].text = "诛邪·"+str(zx_lv_btn)+"级"+"\n\n\n\n\n\n\n"
+					zx_lv_dang_qian = json.get_zx_lv(i + 1)
+				btn[i].text = "诛邪·"+str(zx_lv_dang_qian)+"级"+"\n\n\n\n\n\n\n"
 			else:
 				# 主线模式
 				btn[i].text = "主线·"+str(i+1)+"关"+"\n\n\n\n\n\n\n"
@@ -229,8 +268,16 @@ func xian_shi() -> void:
 				s.play("idle")
 				s.speed_scale = 0.4
 				s.visible = true
+			# 重置×跟随关卡模块定位到右上角
+			chong_zhi_btns[i].position = Vector2(x + 104, y - 8)
+			# 仅诛邪模式、且该关通过至少1关（等级≥2）时显示×；主线/未通关关隐藏
+			chong_zhi_btns[i].visible = current_mode == 1 and zx_lv_dang_qian >= 2
 		else:
 			btn[i].visible = false
+			chong_zhi_btns[i].visible = false
 
 func yin_cang() -> void:
 	visible = false
+	# 隐藏面板时一并隐藏所有重置×
+	for b in chong_zhi_btns:
+		b.visible = false

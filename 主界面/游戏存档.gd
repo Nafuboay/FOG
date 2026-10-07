@@ -151,6 +151,17 @@ func upd_zx_lv(guan_kia_id: int) -> void:
 	data["诛邪等级"] = zx_data
 	bao_cun(id, data)
 
+# 删除指定关卡的诛邪等级记录（选关面板×重置用，删除后get_zx_lv恢复默认1级）
+func rst_zx_lv(guan_kia_id: int) -> void:
+	get_dang_wei()
+	var data = du_qu(id)
+	var zx_data = data.get("诛邪等级", {})
+	# 存在该关记录时才删除并写回，避免无意义的存档写入
+	if zx_data.has(str(guan_kia_id)):
+		zx_data.erase(str(guan_kia_id))
+		data["诛邪等级"] = zx_data
+		bao_cun(id, data)
+
 # 获取存档的模式（0=主线，1=诛邪）
 func get_mode() -> int:
 	get_dang_wei()
