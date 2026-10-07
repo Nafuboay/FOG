@@ -57,18 +57,25 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 		var boss_lv = GZ[y][x].get("lv", 1)
 		# 获取当前硬化防御加成
 		var fy_add_5 = GZ[y][x].get("fy_add_5", 0)
-		# 增加防御加成
-		fy_add_5 += boss_lv
-		# 根据怪物占位决定更新范围：主线BOSS(2x2)更新4格，诛邪单格只更新当前格
-		var is_boss = GZ[y][x].get("BOSS", false)
-		var boss_x = int(GZ[y][x].get("BOSS_x", x)) if is_boss else x
-		var boss_y = int(GZ[y][x].get("BOSS_y", y)) if is_boss else y
-		var range_n = 2 if is_boss else 1
-		# 更新蠃虫王格子的防御加成和实际防御值
-		for by in range(boss_y, boss_y + range_n):
-			for bx in range(boss_x, boss_x + range_n):
-				GZ[by][bx]["fy_add_5"] = fy_add_5  # 更新石肤加成
-				GZ[by][bx]["fy"] += boss_lv  # 增加实际防御
+		# 硬化防御上限为自身等级×32（每次受击+自身等级，叠加32次达到极限后保持）
+		var fy_add_5_max = boss_lv * 32
+		# 未达上限时才增加防御，达到极限后受击不再变化
+		if fy_add_5 < fy_add_5_max:
+			# 记录增加前的加成，并钳制在上限内
+			var fy_add_5_old = fy_add_5
+			fy_add_5 = min(fy_add_5_max, fy_add_5 + boss_lv)
+			# 本次实际增加的防御（正常为boss_lv，钳制时取剩余额度）
+			var fy_zeng = fy_add_5 - fy_add_5_old
+			# 根据怪物占位决定更新范围：主线BOSS(2x2)更新4格，诛邪单格只更新当前格
+			var is_boss = GZ[y][x].get("BOSS", false)
+			var boss_x = int(GZ[y][x].get("BOSS_x", x)) if is_boss else x
+			var boss_y = int(GZ[y][x].get("BOSS_y", y)) if is_boss else y
+			var range_n = 2 if is_boss else 1
+			# 更新蠃虫王格子的防御加成和实际防御值
+			for by in range(boss_y, boss_y + range_n):
+				for bx in range(boss_x, boss_x + range_n):
+					GZ[by][bx]["fy_add_5"] = fy_add_5  # 更新硬化加成
+					GZ[by][bx]["fy"] += fy_zeng  # 增加实际防御
 	# 邪花王【荆棘】技能：受击造成固定反伤
 	elif guai_wu_id == "邪花王·荆冠":
 		# 获取BOSS等级作为反伤伤害
