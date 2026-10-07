@@ -24,12 +24,12 @@ func _ready() -> void:
 	if is_zx:
 		# 诛邪模式：手动加载关卡数据（跳过主线剧情弹幕）
 		_zx_du_qu_guan_kia()
-		# 诛邪模式：设置固定网格
-		GZ_x = 5
-		GZ_y = 3
-		# 英雄初始位置：(2,2) → 网格索引(1,1)，1-based所以设为2
+		# 诛邪模式：设置固定网格（7×7）
+		GZ_x = 7
+		GZ_y = 7
+		# 英雄初始位置：(2,4)，1-based所以直接设为2和4
 		helo_x = 2
-		helo_y = 2
+		helo_y = 4
 		# 清空怪物数量配置
 		guai_wu_n = []
 		# 获取诛邪等级（从场景树获取已有的游戏存档节点）
@@ -172,6 +172,8 @@ func C_GZ() -> void:
 		GZ.append(row)
 	# 诛邪模式：只生成1只特殊怪物
 	_zhu_xie_guai_wu()
+	# 诛邪模式：四角固定生成魔法树
+	_zhu_xie_shu()
 	# 怪物总数量
 	guai_wu_zong = guai_wu_xy.size()
 	guai_wu_xian = guai_wu_zong
@@ -183,13 +185,23 @@ func shu_xing_tie_tu() -> void:
 	for y in range(GZ_y):
 		for x in range(GZ_x):
 			if GZs[y][x] != null:
-				GZs[y][x].texture = tile_fan_kai
+				# 魔法树格子使用紫地版本的已翻开图片
+				if GZ[y][x].get("zhang_ai", false) and tile_fan_kai_zi != null:
+					GZs[y][x].texture = tile_fan_kai_zi
+				else:
+					GZs[y][x].texture = tile_fan_kai
+	# 显示四角魔法树贴图（只有主格显示树精灵）
+	for shu in zhang_ai_xy:
+		var sx = int(shu.x)
+		var sy = int(shu.y)
+		if zhang_ai[sy][sx] != null:
+			zhang_ai[sy][sx].visible = true
 
 # 诛邪模式的怪物生成（只生成1只特殊怪物）
 func _zhu_xie_guai_wu() -> void:
-	# 怪物位置固定在(4,2) → 网格索引(3,1)
+	# 怪物位置固定在中心(4,4) → 网格索引(3,3)
 	var monster_x = 3
-	var monster_y = 1
+	var monster_y = 3
 	# 标记该格子为怪物，并设置相关属性
 	GZ[monster_y][monster_x]["guai_wu"] = true
 	GZ[monster_y][monster_x]["guai_wu_id"] = zx_monster_name
@@ -225,6 +237,20 @@ func _zhu_xie_guai_wu() -> void:
 		var dong_hua = guai_wu1.get_node("AnimatedSprite2D")
 		if dong_hua.sprite_frames and dong_hua.sprite_frames.has_animation("idle"):
 			dong_hua.play("idle")
+
+# 诛邪模式：四角固定生成魔法树（每颗占2×2共4格）
+func _zhu_xie_shu() -> void:
+	# 四角主格坐标（0-based网格索引，主格为左上角，向右下扩展2×2）
+	var jiao = [Vector2(0, 0), Vector2(5, 0), Vector2(0, 5), Vector2(5, 5)]
+	for shu in jiao:
+		var sx = int(shu.x)
+		var sy = int(shu.y)
+		# 标记2×2区域为障碍
+		for ny in range(sy, sy + 2):
+			for nx in range(sx, sx + 2):
+				GZ[ny][nx]["zhang_ai"] = true
+		# 记录主格位置（树贴图显示与信息面板使用）
+		zhang_ai_xy.append(shu)
 
 # 诛邪模式：按等级比例调整人物和怪物大小
 func _zhu_xie_scale() -> void:

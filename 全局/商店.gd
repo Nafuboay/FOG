@@ -122,7 +122,7 @@ func yao_xian_shi_cao_zuo_btn() -> bool:
 
 # 获取购买按钮文本（重写基类）
 func get_cao_zuo_texts() -> Array:
-	return ["一件", "十件", "10%"]
+	return [" 一件", " 十件", " 10%"]
 
 # 获取购买按钮amount参数（重写基类：1=一件，10=十件，-1=10%银币）
 func get_cao_zuo_amounts() -> Array:
