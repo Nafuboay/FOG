@@ -161,8 +161,8 @@ func liu_xue() -> void:
 	liu_xue_n = min(liu_xue_n + 1, zui_gao_ceng_shu)
 	# 更新流血层数（使用set_meta存储自定义属性）
 	guan_qia.helo.set_meta("liu_xue_n", liu_xue_n)
-	# 计算流血伤害：2 × 层数
-	var shui_xue_shang_hai = 2 * liu_xue_n
+	# 计算流血伤害：3 × 层数
+	var shui_xue_shang_hai = 3 * liu_xue_n
 	# 打印流血信息
 	print("%.2f秒 怪物造成流血：%d（层数：%d）" % [(Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0, shui_xue_shang_hai, liu_xue_n])
 	# 对人物造成流血伤害（真伤，使用灰色飘字）
