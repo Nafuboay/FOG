@@ -87,8 +87,8 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 		# 打印反伤信息
 		var time_2 = (Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0
 		print("%.2f秒 怪物造成反伤：%d" % [time_2, fan_shang])
-		# 对人物造成反伤
-		zhan_dou.shang_hai(0, 0, fan_shang, true)
+		# 对人物造成反伤（真伤，使用灰色飘字）
+		zhan_dou.shang_hai(0, 0, fan_shang, true, true)
 		# 检查人物是否被反伤击杀
 		if guan_qia.helo_hp <= 0:
 			guan_qia.helo_hp = 0
@@ -158,8 +158,8 @@ func liu_xue() -> void:
 	var shui_xue_shang_hai = 2 * liu_xue_n
 	# 打印流血信息
 	print("%.2f秒 怪物造成流血：%d（层数：%d）" % [(Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0, shui_xue_shang_hai, liu_xue_n])
-	# 对人物造成流血伤害
-	zhan_dou.shang_hai(0, 0, shui_xue_shang_hai, true)
+	# 对人物造成流血伤害（真伤，使用灰色飘字）
+	zhan_dou.shang_hai(0, 0, shui_xue_shang_hai, true, true)
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# 检查人物是否因流血死亡

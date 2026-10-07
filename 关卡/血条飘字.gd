@@ -30,7 +30,7 @@ var xue_tiao_3: TextureRect
 var xue_tiao_4: TextureRect
 # 怪物血条裁剪纹理
 var xue_tiao_5: AtlasTexture
-# 飘字数字图片数组（0-9怪物伤害、10-19恢复、20-29人物伤害）
+# 飘字数字图片数组（0-9怪物伤害、10-19恢复、20-29人物伤害、30-39真伤）
 var piao_zi_s: Array[Texture2D] = []
 
 # 初始化：传入关卡节点和战斗系统
@@ -42,7 +42,7 @@ func _init(gq: Node2D, zd: Node) -> void:
 func load_xue_tiao_zi_yuan() -> void:
 	tiao_kuang = load("res://关卡/信息/条框.png")
 	xue_tiao = load("res://关卡/信息/HP1.png")
-	for i in range(30):
+	for i in range(40):
 		piao_zi_s.append(load("res://关卡/飘字/%02d.png" % i))
 
 # 创建人物血条
@@ -159,7 +159,8 @@ func xue_tiao_upd_2(x: int, y: int) -> void:
 	xue_tiao_4.size = Vector2(tiao_x * hp_pct, tiao_y)
 
 # 飘字显示
-func piao_zi(x: int, y: int, zhi: int, is_hui_fu: bool, is_helo: bool) -> void:
+# is_zhen_shang=true时使用30-39灰色真伤飘字（优先级高于恢复/人物伤害）
+func piao_zi(x: int, y: int, zhi: int, is_hui_fu: bool, is_helo: bool, is_zhen_shang: bool = false) -> void:
 	# 将数值转换为字符串，便于逐个提取数字
 	var zi_fu = str(zhi)
 	# 是否已处理第一个数字（用于计算起始X坐标）
@@ -170,9 +171,11 @@ func piao_zi(x: int, y: int, zhi: int, is_hui_fu: bool, is_helo: bool) -> void:
 	for i in zi_fu:
 		# 将字符转换为数字
 		var shu = int(i)
-		# 图片索引：恢复用10-19，人物伤害用20-29，怪物伤害用0-9
+		# 图片索引：真伤用30-39，恢复用10-19，人物伤害用20-29，怪物伤害用0-9
 		var id = shu
-		if is_hui_fu:
+		if is_zhen_shang:
+			id += 30
+		elif is_hui_fu:
 			id += 10
 		elif is_helo:
 			id += 20

@@ -60,7 +60,8 @@ func _ready() -> void:
 	si_wang = 死亡处理_SCRIPT.new(guan_qia, self)
 
 # 常规伤害
-func shang_hai(x: int, y: int, zhi: int, is_helo: bool) -> void:
+# is_zhen_shang=true时使用灰色真伤飘字（荆棘反伤、流血等无视防御的伤害）
+func shang_hai(x: int, y: int, zhi: int, is_helo: bool, is_zhen_shang: bool = false) -> void:
 	if zhi < 0: # 伤害异常
 		return
 	if is_helo: # 是人物
@@ -68,16 +69,16 @@ func shang_hai(x: int, y: int, zhi: int, is_helo: bool) -> void:
 		if guan_qia.helo_hp < 0:
 			guan_qia.helo_hp = 0
 		xue_tiao_qi.xue_tiao_upd_1() # 刷新人物血条
-		# 人物伤害使用30-39图片（从1开始计数）
-		xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, zhi, false, false)
+		# 人物伤害飘字（真伤时使用30-39灰色飘字）
+		xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, zhi, false, false, is_zhen_shang)
 	else: # 是怪物
 		var GZ1 = guan_qia.GZ[y][x]
 		GZ1["hp"] -= zhi
 		if GZ1["hp"] < 0:
 			GZ1["hp"] = 0
 		xue_tiao_qi.xue_tiao_upd_2(x, y) # 刷新怪物血条
-		# 怪物伤害使用0-9图片
-		xue_tiao_qi.piao_zi(x, y, zhi, false, true)
+		# 怪物伤害飘字（真伤时使用30-39灰色飘字）
+		xue_tiao_qi.piao_zi(x, y, zhi, false, true, is_zhen_shang)
 
 # 常规恢复
 func hui_fu(x: int, y: int, zhi: int, is_helo: bool) -> void:
