@@ -10,8 +10,11 @@ func _ready() -> void:
 	super._ready()
 	attack_n = 2
 
-func shang_hai_hou() -> void:
-	ll_add_1 += 1
+# 受伤后特殊技能：临时力量每层+1，叠加上限为自身等级×32（战斗系统通过has_method调用，参数为关卡节点）
+func shang_hai_hou(guan_qia: Node) -> void:
+	# 达到自身等级×32上限后不再增加
+	if ll_add_1 < guan_qia.helo_lv * 32:
+		ll_add_1 += 1
 
 # 战斗结束特殊技能：重置战斗临时力量加成（战斗系统通过has_method调用，参数为战斗系统）
 func zhan_dou_end_ji_neng(zd: Node) -> void:

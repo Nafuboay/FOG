@@ -351,10 +351,11 @@ func attack_1() -> void:
 		helo.attack_xin_hao.disconnect(helo_shang_hai_0)
 	# 连接人物攻击信号
 	helo.attack_xin_hao.connect(helo_shang_hai_0)
-	helo.play_attack()
-	guai_wu_ing.play_attack()
+	# 先记录战斗开始时间并打印（首次攻击信号在play_attack内同步发出，回合开始的生命打印依赖此时间戳）
 	zhan_dou_time = Time.get_ticks_msec()
 	print("\n战斗开始")
+	helo.play_attack()
+	guai_wu_ing.play_attack()
 
 # 计算人物对怪物的伤害
 func helo_shang_hai_0() -> void:
@@ -431,9 +432,9 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 		return
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
-	# 伤害后处理（玄戈力量加成：角色文件通过has_method多态实现，与zhan_dou_end_ji_neng同模式）
+	# 伤害后处理（玄戈力量加成：角色文件通过has_method多态实现，与zhan_dou_end_ji_neng同模式；传入关卡节点以读取自身等级）
 	if guan_qia.helo != null and is_instance_valid(guan_qia.helo) and guan_qia.helo.has_method("shang_hai_hou"):
-		guan_qia.helo.shang_hai_hou()
+		guan_qia.helo.shang_hai_hou(guan_qia)
 		# 力量加成后再刷新一次面板
 		guan_qia.shu_wu_upd.emit()
 	# 检查怪物是否死亡
@@ -500,6 +501,9 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 		# 统一处理人物死亡（含失败弹窗与结束战斗，逻辑在死亡处理.gd）
 		si_wang.helo_si_wang()
 	else:
+		# 受常规伤害后启动角色受击特有技能（爱丽丝涅槃：0.2秒后概率回满血；真伤不走本函数故不触发）
+		if guan_qia.helo != null and is_instance_valid(guan_qia.helo) and guan_qia.helo.has_method("nie_pan_pan_ding"):
+			guan_qia.helo.nie_pan_pan_ding(self, ji_shu)
 		# 场景已切换/释放中时不再使用恢复符
 		if not is_inside_tree():
 			return
@@ -637,6 +641,10 @@ func che_tui_0() -> void:
 # 战斗回合
 func zhan_dou_hui() -> void:
 	helo_hui += 1
+	# 每回合开始后台打印轮次与双方当前生命（怪物取BOSS/怪物主格数据）
+	var GZ = guan_qia.GZ
+	print("第%d轮" % helo_hui)
+	print("%.2f秒 英雄当前生命：%d 怪物当前生命：%d" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0, guan_qia.helo_hp, GZ[guai_wu_y][guai_wu_x]["hp"]])
 	# 判断条件：已点击撤退 且 记录过回合数 且 当前回合等于撤退回合+1
 	if che_tui_ing and che_tui_hui > 0 and helo_hui == che_tui_hui + 1:
 		print("%.2f秒 开始撤退" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
