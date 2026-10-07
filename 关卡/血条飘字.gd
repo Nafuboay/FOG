@@ -30,7 +30,7 @@ var xue_tiao_3: TextureRect
 var xue_tiao_4: TextureRect
 # 怪物血条裁剪纹理
 var xue_tiao_5: AtlasTexture
-# 飘字数字图片数组（0-9怪物伤害、10-19恢复、20-29人物伤害、30-39真伤）
+# 飘字数字图片数组（0-9怪物对人物伤害、10-19恢复、20-29人物对怪物伤害、30-39真伤）
 var piao_zi_s: Array[Texture2D] = []
 
 # 初始化：传入关卡节点和战斗系统

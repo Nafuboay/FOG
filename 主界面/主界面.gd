@@ -316,6 +316,14 @@ func dian_ji(dang_wei: int) -> void:
 		# 将游戏存档节点移到root下，使其在切换场景后继续存在
 		if json.get_parent() != get_tree().root:
 			get_tree().root.add_child(json)
+		# 切换场景前先恢复总线音量：主城背景音乐在场景实例化时即autoplay，
+		# 若等音量调节节点_ready再设置，音乐会先以默认0dB响一瞬后才变成设置值
+		var yue_liang_bus = AudioServer.get_bus_index("Master")
+		if int(data.get("静音", 0)) == 1:
+			# 静音状态直接压到-80dB，与音量调节.gd的静音处理一致
+			AudioServer.set_bus_volume_db(yue_liang_bus, -80)
+		else:
+			AudioServer.set_bus_volume_db(yue_liang_bus, int(data.get("分贝", 0)))
 		# 已有存档，进入主城
 		get_tree().change_scene_to_file("res://主城/主城.tscn")
 	else:
