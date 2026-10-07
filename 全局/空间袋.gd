@@ -167,66 +167,13 @@ func get_cao_zuo_png1() -> Texture2D:
 func yao_xian_shi_cao_zuo_btn() -> bool:
 	return is_zhu
 
-# 创建出售操作按钮（重写基类：一件/10%/全部）
-func create_cao_zuo_buttons() -> void:
-	var font_file = 提示弹幕.get_kai_ti_font()
-	# 一件按钮（出售1件，amount=1）
-	cao_zuo_btn1 = TextureRect.new()
-	cao_zuo_btn1.texture = get_cao_zuo_png0()
-	cao_zuo_btn1.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	cao_zuo_btn1.size = Vector2(64, 64)
-	cao_zuo_btn1.position = Vector2(96, 192)
-	cao_zuo_btn1.mouse_entered.connect(func(): if cao_zuo_btn1 != null: cao_zuo_btn1.texture = get_cao_zuo_png1())
-	cao_zuo_btn1.mouse_exited.connect(func(): if cao_zuo_btn1 != null: cao_zuo_btn1.texture = get_cao_zuo_png0())
-	cao_zuo_btn1.gui_input.connect(func(event): cao_zuo_3(event, 1))
-	wu_pin_kuai.add_child(cao_zuo_btn1)
-	# 一件文本
-	cao_zuo_text10 = Label.new()
-	cao_zuo_text10.text = "一件"
-	cao_zuo_text10.add_theme_color_override("font_color", Color.BLACK)
-	cao_zuo_text10.add_theme_font_size_override("font_size", 24)
-	if font_file != null:
-		cao_zuo_text10.add_theme_font_override("font", font_file)
-	cao_zuo_text10.position = Vector2(160, 212)
-	wu_pin_kuai.add_child(cao_zuo_text10)
-	# 10%按钮（出售当前数量10%向上取整，amount=0）
-	cao_zuo_btn10 = TextureRect.new()
-	cao_zuo_btn10.texture = get_cao_zuo_png0()
-	cao_zuo_btn10.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	cao_zuo_btn10.size = Vector2(64, 64)
-	cao_zuo_btn10.position = Vector2(96, 288)
-	cao_zuo_btn10.mouse_entered.connect(func(): if cao_zuo_btn10 != null: cao_zuo_btn10.texture = get_cao_zuo_png1())
-	cao_zuo_btn10.mouse_exited.connect(func(): if cao_zuo_btn10 != null: cao_zuo_btn10.texture = get_cao_zuo_png0())
-	cao_zuo_btn10.gui_input.connect(func(event): cao_zuo_3(event, 0))
-	wu_pin_kuai.add_child(cao_zuo_btn10)
-	# 10%文本
-	cao_zuo_text100 = Label.new()
-	cao_zuo_text100.text = "10%"
-	cao_zuo_text100.add_theme_color_override("font_color", Color.BLACK)
-	cao_zuo_text100.add_theme_font_size_override("font_size", 24)
-	if font_file != null:
-		cao_zuo_text100.add_theme_font_override("font", font_file)
-	cao_zuo_text100.position = Vector2(160, 308)
-	wu_pin_kuai.add_child(cao_zuo_text100)
-	# 全部按钮（出售全部，amount=-1）
-	cao_zuo_btn100 = TextureRect.new()
-	cao_zuo_btn100.texture = get_cao_zuo_png0()
-	cao_zuo_btn100.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	cao_zuo_btn100.size = Vector2(64, 64)
-	cao_zuo_btn100.position = Vector2(96, 384)
-	cao_zuo_btn100.mouse_entered.connect(func(): if cao_zuo_btn100 != null: cao_zuo_btn100.texture = get_cao_zuo_png1())
-	cao_zuo_btn100.mouse_exited.connect(func(): if cao_zuo_btn100 != null: cao_zuo_btn100.texture = get_cao_zuo_png0())
-	cao_zuo_btn100.gui_input.connect(func(event): cao_zuo_3(event, -1))
-	wu_pin_kuai.add_child(cao_zuo_btn100)
-	# 全部文本
-	var text_all = Label.new()
-	text_all.text = "全部"
-	text_all.add_theme_color_override("font_color", Color.BLACK)
-	text_all.add_theme_font_size_override("font_size", 24)
-	if font_file != null:
-		text_all.add_theme_font_override("font", font_file)
-	text_all.position = Vector2(160, 404)
-	wu_pin_kuai.add_child(text_all)
+# 获取出售按钮文本（重写基类）
+func get_cao_zuo_texts() -> Array:
+	return [" 一件", "  10%", " 全部"]
+
+# 获取出售按钮amount参数（重写基类：1=一件，0=10%，-1=全部）
+func get_cao_zuo_amounts() -> Array:
+	return [1, 0, -1]
 
 # 出售按钮点击处理
 # amount 为出售模式：1=一件，0=当前数量10%向上取整，-1=全部

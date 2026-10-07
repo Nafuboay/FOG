@@ -120,7 +120,16 @@ func get_cao_zuo_png1() -> Texture2D:
 func yao_xian_shi_cao_zuo_btn() -> bool:
 	return true
 
+# 获取购买按钮文本（重写基类）
+func get_cao_zuo_texts() -> Array:
+	return ["一件", "十件", "10%"]
+
+# 获取购买按钮amount参数（重写基类：1=一件，10=十件，-1=10%银币）
+func get_cao_zuo_amounts() -> Array:
+	return [1, 10, -1]
+
 # 购买按钮点击处理
+# amount为购买模式：1=一件，10=十件，-1=花费10%银币购买最大数量
 func cao_zuo_3(event: InputEvent, amount: int) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var wu_ming = get_wu_ming(GZ_ing)
@@ -134,6 +143,12 @@ func cao_zuo_3(event: InputEvent, amount: int) -> void:
 		var data = json.du_qu(json.id)
 		var BB_1 = data.get("背包", {})
 		var S_1 = int(data.get("银币", 0))
+		# 10%模式：用当前银币的10%计算可购买的最大数量
+		if amount == -1:
+			amount = int(S_1 * 0.1) / shou_jia if shou_jia > 0 else 0
+			if amount <= 0:
+				提示弹幕.wen_ben("银币不足！", 0)
+				return
 		# 检查银币是否足够购买指定数量
 		var total_cost = shou_jia * amount
 		if S_1 < total_cost:

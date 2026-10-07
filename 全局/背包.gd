@@ -41,12 +41,9 @@ var wen_ben_png: Texture2D = null
 # 文本显示控件
 var wen_ben: TextureRect = null
 # 操作按钮数组（空间袋：出售按钮，商店：购买按钮）
-var cao_zuo_btn1: TextureRect = null  # ×1按钮
-var cao_zuo_btn10: TextureRect = null  # ×10按钮
-var cao_zuo_btn100: TextureRect = null  # ×100按钮
-# 操作按钮文本标签数组
-var cao_zuo_text10: Label = null  # ×10文本
-var cao_zuo_text100: Label = null  # ×100文本
+var cao_zuo_btn1: TextureRect = null  # 第一个按钮
+var cao_zuo_btn10: TextureRect = null  # 第二个按钮
+var cao_zuo_btn100: TextureRect = null  # 第三个按钮
 
 # 初始化
 func _ready() -> void:
@@ -277,57 +274,46 @@ func wu_pin_XX(wu_ming: String) -> void:
 		# 创建操作按钮容器（水平排列3个按钮）
 		create_cao_zuo_buttons()
 
-# 创建操作按钮（3个：×1、×10、×100，竖向排列）
+# 获取操作按钮文本（子类重写以自定义）
+func get_cao_zuo_texts() -> Array:
+	return ["", "×10", "×100"]
+
+# 获取操作按钮amount参数（子类重写以自定义）
+func get_cao_zuo_amounts() -> Array:
+	return [1, 10, 100]
+
+# 创建操作按钮（3个，竖向排列）
 func create_cao_zuo_buttons() -> void:
 	var font_file = 提示弹幕.get_kai_ti_font()
-	# 创建×1按钮（位置：96, 224）
-	cao_zuo_btn1 = TextureRect.new()
-	cao_zuo_btn1.texture = get_cao_zuo_png0()
-	cao_zuo_btn1.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	cao_zuo_btn1.size = Vector2(64,64)
-	cao_zuo_btn1.position = Vector2(96,192)
-	cao_zuo_btn1.mouse_entered.connect(func(): if cao_zuo_btn1 != null: cao_zuo_btn1.texture = get_cao_zuo_png1())
-	cao_zuo_btn1.mouse_exited.connect(func(): if cao_zuo_btn1 != null: cao_zuo_btn1.texture = get_cao_zuo_png0())
-	cao_zuo_btn1.gui_input.connect(func(event): cao_zuo_3(event, 1))
-	wu_pin_kuai.add_child(cao_zuo_btn1)
-	# 创建×10按钮（位置：96, 320）
-	cao_zuo_btn10 = TextureRect.new()
-	cao_zuo_btn10.texture = get_cao_zuo_png0()
-	cao_zuo_btn10.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	cao_zuo_btn10.size = Vector2(64, 64)
-	cao_zuo_btn10.position = Vector2(96,288)
-	cao_zuo_btn10.mouse_entered.connect(func(): if cao_zuo_btn10 != null: cao_zuo_btn10.texture = get_cao_zuo_png1())
-	cao_zuo_btn10.mouse_exited.connect(func(): if cao_zuo_btn10 != null: cao_zuo_btn10.texture = get_cao_zuo_png0())
-	cao_zuo_btn10.gui_input.connect(func(event): cao_zuo_3(event, 10))
-	wu_pin_kuai.add_child(cao_zuo_btn10)
-	# 创建×10文本标签
-	cao_zuo_text10 = Label.new()
-	cao_zuo_text10.text = "×10"
-	cao_zuo_text10.add_theme_color_override("font_color", Color.BLACK)
-	cao_zuo_text10.add_theme_font_size_override("font_size",24)
-	if font_file != null:
-		cao_zuo_text10.add_theme_font_override("font", font_file)
-	cao_zuo_text10.position = Vector2(160,308)
-	wu_pin_kuai.add_child(cao_zuo_text10)
-	# 创建×100按钮
-	cao_zuo_btn100 = TextureRect.new()
-	cao_zuo_btn100.texture = get_cao_zuo_png0()
-	cao_zuo_btn100.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	cao_zuo_btn100.size = Vector2(64,64)
-	cao_zuo_btn100.position = Vector2(96,384)
-	cao_zuo_btn100.mouse_entered.connect(func(): if cao_zuo_btn100 != null: cao_zuo_btn100.texture = get_cao_zuo_png1())
-	cao_zuo_btn100.mouse_exited.connect(func(): if cao_zuo_btn100 != null: cao_zuo_btn100.texture = get_cao_zuo_png0())
-	cao_zuo_btn100.gui_input.connect(func(event): cao_zuo_3(event, 100))
-	wu_pin_kuai.add_child(cao_zuo_btn100)
-	# 创建×100文本标签
-	cao_zuo_text100 = Label.new()
-	cao_zuo_text100.text = "×100"
-	cao_zuo_text100.add_theme_color_override("font_color", Color.BLACK)
-	cao_zuo_text100.add_theme_font_size_override("font_size",24)
-	if font_file != null:
-		cao_zuo_text100.add_theme_font_override("font", font_file)
-	cao_zuo_text100.position = Vector2(160,404)
-	wu_pin_kuai.add_child(cao_zuo_text100)
+	var texts = get_cao_zuo_texts()
+	var amounts = get_cao_zuo_amounts()
+	var y_positions = [192, 288, 384]
+	var text_y_offsets = [212, 308, 404]
+	var btn_vars = ["cao_zuo_btn1", "cao_zuo_btn10", "cao_zuo_btn100"]
+
+	for i in range(3):
+		var btn = TextureRect.new()
+		btn.texture = get_cao_zuo_png0()
+		btn.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		btn.size = Vector2(64, 64)
+		btn.position = Vector2(96, y_positions[i])
+		var amt = amounts[i]
+		btn.mouse_entered.connect(func(): if btn != null: btn.texture = get_cao_zuo_png1())
+		btn.mouse_exited.connect(func(): if btn != null: btn.texture = get_cao_zuo_png0())
+		btn.gui_input.connect(func(event): cao_zuo_3(event, amt))
+		wu_pin_kuai.add_child(btn)
+		set(btn_vars[i], btn)
+
+		var text = texts[i]
+		if text != "":
+			var lbl = Label.new()
+			lbl.text = text
+			lbl.add_theme_color_override("font_color", Color.BLACK)
+			lbl.add_theme_font_size_override("font_size", 24)
+			if font_file != null:
+				lbl.add_theme_font_override("font", font_file)
+			lbl.position = Vector2(160, text_y_offsets[i])
+			wu_pin_kuai.add_child(lbl)
 
 # 操作按钮点击处理
 func cao_zuo_3(_event: InputEvent, _amount: int) -> void:
@@ -344,8 +330,6 @@ func wu_pin_XX_0() -> void:
 	cao_zuo_btn1 = null
 	cao_zuo_btn10 = null
 	cao_zuo_btn100 = null
-	cao_zuo_text10 = null
-	cao_zuo_text100 = null
 
 # 设置是否在主城场景
 func is_zhu_cheng(zai: bool) -> void:
