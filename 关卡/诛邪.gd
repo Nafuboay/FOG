@@ -245,10 +245,11 @@ func _zhu_xie_shu() -> void:
 	for shu in jiao:
 		var sx = int(shu.x)
 		var sy = int(shu.y)
-		# 标记2×2区域为障碍
+		# 标记2×2区域为障碍（kong_bai必须为false，否则move_xy会把树格当作可走格）
 		for ny in range(sy, sy + 2):
 			for nx in range(sx, sx + 2):
 				GZ[ny][nx]["zhang_ai"] = true
+				GZ[ny][nx]["kong_bai"] = false
 		# 记录主格位置（树贴图显示与信息面板使用）
 		zhang_ai_xy.append(shu)
 
