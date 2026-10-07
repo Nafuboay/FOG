@@ -745,10 +745,10 @@ func C_helo() -> void:
 	# 播放待机动画（如果有该方法）
 	if helo.has_method("play_idle"):
 		helo.play_idle(true)
-	# 加载血条资源并创建血条
-	zhan_dou.load_xue_tiao_zi_yuan()
-	zhan_dou.C_xue_tiao_1()
-	zhan_dou.C_xue_tiao_2()
+	# 加载血条资源并创建血条（血条飘字逻辑在血条飘字.gd）
+	zhan_dou.xue_tiao_qi.load_xue_tiao_zi_yuan()
+	zhan_dou.xue_tiao_qi.C_xue_tiao_1()
+	zhan_dou.xue_tiao_qi.C_xue_tiao_2()
 	# 翻开人物九宫格
 	fan_kai.kai_ge_zi(helo_x0, helo_y0, true)
 	fan_kai.kai_ge_zi(helo_x0 + 1, helo_y0, true)

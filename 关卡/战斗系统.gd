@@ -4,7 +4,15 @@ class_name 战斗系统 extends Node
 var guan_qia: Node2D
 # BOSS特殊技能处理器脚本（技能逻辑集中在特殊技能.gd，主线与诛邪通用）
 const 特殊技能_SCRIPT = preload("res://关卡/特殊技能.gd")
+# 血条飘字处理器脚本（血条与飘字显示集中在血条飘字.gd）
+const 血条飘字_SCRIPT = preload("res://关卡/血条飘字.gd")
+# 死亡处理器脚本（人物/怪物死亡、BOSS宝箱、胜利结算集中在死亡处理.gd）
+const 死亡处理_SCRIPT = preload("res://关卡/死亡处理.gd")
 var ji_neng
+# 血条飘字处理器（血条与飘字显示逻辑）
+var xue_tiao_qi
+# 死亡处理器（人物/怪物死亡与胜利结算逻辑）
+var si_wang
 # 战斗秒杀倍率
 var zhan_dou_ming: float = 1.0
 # 战斗进行中状态
@@ -33,20 +41,6 @@ var fan1: bool = false
 var fan2: bool = false
 # 与BOSS战斗是否需要反转
 var fan3: bool = false
-# 信息相关
-var tiao_kuang: Texture2D
-var xue_tiao: Texture2D
-var xue_tiao_0: TextureRect
-var xue_tiao_1: TextureRect
-var xue_tiao_2: AtlasTexture
-var xue_tiao_x: int = 35
-var xue_tiao_y: int = 4
-var xue_tiao_x_BOSS: int = 70
-var xue_tiao_y_BOSS: int = 8
-var xue_tiao_3: TextureRect
-var xue_tiao_4: TextureRect
-var xue_tiao_5: AtlasTexture
-var piao_zi_s: Array[Texture2D] = []
 # 是否找到BOSS战斗位置的标记
 var is_BOSS_xy: bool = false
 # 各等级恢复符的单个回血量（下标0未使用，1-6对应1-6级恢复符）
@@ -60,126 +54,10 @@ func _ready() -> void:
 	guan_qia = parent
 	# 创建BOSS特殊技能处理器（用preload路径引用，不依赖全局class_name注册）
 	ji_neng = 特殊技能_SCRIPT.new(guan_qia, self)
-
-# 加载血条资源
-func load_xue_tiao_zi_yuan() -> void:
-	tiao_kuang = load("res://关卡/信息/条框.png")
-	xue_tiao = load("res://关卡/信息/HP1.png")
-	for i in range(30):
-		piao_zi_s.append(load("res://关卡/飘字/%02d.png" % i))
-
-# 创建人物血条
-func C_xue_tiao_1() -> void:
-	# 创建血条背景框
-	xue_tiao_0 = TextureRect.new()
-	xue_tiao_0.texture = tiao_kuang
-	xue_tiao_0.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	xue_tiao_0.size = Vector2(xue_tiao_x, xue_tiao_y)
-	# 添加到游戏容器
-	guan_qia.rong_qi.add_child(xue_tiao_0)
-	# 条框位置（基于人物所在格子，从1开始）
-	var helo_x0 = guan_qia.helo_x - 1
-	var helo_y0 = guan_qia.helo_y - 1
-	var GZ_z = guan_qia.GZ_zhong(helo_x0, helo_y0)
-	xue_tiao_0.position = Vector2(GZ_z.x-xue_tiao_0.size.x/2,GZ_z.y-74)
-	# 设置血条层级为人物所在格的层级
-	xue_tiao_0.z_index = (guan_qia.GZ_x - helo_x0) + helo_y0 * guan_qia.GZ_y
-	# 创建满的血条显示节点
-	xue_tiao_2 = AtlasTexture.new()
-	xue_tiao_2.atlas = xue_tiao  # 原始血条图片
-	xue_tiao_2.region = Rect2(0, 0, xue_tiao.get_width(), xue_tiao.get_height())
-	# 使用裁剪后的纹理
-	xue_tiao_1 = TextureRect.new()
-	xue_tiao_1.texture = xue_tiao_2
-	xue_tiao_1.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	xue_tiao_1.size = Vector2(xue_tiao_x, xue_tiao_y)
-	# 添加到血条容器中
-	xue_tiao_0.add_child(xue_tiao_1)
-	# 初始更新血条显示
-	xue_tiao_upd_1()
-
-# 更新人物血条显示
-func xue_tiao_upd_1() -> void:
-	if xue_tiao_1 == null or xue_tiao_0 == null:
-		return
-	# 人物死亡时隐藏血条
-	if guan_qia.helo_hp <= 0:
-		xue_tiao_0.visible = false
-		return
-	xue_tiao_0.visible = true
-	# 计算HP百分比
-	var hp_pct: float = 0.0
-	if guan_qia.helo_shp > 0:
-		hp_pct = float(guan_qia.helo_hp) / float(guan_qia.helo_shp)
-	# 限制范围在0-1之间
-	hp_pct = clamp(hp_pct, 0.0, 1.0)
-	# 根据百分比计算显示宽度
-	# 通过改变宽度来显示左边的部分
-	xue_tiao_1.size = Vector2(xue_tiao_x * hp_pct, xue_tiao_y)
-
-# 创建怪物血条
-func C_xue_tiao_2() -> void:
-	# 创建血条背景框（条框纹理）
-	xue_tiao_3 = TextureRect.new()
-	xue_tiao_3.texture = tiao_kuang
-	xue_tiao_3.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	xue_tiao_3.size = Vector2(xue_tiao_x, xue_tiao_y)
-	# 默认隐藏，战斗开始时再显示
-	xue_tiao_3.visible = false
-	# 添加到游戏容器中
-	guan_qia.rong_qi.add_child(xue_tiao_3)
-	# 创建血条裁剪纹理（从完整血条图片中裁剪显示区域）
-	xue_tiao_5 = AtlasTexture.new()
-	xue_tiao_5.atlas = xue_tiao
-	xue_tiao_5.region = Rect2(0, 0, xue_tiao.get_width(), xue_tiao.get_height())
-	# 创建血条显示节点（实际的红色血条）
-	xue_tiao_4 = TextureRect.new()
-	xue_tiao_4.texture = xue_tiao_5
-	xue_tiao_4.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	xue_tiao_4.size = Vector2(xue_tiao_x, xue_tiao_y)
-	# 将血条添加到背景框容器中
-	xue_tiao_3.add_child(xue_tiao_4)
-
-# 更新怪物血条位置和显示
-func xue_tiao_upd_2(x: int, y: int) -> void:
-	# 检查节点是否有效
-	if xue_tiao_4 == null or xue_tiao_3 == null:
-		return
-	# 计算怪物所在格子的屏幕中心位置
-	var GZ_z = guan_qia.GZ_zhong(x, y)
-	# 获取怪物数据，判断是否是BOSS
-	var GZ1 = guan_qia.GZ[y][x]
-	var is_boss = GZ1.get("BOSS", false)
-	# 根据是否是BOSS选择对应的尺寸
-	var tiao_x = xue_tiao_x
-	var tiao_y = xue_tiao_y
-	if is_boss:
-		tiao_x = xue_tiao_x_BOSS
-		tiao_y = xue_tiao_y_BOSS
-	# 设置血条尺寸
-	xue_tiao_3.size = Vector2(tiao_x, tiao_y)
-	# 设置血条位置（位于怪物头顶）
-	if is_boss:
-		xue_tiao_3.position = Vector2(GZ_z.x-17,GZ_z.y-76)
-	else:
-		xue_tiao_3.position = Vector2(GZ_z.x-17.5,GZ_z.y-74)
-	# 设置血条层级（与怪物层级一致，确保显示在怪物上方）
-	xue_tiao_3.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
-	# 获取怪物的最大HP和当前HP
-	var shp = GZ1.get("shp", 1)  # 最大HP
-	var hp = GZ1.get("hp", 1)    # 当前HP
-	# 如果怪物已死亡，隐藏血条
-	if hp <= 0:
-		xue_tiao_3.visible = false
-		return
-	# 显示血条
-	xue_tiao_3.visible = true
-	# 计算HP百分比
-	var hp_pct = float(hp) / float(shp)
-	# 限制范围在0-1之间
-	hp_pct = clamp(hp_pct, 0.0, 1.0)
-	# 根据百分比调整血条显示宽度（从左到右递减）
-	xue_tiao_4.size = Vector2(tiao_x * hp_pct, tiao_y)
+	# 创建血条飘字处理器（血条与飘字显示逻辑在血条飘字.gd）
+	xue_tiao_qi = 血条飘字_SCRIPT.new(guan_qia, self)
+	# 创建死亡处理器（人物/怪物死亡与胜利结算逻辑在死亡处理.gd）
+	si_wang = 死亡处理_SCRIPT.new(guan_qia, self)
 
 # 常规伤害
 func shang_hai(x: int, y: int, zhi: int, is_helo: bool) -> void:
@@ -189,17 +67,17 @@ func shang_hai(x: int, y: int, zhi: int, is_helo: bool) -> void:
 		guan_qia.helo_hp -= zhi
 		if guan_qia.helo_hp < 0:
 			guan_qia.helo_hp = 0
-		xue_tiao_upd_1() # 刷新人物血条
+		xue_tiao_qi.xue_tiao_upd_1() # 刷新人物血条
 		# 人物伤害使用30-39图片（从1开始计数）
-		piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, zhi, false, false)
+		xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, zhi, false, false)
 	else: # 是怪物
 		var GZ1 = guan_qia.GZ[y][x]
 		GZ1["hp"] -= zhi
 		if GZ1["hp"] < 0:
 			GZ1["hp"] = 0
-		xue_tiao_upd_2(x, y) # 刷新怪物血条
+		xue_tiao_qi.xue_tiao_upd_2(x, y) # 刷新怪物血条
 		# 怪物伤害使用0-9图片
-		piao_zi(x, y, zhi, false, true)
+		xue_tiao_qi.piao_zi(x, y, zhi, false, true)
 
 # 常规恢复
 func hui_fu(x: int, y: int, zhi: int, is_helo: bool) -> void:
@@ -209,59 +87,17 @@ func hui_fu(x: int, y: int, zhi: int, is_helo: bool) -> void:
 		guan_qia.helo_hp += zhi
 		if guan_qia.helo_hp > guan_qia.helo_shp:
 			guan_qia.helo_hp = guan_qia.helo_shp
-		xue_tiao_upd_1() # 刷新人物血条
+		xue_tiao_qi.xue_tiao_upd_1() # 刷新人物血条
 		# 恢复使用10-19图片（从1开始计数）
-		piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, zhi, true, false)
+		xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, zhi, true, false)
 	else: # 是怪物
 		var GZ1 = guan_qia.GZ[y][x]
 		GZ1["hp"] += zhi
 		if GZ1["hp"] > GZ1["shp"]:
 			GZ1["hp"] = GZ1["shp"]
-		xue_tiao_upd_2(x, y) # 刷新怪物血条
+		xue_tiao_qi.xue_tiao_upd_2(x, y) # 刷新怪物血条
 		# 恢复使用10-19图片
-		piao_zi(x, y, zhi, true, false)
-
-# 飘字显示
-func piao_zi(x: int, y: int, zhi: int, is_hui_fu: bool, is_helo: bool) -> void:
-	# 将数值转换为字符串，便于逐个提取数字
-	var zi_fu = str(zhi)
-	# 是否已处理第一个数字（用于计算起始X坐标）
-	var xy = false
-	# 第一个数字图的左边缘位置
-	var x_1 = 0
-	# 遍历数值的每一位数字
-	for i in zi_fu:
-		# 将字符转换为数字
-		var shu = int(i)
-		# 图片索引：恢复用10-19，人物伤害用20-29，怪物伤害用0-9
-		var id = shu
-		if is_hui_fu:
-			id += 10
-		elif is_helo:
-			id += 20
-		# 创建TextureRect显示数字图片
-		var tu_pian = TextureRect.new()
-		tu_pian.texture = piao_zi_s[id]
-		tu_pian.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		# 设置飘字大小和间距
-		tu_pian.size = Vector2(14,14)
-		var n = 11
-		# 计算格子中心位置
-		var GZ_z = guan_qia.GZ_zhong(x, y)
-		if not xy:
-			x_1 = GZ_z.x-(n*(zi_fu.length()-1)+tu_pian.size.x)/2.0
-			xy = true
-		# 设置飘字位置和层级
-		tu_pian.position = Vector2(x_1,GZ_z.y-72-tu_pian.size.y/2.0)
-		tu_pian.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
-		# 添加到游戏容器
-		guan_qia.rong_qi.add_child(tu_pian)
-		x_1 += n
-		# 创建飘字动画
-		var tween = create_tween()
-		tween.tween_property(tu_pian,"position:y",tu_pian.position.y-300,2.5)
-		tween.parallel().tween_property(tu_pian, "modulate:a", 0.0, 2.5)
-		tween.tween_callback(tu_pian.queue_free)
+		xue_tiao_qi.piao_zi(x, y, zhi, true, false)
 
 # 查找对战怪物
 func find_guai_wu(x: int, y: int) -> Node:
@@ -417,7 +253,7 @@ func zhan_dou(x: int, y: int) -> void:
 	if fan3:
 		fan1 = true
 	# 战斗时显示怪物血条
-	xue_tiao_upd_2(boss_x, boss_y)
+	xue_tiao_qi.xue_tiao_upd_2(boss_x, boss_y)
 	# 战斗时怪物面板自动显示当前怪物
 	guan_qia.XX.look(false, boss_x, boss_y)
 	# 战斗时显示人物面板
@@ -573,12 +409,6 @@ func helo_shang_hai_0() -> void:
 	if zhan_dou_ing and guai_wu_x >= 0 and guai_wu_y >= 0:
 		guai_wu_shang_hai_0(0)
 
-# 玄戈专用：每次伤害后力量+1
-func shang_hai_hou() -> void:
-	# 人物可能因场景切换/死亡被释放，需做空检查
-	if guan_qia.helo != null and is_instance_valid(guan_qia.helo) and guan_qia.helo.has_method("shang_hai_hou"):
-		guan_qia.helo.shang_hai_hou()
-
 # 应用人物对怪物的伤害
 func helo_shang_hai_1(ji_shu: int) -> void:
 	# 获取人物属性用于打印
@@ -600,17 +430,17 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 		return
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
-	# 调用伤害后处理（玄戈力量加成）
-	shang_hai_hou()
-	# 伤害后处理（玄戈力量加成）后再刷新一次面板
-	if guan_qia.helo.has_method("shang_hai_hou"):
+	# 伤害后处理（玄戈力量加成：角色文件通过has_method多态实现，与zhan_dou_end_ji_neng同模式）
+	if guan_qia.helo != null and is_instance_valid(guan_qia.helo) and guan_qia.helo.has_method("shang_hai_hou"):
+		guan_qia.helo.shang_hai_hou()
+		# 力量加成后再刷新一次面板
 		guan_qia.shu_wu_upd.emit()
 	# 检查怪物是否死亡
 	if guan_qia.GZ[guai_wu_y][guai_wu_x]["hp"] <= 0:
 		# 如果没有死亡标签，则添加并执行死亡
 		if guan_qia.GZ[guai_wu_y][guai_wu_x].get("si_wang", false) != true:
 			guan_qia.GZ[guai_wu_y][guai_wu_x]["si_wang"] = true
-			guai_wu_die()
+			si_wang.guai_wu_die()
 
 # 计算怪物对人物的伤害
 func guai_wu_shang_hai_0(yan_chi: float = 0.2) -> void:
@@ -666,8 +496,8 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 	# 检查人物是否死亡
 	if guan_qia.helo_hp <= 0:
 		guan_qia.helo_hp = 0
-		# 统一处理人物死亡（含失败弹窗与结束战斗）
-		helo_si_wang()
+		# 统一处理人物死亡（含失败弹窗与结束战斗，逻辑在死亡处理.gd）
+		si_wang.helo_si_wang()
 	else:
 		# 场景已切换/释放中时不再使用恢复符
 		if not is_inside_tree():
@@ -677,40 +507,6 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 		# 检查战斗是否还在进行中
 		if zhan_dou_ing:
 			hui_fu_fu()
-
-# 人物死亡统一处理：添加破损稻草人、清除人物、显示失败图片并结束战斗
-func helo_si_wang() -> void:
-	var shi_jian = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	print("%.2f秒 英雄死亡\n" % shi_jian)
-	# 人物死亡时添加破损稻草人到永久背包
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json != null:
-		var data = json.du_qu(guan_qia.json_id)
-		var bei_bao = data.get("背包", {})
-		if bei_bao.has("破损稻草人"):
-			bei_bao["破损稻草人"] += 1
-		else:
-			bei_bao["破损稻草人"] = 1
-		data["背包"] = bei_bao
-		json.bao_cun(guan_qia.json_id, data)
-	var helo = guan_qia.helo
-	if helo != null:
-		helo.queue_free()
-		# 立即清除人物引用
-		guan_qia.helo = null
-	# 画面变暗并显示失败图片
-	guan_qia.modulate = Color(0.5, 0.5, 0.5)
-	for c in guan_qia.get_children():
-		if c is CanvasLayer:
-			for yun in c.get_children():
-				yun.modulate = Color(0.5, 0.5, 0.5)
-	var shi_bai = TextureRect.new()
-	shi_bai.texture = load("res://关卡/信息/失败.png")
-	shi_bai.position = Vector2(384, 104)
-	shi_bai.z_index = 1000
-	guan_qia.add_child(shi_bai)
-	# 调用通用结束战斗底层
-	zhan_dou_end()
 
 # 获取指定等级恢复符的单个回血量
 func get_hui_fu_zhi(lv: int) -> int:
@@ -866,7 +662,7 @@ func zhan_dou_hui() -> void:
 # 完成撤退
 func che_tui_1() -> void:
 	# 撤退成功，隐藏怪物血条
-	xue_tiao_3.visible = false
+	xue_tiao_qi.xue_tiao_3.visible = false
 	print("%.2f秒 撤退成功\n" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
 	# 怪物待机
 	if guai_wu_ing != null and is_instance_valid(guai_wu_ing):
@@ -885,7 +681,7 @@ func che_tui_1() -> void:
 		# 计算回血量并使用统一函数恢复
 		var hui_fu_zhi = GZ[guai_wu_y][guai_wu_x]["shp"] - GZ[guai_wu_y][guai_wu_x]["hp"]
 		hui_fu(guai_wu_x, guai_wu_y, hui_fu_zhi, false)
-		xue_tiao_3.visible = false
+		xue_tiao_qi.xue_tiao_3.visible = false
 	# 怪物死亡处理清除朝向标记
 	fan1 = false
 	fan2 = false
@@ -896,122 +692,6 @@ func che_tui_1() -> void:
 	che_tui_hui = 0
 	# 调用通用结束战斗底层
 	zhan_dou_end()
-
-# 怪物死亡处理
-func guai_wu_die() -> void:
-	# 记录怪物位置
-	var die_x = guai_wu_x
-	var die_y = guai_wu_y
-	# 获取关卡数据引用
-	var GZ = guan_qia.GZ
-	var GZs = guan_qia.GZs
-	var tile_fan_kai = guan_qia.tile_fan_kai
-	var tile_shu_zi = guan_qia.tile_shu_zi
-	# 打印怪物死亡时间
-	var shi_jian = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	print("%.2f秒 怪物死亡" % shi_jian)
-	# 计算掉落并显示弹幕
-	var diao_luo_ing = 掉落物.diao_luo_wu(guan_qia, die_x, die_y)
-	# 在背包中显示掉落的物品
-	guan_qia.get_node("背包").xian_shi_wu_pin(guan_qia.BB_ls)
-	for wu_ming in diao_luo_ing:
-		var n = diao_luo_ing[wu_ming]
-		提示弹幕.wen_ben("获得【" + wu_ming + "】×" + str(n) + "！", 0)
-	# 移除怪物节点
-	if guai_wu_ing != null and is_instance_valid(guai_wu_ing):
-		guai_wu_ing.queue_free()
-		await get_tree().create_timer(0.05).timeout
-	# 移除格子怪物数据
-	GZ[die_y][die_x]["guai_wu"] = false
-	# 如果是BOSS，同步属性到其他3个格子，然后清除BOSS标记
-	if GZ[die_y][die_x]["BOSS"] == true:
-		var boss_hp = GZ[die_y][die_x]["hp"]
-		var boss_shp = GZ[die_y][die_x]["shp"]
-		for ny in range(die_y, die_y + 2):
-			for nx in range(die_x, die_x + 2):
-				if ny == die_y and nx == die_x:
-					continue
-				GZ[ny][nx]["hp"] = boss_hp
-				GZ[ny][nx]["shp"] = boss_shp
-		# 清除BOSS标记
-		for ny in range(die_y, die_y + 2):
-			for nx in range(die_x, die_x + 2):
-				GZ[ny][nx]["BOSS"] = false
-		# BOSS宝箱
-		C_BX(die_x, die_y)
-	# 刷新格子
-	guan_qia.shu_zi_n()
-	for ny in range(max(0, die_y - 1), min(guan_qia.GZ_y, die_y + 2)):
-		for nx in range(max(0, die_x - 1), min(guan_qia.GZ_x, die_x + 2)):
-			var GZ2 = GZ[ny][nx]
-			if GZ2["fan_kai"] == true:
-				if GZ2["shu_zi"] == true:
-					GZs[ny][nx].texture = tile_shu_zi[GZ2["number"] - 1]
-				elif GZ2["kong_bai"] == true:
-					GZs[ny][nx].texture = tile_fan_kai
-					guan_qia.fan_kai.flood_fill(nx, ny)
-	# 自动排雷、和弦
-	guan_qia.fan_kai.pai_lei()
-	guan_qia.fan_kai.he_xian()
-	# 更新怪物数量
-	var n_1 = 0
-	var n_4 = 0
-	for y in range(guan_qia.GZ_y):
-		for x in range(guan_qia.GZ_x):
-			var GZ1 = guan_qia.GZ[y][x]
-			if GZ1.get("guai_wu", false) == true:
-				n_1 += 1
-			if GZ1.get("BOSS", false) == true:
-				n_4 += 1
-	guan_qia.guai_wu_xian = n_1 + int(n_4 / 4.0)
-	# 更新怪物数量标签（诛邪模式下可能不存在）
-	if guan_qia.guai_wu_lbl != null:
-		guan_qia.guai_wu_lbl.text = "怪物数量：" + str(guan_qia.guai_wu_xian) + "/" + str(guan_qia.guai_wu_zong)
-	# 怪物死亡类技能（野猪王热血：场上怪物越多生命越高）
-	ji_neng.guai_wu_die_ji_neng()
-	# 检查胜利条件：人物存活且怪物数量为0
-	if guan_qia.helo_hp > 0 and guan_qia.guai_wu_xian == 0:
-		# 诛邪模式下：保存等级并重新进入关卡
-		if guan_qia.has_method("_zhu_xie_win"):
-			# 先结束战斗状态（重置zhan_dou_ing），防止挂起的攻击协程在场景切换后继续执行导致崩溃
-			zhan_dou_end()
-			guan_qia._zhu_xie_win()
-			return  # 不执行后续的helo_move等
-		# 主线模式：显示胜利UI
-		if guan_qia.guan_ui != null:
-			guan_qia.guan_ui.C_sheng_li()
-	# 怪物死亡特殊：先结束战斗，再清除朝向标记，最后人物移动到该格
-	zhan_dou_end()
-	fan1 = false
-	fan2 = false
-	guan_qia.helo_move(die_x, die_y)
-	print("%.2f秒 战斗胜利\n" % ((Time.get_ticks_msec() - zhan_dou_time) / 1000.0))
-
-# BOSS死亡后生成宝箱
-func C_BX(boss_x: int, boss_y: int) -> void:
-	var n_x = boss_x
-	var n_y = boss_y + 1
-	# 检查目标格子是否有效
-	if n_x < 0 or n_x >= guan_qia.GZ_x or n_y < 0 or n_y >= guan_qia.GZ_y:
-		return
-	# 获取BOSS名称
-	var boss_ming = guan_qia.GZ[boss_y][boss_x].get("名字", "")
-	# 创建宝箱节点
-	var n = Sprite2D.new()
-	n.name = "BOSS宝箱"
-	# 加载宝箱图片
-	n.texture = load("res://关卡/信息/宝箱.png")
-	# 计算宝箱位置（格子中心往上偏10像素）
-	var GZ_z = guan_qia.GZ_zhong(n_x,n_y)
-	n.position = GZ_z - Vector2(0, 10)
-	# 设置层级：与该格子层级一致
-	n.z_index = (guan_qia.GZ_x - n_x) + n_y * guan_qia.GZ_y
-	# 添加到游戏容器
-	guan_qia.rong_qi.add_child(n)
-	# 在格子数据中标记有宝箱、宝箱名称和开启次数
-	guan_qia.GZ[n_y][n_x]["BX"] = true
-	guan_qia.GZ[n_y][n_x]["BX_id"] = boss_ming
-	guan_qia.GZ[n_y][n_x]["BX_n"] = 0
 
 # 通用结束战斗底层
 func zhan_dou_end() -> void:

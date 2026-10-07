@@ -336,10 +336,10 @@ func helo_move(x: int, y: int) -> void:
 	var GZ_z = guan_qia.GZ_zhong(x, y)
 	# 人物偏移
 	guan_qia.helo.position = Vector2(GZ_z.x + guan_qia.role_pian_yi_x, GZ_z.y - guan_qia.role_pian_yi_y)
-	# 血条位置
-	if guan_qia.zhan_dou.xue_tiao_0 != null:
-		guan_qia.zhan_dou.xue_tiao_0.position = Vector2(GZ_z.x - guan_qia.zhan_dou.xue_tiao_0.size.x / 2, GZ_z.y - 74)
-		guan_qia.zhan_dou.xue_tiao_0.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
+	# 血条位置（血条显示逻辑在血条飘字.gd）
+	if guan_qia.zhan_dou.xue_tiao_qi != null and guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0 != null:
+		guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0.position = Vector2(GZ_z.x - guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0.size.x / 2, GZ_z.y - 74)
+		guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
 	# 人物层级
 	guan_qia.helo.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
 	# 重新播放待机动画

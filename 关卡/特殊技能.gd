@@ -92,8 +92,8 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 		# 检查人物是否被反伤击杀
 		if guan_qia.helo_hp <= 0:
 			guan_qia.helo_hp = 0
-			# 统一处理人物死亡（含失败弹窗与结束战斗）
-			zhan_dou.helo_si_wang()
+			# 统一处理人物死亡（含失败弹窗与结束战斗，逻辑在死亡处理.gd）
+			zhan_dou.si_wang.helo_si_wang()
 			# 人物已死亡，通知调用方跳过后续流程
 			return true
 	return false
@@ -165,8 +165,8 @@ func liu_xue() -> void:
 	# 检查人物是否因流血死亡
 	if guan_qia.helo_hp <= 0:
 		guan_qia.helo_hp = 0
-		# 统一处理人物死亡（含失败弹窗与结束战斗）
-		zhan_dou.helo_si_wang()
+		# 统一处理人物死亡（含失败弹窗与结束战斗，逻辑在死亡处理.gd）
+		zhan_dou.si_wang.helo_si_wang()
 
 # ---------- 死亡类技能：任意怪物死亡后触发 ----------
 func guai_wu_die_ji_neng() -> void:

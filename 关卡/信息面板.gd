@@ -198,8 +198,8 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 func on_shu_wu_upd() -> void:
 	# 刷新人物面板
 	look_helo_upd()
-	# 更新人物血条显示
-	guan_qia.zhan_dou.xue_tiao_upd_1()
+	# 更新人物血条显示（血条逻辑在血条飘字.gd）
+	guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_upd_1()
 	# 刷新当前查看的怪物面板
 	if guan_qia.guai_wu_x_ing >= 0 and guan_qia.guai_wu_y_ing >= 0:
 		look(false, guan_qia.guai_wu_x_ing, guan_qia.guai_wu_y_ing)
