@@ -778,8 +778,8 @@ func get_ZB(data: Dictionary) -> void:
 	var ll_lv = QHs.get("力量", 0)
 	var fy_lv = QHs.get("防御", 0)
 	var ct_lv = QHs.get("穿透", 0)
-	# 应用装备强化等级到装备加成字段
-	helo.shp_add_0 = hp_lv
+	# 应用装备强化等级到装备加成字段（诛邪模式下xue=诛邪等级，装备生命也乘生命系数）
+	helo.shp_add_0 = hp_lv * xue
 	helo.ll_add_0 = ll_lv
 	helo.fy_add_0 = fy_lv
 	helo.ct_add_0 = ct_lv

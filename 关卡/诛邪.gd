@@ -40,6 +40,8 @@ func _ready() -> void:
 			get_tree().root.add_child(json)
 		json.get_dang_wei()
 		zx_lv = json.get_zx_lv(guan_kia_id + 1)
+		# 诛邪模式生命系数 = 关卡级数，敌我双方生命都乘此系数（人物通过xue变量生效）
+		xue = zx_lv
 		# 从映射表获取该关的新怪物（每关首次解锁的怪物）
 		if guan_kia_id >= 0 and guan_kia_id < ZX_GUAI_WU_MING.size():
 			zx_monster_name = ZX_GUAI_WU_MING[guan_kia_id]
@@ -216,8 +218,8 @@ func _zhu_xie_guai_wu() -> void:
 	guai_wu1.set_meta("grid_y", monster_y)
 	# 诛邪模式下怪物等级 = 基础等级 × 诛邪等级
 	GZ[monster_y][monster_x]["lv"] = guai_wu1.LV * zx_lv
-	GZ[monster_y][monster_x]["shp"] = guai_wu1.HP * zx_lv
-	GZ[monster_y][monster_x]["hp"] = guai_wu1.HP * zx_lv
+	GZ[monster_y][monster_x]["shp"] = guai_wu1.HP * zx_lv * zx_lv
+	GZ[monster_y][monster_x]["hp"] = guai_wu1.HP * zx_lv * zx_lv
 	GZ[monster_y][monster_x]["ll"] = guai_wu1.LL * zx_lv
 	GZ[monster_y][monster_x]["fy"] = guai_wu1.FY * zx_lv
 	GZ[monster_y][monster_x]["ct"] = guai_wu1.CT * zx_lv
