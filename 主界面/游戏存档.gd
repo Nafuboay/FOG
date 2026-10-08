@@ -1,6 +1,8 @@
 class_name 游戏存档 extends Node
 # 存档槽位数量（支持6个存档）
 const cao_wei: int = 6
+# 角色最高等级（开放更高等级只需改此处）
+const MAX_LV: int = 4
 # 当前使用的存档槽位编号(0~5)
 var id: int = 0
 # 存档文件夹路径（与exe文件同目录）
@@ -118,18 +120,23 @@ func shan_chu(json_id: int) -> bool:
 		return true
 	return false
 
+# 计算升到指定等级所需的累计经验
+# 公式：lv^5 * 10万（1级为0）
+static func get_exp_need(lv: int) -> int:
+	if lv <= 1:
+		return 0
+	return int(float(lv) ** 5 * 100000.0)
+
 # 检查并修正等级
 func chk_lv(data: Dictionary) -> int:
 	var Exp = data.get("经验", 0)
 	var lv = 1
-	if Exp >= 424673280:
-		lv = 4
-	elif Exp >= 100776960:
-		lv = 3
-	elif Exp >= 13271040:
-		lv = 2
-	else:
-		lv = 1
+	# 从2级往最高等级遍历，累计经验达到阈值则升级，未达到则停止
+	for n in range(2, MAX_LV + 1):
+		if Exp >= get_exp_need(n):
+			lv = n
+		else:
+			break
 	# 更新数据中的等级
 	data["等级"] = lv
 	return lv

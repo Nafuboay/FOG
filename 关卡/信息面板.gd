@@ -263,9 +263,11 @@ func ji_suan_hp_pct(hp: int, shp: int) -> int:
 
 # 计算经验百分比
 func ji_suan_exp_pct(exp_0: int, lv: int) -> int:
-	if lv != 1 and lv != 2 and lv != 3:
+	# 已达最高等级，显示MAX
+	if lv >= 游戏存档.MAX_LV:
 		return 100
-	var exp_need = 13271040 if lv == 1 else (100776960 if lv == 2 else 424673280)
+	# 升到下一级所需的累计经验（统一由游戏存档公式计算）
+	var exp_need = 游戏存档.get_exp_need(lv + 1)
 	var exp_pct = int(round(float(exp_0) / exp_need * 100))
 	if exp_0 > 0 and exp_pct < 1:
 		exp_pct = 1
