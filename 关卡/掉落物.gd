@@ -127,8 +127,8 @@ static func diao_luo_wu(guan_qia, die_x: int, die_y: int) -> Dictionary:
 		var zx_biao = diao_luo_zx[guai_wu_ming]
 		diao_biao = zx_biao[0]
 		diao_lv = zx_biao[1]
-		# 掉落次数=怪物等级n的2次方，基础表为1级（1次）
-		diao_n = int(pow(float(GZ[die_y][die_x].get("lv", 1)), 2.0))
+		# 掉落次数=怪物等级n的3次方，基础表为1级（1次）
+		diao_n = int(pow(float(GZ[die_y][die_x].get("lv", 1)), 3.0))
 	else:
 		# 主线模式：读取主线掉落配置
 		var wu_1 = diao_luo.get(guai_wu_ming)

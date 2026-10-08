@@ -72,12 +72,12 @@ func look_helo_upd() -> void:
 	var exp_0 = data.get("经验", 0)
 	# 计算升级所需经验和经验占比
 	var exp_pct = ji_suan_exp_pct(exp_0, lv)
-	# 经验显示文本
+	# 经验显示文本（数字参照战力格式化，百分比与满级MAX不变）
 	var exp_str = ""
 	if exp_pct == 100:
 		exp_str = "MAX"
 	else:
-		exp_str = "%d(%d%%)" % [exp_0, exp_pct]
+		exp_str = "%s(%d%%)" % [ge_shi_zl(exp_0), exp_pct]
 	# 组装显示文本
 	var text = "\n  【英雄】%s\n  【战力】%s\n  【等级】%d\n  【经验】%s\n  【生命】%d/%d（%d%%）
 	  【力量】%s\n  【防御】%s\n  【穿透】%s\n  【位置】（%d，%d）" % [
