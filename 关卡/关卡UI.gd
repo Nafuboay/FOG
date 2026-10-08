@@ -422,16 +422,15 @@ func suo_fang_upd(fang_da: bool) -> void:
 		if node.has_method("on_suo_fang_changed"):
 			node.on_suo_fang_changed()
 
-# 创建诛邪模式胜利界面：先保存掉落物，再显示胜利图片与下一关按钮
-# 与主线C_sheng_li的区别：不更新主线进度/经验/银币，等级点击按钮后才提升
-func C_zx_sheng_li() -> void:
-	# 先将临时背包掉落物合并写入永久存档（不提升诛邪等级）
-	guan_qia._zx_bao_cun_diao_luo()
+# 公共辅助：创建胜利图片 + 下一关按钮（主线与诛邪复用）
+# xia_yi_guan_callback: 下一关按钮点击时调用的回调函数名（Callable）
+# xian_shi_an_niu: 是否显示下一关按钮
+func _C_sheng_li_jie_mian(xia_yi_guan_callback: Callable, xian_shi_an_niu: bool) -> void:
 	# 获取视口尺寸用于居中显示（逻辑分辨率）
 	var viewport_size = guan_qia.get_viewport_rect().size
 	# 加载胜利图片
 	var sheng_li = load("res://关卡/信息/胜利.png")
-	# 创建胜利图片TextureRect（布局与主线C_sheng_li一致）
+	# 创建胜利图片TextureRect
 	var png_1 = TextureRect.new()
 	png_1.texture = sheng_li
 	png_1.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -439,10 +438,13 @@ func C_zx_sheng_li() -> void:
 	png_1.position = Vector2(viewport_size.x/2.0-128,64)
 	png_1.z_index = 1000
 	guan_qia.add_child(png_1)
+	# 需要显示下一关按钮时才创建
+	if not xian_shi_an_niu:
+		return
 	# 加载下一关按钮图片
 	var xia_yi_guan_0 = load("res://关卡/信息/下一关0.png")
 	var xia_yi_guan_1 = load("res://关卡/信息/下一关1.png")
-	# 创建下一关按钮（诛邪模式可无限提升等级，因此按钮始终显示）
+	# 创建下一关按钮
 	var an_niu = TextureRect.new()
 	an_niu.texture = xia_yi_guan_0
 	an_niu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -453,9 +455,17 @@ func C_zx_sheng_li() -> void:
 	an_niu.mouse_exited.connect(func(): an_niu.texture = xia_yi_guan_0)
 	an_niu.gui_input.connect(func(event):
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			on_zx_xia_yi_ji()
+			xia_yi_guan_callback.call()
 	)
 	guan_qia.add_child(an_niu)
+
+# 创建诛邪模式胜利界面：先保存掉落物，再显示胜利图片与下一关按钮
+# 与主线C_sheng_li的区别：不更新主线进度/经验/银币，等级点击按钮后才提升
+func C_zx_sheng_li() -> void:
+	# 先将临时背包掉落物合并写入永久存档（不提升诛邪等级）
+	guan_qia._zx_bao_cun_diao_luo()
+	# 诛邪可无限提升等级，按钮始终显示
+	_C_sheng_li_jie_mian(on_zx_xia_yi_ji, true)
 
 # 诛邪模式下一关按钮点击事件：提升等级并重新进入本关下一级
 func on_zx_xia_yi_ji() -> void:
@@ -492,38 +502,10 @@ func C_sheng_li() -> void:
 	json.bao_cun(guan_qia.json_id, data)
 	# 经验弹幕
 	提示弹幕.wen_ben("获得" + str(exp_add) + "经验。", 0)
-	# 获取视口宽度用于居中显示（逻辑分辨率）
-	var viewport_size = guan_qia.get_viewport_rect().size
-	# 加载胜利图片
-	var sheng_li = load("res://关卡/信息/胜利.png")
-	# 创建胜利图片TextureRect
-	var png_1 = TextureRect.new()
-	png_1.texture = sheng_li
-	png_1.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	png_1.size = Vector2(256,256)
-	png_1.position = Vector2(viewport_size.x/2.0-128,64)
-	png_1.z_index = 1000
-	guan_qia.add_child(png_1)
-	# 判断是否是最后一关
+	# 判断是否是最后一关，最后一关不显示下一关按钮
 	var end = 关卡数据.guan_kia_n()
-	if guan_qia.guan_kia_id < end - 1:
-		# 加载下一关按钮图片
-		var xia_yi_guan_0 = load("res://关卡/信息/下一关0.png")
-		var xia_yi_guan_1 = load("res://关卡/信息/下一关1.png")
-		# 创建下一关按钮
-		var an_niu = TextureRect.new()
-		an_niu.texture = xia_yi_guan_0
-		an_niu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		an_niu.size = Vector2(150, 50)
-		an_niu.position = Vector2(viewport_size.x/2.0-75,384)
-		an_niu.z_index = 1000
-		an_niu.mouse_entered.connect(func(): an_niu.texture = xia_yi_guan_1)
-		an_niu.mouse_exited.connect(func(): an_niu.texture = xia_yi_guan_0)
-		an_niu.gui_input.connect(func(event):
-			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-				on_xia_yi_guan()
-		)
-		guan_qia.add_child(an_niu)
+	var xian_shi_an_niu = guan_qia.guan_kia_id < end - 1
+	_C_sheng_li_jie_mian(on_xia_yi_guan, xian_shi_an_niu)
 
 # 下一关按钮点击事件
 func on_xia_yi_guan() -> void:
