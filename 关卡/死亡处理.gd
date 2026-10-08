@@ -122,14 +122,12 @@ func guai_wu_die() -> void:
 	zhan_dou.ji_neng.guai_wu_die_ji_neng()
 	# 检查胜利条件：人物存活且怪物数量为0
 	if guan_qia.helo_hp > 0 and guan_qia.guai_wu_xian == 0:
-		# 诛邪模式下：保存等级并重新进入关卡
+		# 诛邪模式：先保存掉落物并弹出胜利界面，玩家点「下一关」才提升等级进入下一级
 		if guan_qia.has_method("_zhu_xie_win"):
-			# 先结束战斗状态（重置zhan_dou_ing），防止挂起的攻击协程在场景切换后继续执行导致崩溃
-			zhan_dou.zhan_dou_end()
-			guan_qia._zhu_xie_win()
-			return  # 不执行后续的helo_move等
-		# 主线模式：显示胜利UI
-		if guan_qia.guan_ui != null:
+			if guan_qia.guan_ui != null:
+				guan_qia.guan_ui.C_zx_sheng_li()
+		# 主线模式：显示胜利UI（内部完成进度/经验/背包结算）
+		elif guan_qia.guan_ui != null:
 			guan_qia.guan_ui.C_sheng_li()
 	# 怪物死亡特殊：先结束战斗，再清除朝向标记，最后人物移动到该格
 	zhan_dou.zhan_dou_end()

@@ -289,28 +289,42 @@ func _zhu_xie_scale() -> void:
 			# 再设置缩放
 			guai_wu[0].scale = Vector2(bi_li, bi_li)
 
-# 击败怪物后提升等级并保存
-func _zhu_xie_win() -> void:
+# 胜利界面弹出时：将临时背包掉落物合并写入永久存档（不提升等级）
+# 提前保存是为了防止玩家点「重新挑战」或「返回主城」后掉落物丢失
+func _zx_bao_cun_diao_luo() -> void:
+	# 没有临时掉落物时无需保存
+	if BB_ls.is_empty():
+		return
+	# 获取存档节点，不存在则创建
 	var json = get_node_or_null("/root/游戏存档")
 	if json == null:
 		json = load("res://主界面/游戏存档.gd").new()
 		json.name = "游戏存档"
 		get_tree().root.add_child(json)
 	json.get_dang_wei()
+	# 读取永久存档中的背包数据
+	var data = json.du_qu(json.id)
+	var wu_pin = data.get("背包", {})
+	# 遍历临时背包：已有物品累加，没有则新增
+	for wu_ming in BB_ls:
+		var n = int(BB_ls[wu_ming])
+		if wu_pin.has(wu_ming):
+			wu_pin[wu_ming] = int(wu_pin[wu_ming]) + n
+		else:
+			wu_pin[wu_ming] = n
+	data["背包"] = wu_pin
+	json.bao_cun(json.id, data)
+
+# 点击胜利界面「下一关」按钮：提升诛邪等级并重新进入本关下一级
+func _zhu_xie_win() -> void:
+	# 获取存档节点，不存在则创建
+	var json = get_node_or_null("/root/游戏存档")
+	if json == null:
+		json = load("res://主界面/游戏存档.gd").new()
+		json.name = "游戏存档"
+		get_tree().root.add_child(json)
+	json.get_dang_wei()
+	# 诛邪等级+1并写入存档
 	json.upd_zx_lv(guan_kia_id + 1)
-	# 将临时背包掉落物合并写入存档（重进关卡前保存，防止掉落丢失）
-	if not BB_ls.is_empty():
-		var data = json.du_qu(json.id)
-		var wu_pin = data.get("背包", {})
-		for wu_ming in BB_ls:
-			var n = int(BB_ls[wu_ming])
-			# 已有该物品则累加，没有则新增
-			if wu_pin.has(wu_ming):
-				wu_pin[wu_ming] = int(wu_pin[wu_ming]) + n
-			else:
-				wu_pin[wu_ming] = n
-		data["背包"] = wu_pin
-		json.bao_cun(json.id, data)
-	zx_lv += 1
-	# 刷新显示（重新进入关卡）
+	# 重新进入关卡（新场景会读取存档中已提升的等级，无需在此修改zx_lv）
 	get_tree().change_scene_to_file("res://关卡/诛邪.tscn")
