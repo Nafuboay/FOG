@@ -64,6 +64,8 @@ var QH_btn: TextureRect = null
 var SR_lbl: Label = null
 # 消耗银币显示标签
 var S_add_lbl: Label = null
+# 返还金条显示标签
+var FH_lbl: Label = null
 
 func _ready() -> void:
 	# 初始化窗口大小
@@ -136,6 +138,47 @@ func C_S() -> void:
 	C_SR_lbl()
 	# 创建消耗银币显示
 	C_S_add_lbl()
+	# 创建返还金条显示
+	C_FH_lbl()
+
+# 创建返还金条显示标签
+func C_FH_lbl() -> void:
+	FH_lbl = Label.new()
+	FH_lbl.text = "返还：0"
+	FH_lbl.add_theme_font_size_override("font_size", 32)
+	# 金条用金色显示
+	FH_lbl.add_theme_color_override("font_color", Color("#FFCC00"))
+	var kai_ti = 提示弹幕.get_kai_ti_font()
+	if kai_ti != null:
+		FH_lbl.add_theme_font_override("font", kai_ti)
+	FH_lbl.z_index = 1
+	FH_lbl.visible = false
+	FH_lbl.position = Vector2(400, 90)
+	QH_n.add_child(FH_lbl)
+
+# 计算预测升级返还的金条数量（假设英雄现在升级）
+func get_FH_jt() -> int:
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return 0
+	var data = json.du_qu(json.id)
+	var hero_lv = int(data.get("等级", 1))
+	var QHs = data.get("强化", {"生命":0, "力量":0, "防御":0, "穿透":0})
+	var keys = ["生命", "力量", "防御", "穿透"]
+	# 累计四属性已消耗的总强化值（与升级时 rst_qh 的计算一致）
+	var total = 0
+	for key in keys:
+		var qh_lv = int(QHs.get(key, 0))
+		for m in range(1, qh_lv + 1):
+			total += json.calc_qh_m(hero_lv, m)
+	# 按每满1024返1金条（向下取整）
+	return int(total / 1024.0)
+
+# 更新返还金条显示
+func FH_upd() -> void:
+	if FH_lbl == null:
+		return
+	FH_lbl.text = "返还：%d" % get_FH_jt()
 
 # 创建强化按钮
 func C_QH_btn() -> void:
@@ -297,6 +340,9 @@ func QH_On1() -> void:
 		S_upd()
 		S_lbl.visible = true
 		S.visible = true
+		# 更新并显示返还金条
+		FH_upd()
+		FH_lbl.visible = true
 		# 重新加载角色装备（以防角色变更）
 		load_helo_ZB()
 		# 重置放置区
@@ -333,6 +379,9 @@ func QH_On1() -> void:
 			SR_lbl.visible = false
 		if S_add_lbl != null:
 			S_add_lbl.visible = false
+		# 隐藏返还金条显示
+		if FH_lbl != null:
+			FH_lbl.visible = false
 		# 重置选中的装备索引
 		ZB_idx = -1
 		# 关闭界面时，将放置区的材料返还到背包
@@ -694,6 +743,8 @@ func QH_zhi_xing() -> void:
 		wu_pin_XX(ZB_1[ZB_idx])
 		# 更新强化信息
 		QH_upd_1()
+		# 强化等级变化，更新返还金条显示
+		FH_upd()
 	else:
 		# 保存存档（银币已扣除）
 		json.bao_cun(json.id, data)
