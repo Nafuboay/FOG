@@ -319,11 +319,13 @@ func dian_ji(dang_wei: int) -> void:
 		# 切换场景前先恢复总线音量：主城背景音乐在场景实例化时即autoplay，
 		# 若等音量调节节点_ready再设置，音乐会先以默认0dB响一瞬后才变成设置值
 		var yue_liang_bus = AudioServer.get_bus_index("Master")
-		if int(data.get("静音", 0)) == 1:
+		# 音量设置存在通用存档里，所有档共用
+		var ty_data = json.du_qu_ty()
+		if int(ty_data.get("静音", 0)) == 1:
 			# 静音状态直接压到-80dB，与音量调节.gd的静音处理一致
 			AudioServer.set_bus_volume_db(yue_liang_bus, -80)
 		else:
-			AudioServer.set_bus_volume_db(yue_liang_bus, int(data.get("分贝", 0)))
+			AudioServer.set_bus_volume_db(yue_liang_bus, int(ty_data.get("分贝", 0)))
 		# 已有存档，进入主城
 		get_tree().change_scene_to_file("res://主城/主城.tscn")
 	else:

@@ -160,7 +160,7 @@ func upd() -> void:
 	# 如果不是静音状态，应用音量到音频总线
 	if not is_mut:
 		AudioServer.set_bus_volume_db(zhu_bus, dB_ing)
-	# 保存设置到存档
+	# 保存设置到通用存档
 	S_json()
 
 # dB值转音量百分比
@@ -188,33 +188,22 @@ func mut_sw() -> void:
 		# 启用滑块
 		dB_S.mouse_filter = Control.MOUSE_FILTER_STOP
 		dB_S.modulate = Color.WHITE
-	# 保存静音状态到存档
+	# 保存静音状态到通用存档
 	S_json()
 
-# 保存音量设置到存档
+# 保存音量设置到通用存档
 func S_json() -> void:
 	# 获取游戏存档节点
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json != null:
-		# 读取当前存档数据
-		var data = json.du_qu(json.id)
-		# 保存分贝值
-		data["分贝"] = dB_ing
-		# 保存静音状态（1表示静音，0表示非静音）
-		data["静音"] = 1 if is_mut else 0
-		# 保存到存档
-		json.bao_cun(json.id, data)
+		# 音量设置所有档共用，整体覆盖写入通用存档
+		json.bao_cun_ty({"分贝": dB_ing, "静音": 1 if is_mut else 0})
 
-# 从存档加载音量设置
+# 从通用存档加载音量设置
 func load_dB() -> void:
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json != null:
-		var data = json.du_qu(json.id)
-		# 检查并补充缺失的字段
-		if not data.has("分贝"):
-			data["分贝"] = 0
-		if not data.has("静音"):
-			data["静音"] = 0
+		var data = json.du_qu_ty()
 		# 读取保存的分贝值，默认为0
 		dB_ing = int(data.get("分贝", 0))
 		# 读取静音状态（1表示静音，0表示非静音）

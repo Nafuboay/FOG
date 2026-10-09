@@ -11,6 +11,11 @@ var mi_wu_json: String = ""
 func _ready() -> void:
 	# 获取exe文件所在目录作为存档根目录
 	mi_wu_json = mu_lu()
+	# 确保存档文件夹存在
+	wen_jian_jia()
+	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音），所有档共用
+	if not FileAccess.file_exists(get_ty_lu_jing()):
+		bao_cun_ty({"分贝": 0, "静音": 0})
 
 # 获取存档根目录路径
 static func mu_lu() -> String:
@@ -221,3 +226,38 @@ func upd_mode(mode: int) -> void:
 	var data = du_qu(id)
 	data["模式"] = mode
 	bao_cun(id, data)
+
+# 获取通用存档文件路径（所有档位共用一个文件）
+func get_ty_lu_jing() -> String:
+	return mi_wu_json + "/通用存档.json"
+
+# 从通用存档读取数据（文件不存在或解析失败返回空字典）
+func du_qu_ty() -> Dictionary:
+	# 确保存档路径已初始化
+	if mi_wu_json.is_empty():
+		mi_wu_json = mu_lu()
+	var lu_jing = get_ty_lu_jing()
+	# 通用存档不存在时返回空字典（读取方用get默认值兜底）
+	if not FileAccess.file_exists(lu_jing):
+		return {}
+	var wen_jian = FileAccess.open(lu_jing, FileAccess.READ)
+	if wen_jian == null:
+		return {}
+	var nei_rong = wen_jian.get_line()
+	wen_jian.close()
+	var jie_xi = JSON.parse_string(nei_rong)
+	if jie_xi == null:
+		return {}
+	return jie_xi
+
+# 保存数据到通用存档（整体覆盖写入）
+func bao_cun_ty(data: Dictionary) -> bool:
+	# 确保存档路径已初始化
+	if mi_wu_json.is_empty():
+		mi_wu_json = mu_lu()
+	var wen_jian = FileAccess.open(get_ty_lu_jing(), FileAccess.WRITE)
+	if wen_jian == null:
+		return false
+	wen_jian.store_line(JSON.stringify(data))
+	wen_jian.close()
+	return true
