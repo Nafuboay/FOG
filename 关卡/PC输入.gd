@@ -38,8 +38,8 @@ func _input(event: InputEvent) -> void:
 	var zhan_dou_ing = zhan_dou.zhan_dou_ing
 	var che_tui_ing = zhan_dou.che_tui_ing
 	var zhan_bai = zhan_dou.zhan_bai
-	# 战斗中的F键撤退
-	if zhan_dou_ing and not che_tui_ing:
+	# 战斗中的F键撤退（诛邪模式无撤退，禁用快捷键）
+	if zhan_dou_ing and not che_tui_ing and not guan_qia.has_method("_zhu_xie_win"):
 		if event is InputEventKey and event.pressed and event.keycode == KEY_F:
 			guan_ui.on_che_tui()
 	# 战斗中和战败时禁止其他操作

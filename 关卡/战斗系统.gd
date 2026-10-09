@@ -241,11 +241,12 @@ func zhan_dou(x: int, y: int) -> void:
 		return
 	# 设置战斗状态为进行中
 	zhan_dou_ing = true
-	# 延迟显示撤退按钮
-	get_tree().create_timer(0.05).timeout.connect(func():
-		guan_qia.guan_ui.che_tui.visible = true
-		guan_qia.guan_ui.che_tui_upd()
-	)
+	# 延迟显示撤退按钮（诛邪模式无撤退，不显示按钮）
+	if not guan_qia.has_method("_zhu_xie_win"):
+		get_tree().create_timer(0.05).timeout.connect(func():
+			guan_qia.guan_ui.che_tui.visible = true
+			guan_qia.guan_ui.che_tui_upd()
+		)
 	# 记录当前战斗的怪物对象和坐标
 	guai_wu_ing = guai_wu1
 	guai_wu_x = boss_x
