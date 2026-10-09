@@ -15,7 +15,7 @@ func _ready() -> void:
 	wen_jian_jia()
 	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音），所有档共用
 	if not FileAccess.file_exists(get_ty_lu_jing()):
-		bao_cun_ty({"分贝": 0, "静音": 0})
+		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": []})
 
 # 获取存档根目录路径
 static func mu_lu() -> String:
@@ -261,3 +261,30 @@ func bao_cun_ty(data: Dictionary) -> bool:
 	wen_jian.store_line(JSON.stringify(data))
 	wen_jian.close()
 	return true
+
+# 记录成就到通用存档历史（某存档领取成就后调用，永久保留）
+# ach_idx 成就索引，ach_count 当前版本成就总数量
+func add_ach_ty(ach_idx: int, ach_count: int) -> void:
+	var data = du_qu_ty()
+	# 读取现有历史成就列表，不存在时创建空数组
+	var his_ach = data.get("历史成就", [])
+	# 长度不足当前版本时扩展，已有值保留，新位置补0
+	if his_ach.size() < ach_count:
+		var old_size = his_ach.size()
+		his_ach.resize(ach_count)
+		for i in range(old_size, ach_count):
+			his_ach[i] = 0
+	# 标记指定成就为已完成
+	if ach_idx >= 0 and ach_idx < his_ach.size():
+		his_ach[ach_idx] = 1
+		data["历史成就"] = his_ach
+		bao_cun_ty(data)
+
+# 检查某成就是否已在通用存档历史中被完成过
+# ach_idx 成就索引
+func has_ach_ty(ach_idx: int) -> bool:
+	var data = du_qu_ty()
+	var his_ach = data.get("历史成就", [])
+	if ach_idx >= 0 and ach_idx < his_ach.size():
+		return int(his_ach[ach_idx]) == 1
+	return false
