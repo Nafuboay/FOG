@@ -52,6 +52,8 @@ var json_fan_hui: Button
 var json: Node
 # 当前选中的存档槽位
 var json_id: int = 0
+# 玄戈是否处于锁定状态（历史成就《不朽者》未完成时为true）
+var xuan_ge_suo: bool = false
 # 存档数量
 const cao_wei: int = 6
 
@@ -342,12 +344,31 @@ func dian_ji(dang_wei: int) -> void:
 		# 隐藏存档返回按钮
 		json_fan_hui.visible = false
 		helo_xuan_ze.visible = true
+		# 显示前刷新玄戈的解锁/锁定状态
+		upd_xuan_ge_suo()
+
+# 刷新玄戈的解锁状态：历史成就《不朽者》（索引0）未完成时锁定
+func upd_xuan_ge_suo() -> void:
+	# 任意存档领取过《不朽者》即解锁（通用存档历史成就，跨存档永久保留）
+	xuan_ge_suo = not json.has_ach_ty(0)
+	if xuan_ge_suo:
+		# 锁定：按钮与待机动画一起暗淡（暗淡程度参考选关面板禁用关卡）
+		xuan_ge.modulate = Color(0.5, 0.5, 0.5, 1)
+		xuan_ge_idle.modulate = Color(0.5, 0.5, 0.5, 1)
+	else:
+		# 已解锁：恢复正常亮度
+		xuan_ge.modulate = Color(1, 1, 1, 1)
+		xuan_ge_idle.modulate = Color(1, 1, 1, 1)
 
 # 点击爱丽丝
 func _on_爱丽丝按钮_input() -> void:
 	C_json("爱丽丝")
 # 点击玄戈
 func _on_玄戈按钮_input() -> void:
+	# 锁定状态下拦截选择，提示解锁条件，不创建存档
+	if xuan_ge_suo:
+		提示弹幕.wen_ben("完成成就《不朽者》解锁英雄【玄戈】！", 0)
+		return
 	C_json("玄戈")
 
 # 爱丽丝按钮悬停
@@ -358,9 +379,15 @@ func _on_爱丽丝按钮_exit() -> void:
 	Alice.modulate = Color(1, 1, 1, 1)
 # 玄戈按钮悬停
 func _on_玄戈按钮_hover() -> void:
+	# 锁定时保持暗淡，不响应悬停高亮
+	if xuan_ge_suo:
+		return
 	xuan_ge.modulate = Color(2, 1, 0.5, 1)
 # 玄戈按钮离开
 func _on_玄戈按钮_exit() -> void:
+	# 锁定时保持暗淡，不恢复亮色
+	if xuan_ge_suo:
+		return
 	xuan_ge.modulate = Color(1, 1, 1, 1)
 
 # 选择人物并创建存档

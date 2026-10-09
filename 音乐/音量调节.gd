@@ -196,8 +196,11 @@ func S_json() -> void:
 	# 获取游戏存档节点
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json != null:
-		# 音量设置所有档共用，整体覆盖写入通用存档
-		json.bao_cun_ty({"分贝": dB_ing, "静音": 1 if is_mut else 0})
+		# 先读取现有通用存档数据，只更新音量相关字段
+		var data = json.du_qu_ty()
+		data["分贝"] = dB_ing
+		data["静音"] = 1 if is_mut else 0
+		json.bao_cun_ty(data)
 
 # 从通用存档加载音量设置
 func load_dB() -> void:
