@@ -192,10 +192,7 @@ func buy_item_batch(wu_ming: String, shou_jia: int, amount: int, BB_1: Dictionar
 		data["背包"] = BB_1
 		json.bao_cun(json.id, data)
 		S_upd()
-		# 显示获得经验弹幕（包含升级提示）
-		if new_lv > lv:
-			提示弹幕.wen_ben("购买并使用【%s】x%d，获得%d经验！\n恭喜升级到%d级！" % [wu_ming, amount, int(total_exp), int(new_lv)], 0)
-		else:
+		if new_lv <= lv:
 			提示弹幕.wen_ben("购买并使用【%s】x%d，获得%d经验！" % [wu_ming, amount, int(total_exp)], 0)
 	else:
 		json.bao_cun(json.id, data)

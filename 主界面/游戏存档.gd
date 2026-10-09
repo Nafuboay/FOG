@@ -137,9 +137,49 @@ func chk_lv(data: Dictionary) -> int:
 			lv = n
 		else:
 			break
+	# 读取旧等级（用于判断是否升级）
+	var old_lv = int(data.get("等级", 1))
 	# 更新数据中的等级
 	data["等级"] = lv
+	# 升级时重置强化系统并返还金条（用旧等级计算已消耗强化值）
+	if lv > old_lv:
+		rst_qh(data, old_lv)
 	return lv
+
+# 计算强化值（英雄等级n时，装备从(m-1)级升到m级的强化值）
+# n 英雄等级, m 目标强化等级
+func calc_qh_m(hero_lv: int, m: int) -> int:
+	var n = float(hero_lv)
+	var base = 25.0 * pow(n, 5.0)
+	var term1 = pow(float(m) / (n * 10.0) + 1.0, 4.0)
+	var term2 = pow(float(m) / (n * 10.0) + 1.0 - 1.0 / (n * 10.0), 4.0)
+	return round(base * (term1 - term2))
+
+# 重置强化系统（英雄升级时调用）
+# hero_lv 旧英雄等级（用于计算已消耗的强化值）
+func rst_qh(data: Dictionary, hero_lv: int) -> void:
+	var QHs = data.get("强化", {"生命":0, "力量":0, "防御":0, "穿透":0})
+	var keys = ["生命", "力量", "防御", "穿透"]
+	# 用旧英雄等级计算总强化值
+	var total = 0
+	for key in keys:
+		var qh_lv = int(QHs.get(key, 0))
+		# 累计该属性从1级到当前等级的强化值
+		for m in range(1, qh_lv + 1):
+			total += calc_qh_m(hero_lv, m)
+	# 按每满1024返1金条（向下取整）
+	var jt = int(total / 1024.0)
+	if jt > 0:
+		var bag = data.get("背包", {})
+		bag["金条"] = int(bag.get("金条", 0)) + jt
+		data["背包"] = bag
+	# 强化全部归零
+	for key in keys:
+		QHs[key] = 0
+	data["强化"] = QHs
+	# 升级提示弹幕（新等级已在 chk_lv 中写入 data）
+	var new_lv = int(data.get("等级", hero_lv))
+	提示弹幕.wen_ben("恭喜升到%d级！当前总强化值%d，返还金条×%d！" % [new_lv, total, jt], 0)
 
 # 获取指定关卡的诛邪等级
 func get_zx_lv(guan_kia_id: int) -> int:

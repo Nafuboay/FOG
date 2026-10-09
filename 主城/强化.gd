@@ -1,5 +1,4 @@
 extends Control
-
 # 强化界面容器
 var QH_n: Control
 # 格子数组
@@ -46,10 +45,17 @@ var ZB_ing: Array = []
 var S_lbl: Label = null
 # 银币图标
 var S: TextureRect = null
-# 强化等级上限
-const QH_MAX = 40
-# 低级强化值数组
-var QH_m = [1,3,6,11,18,29,44,64,93,132,185]
+# 获取当前英雄等级
+func get_hero_lv() -> int:
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return 1
+	var data = json.du_qu(json.id)
+	return int(data.get("等级", 1))
+
+# 获取强化等级上限（英雄等级×10）
+func get_QH_MAX() -> int:
+	return get_hero_lv() * 10
 # 当前选中的装备索引
 var ZB_idx: int = -1
 # 强化按钮
@@ -83,12 +89,13 @@ func _ready() -> void:
 	# 加载角色装备
 	load_helo_ZB()
 
-# 根据等级获取m值
-func get_m(n: int) -> int:
-	if n < QH_m.size():
-		return QH_m[n]
-	var n_float = float(n + 1)
-	return round((pow(n_float, 4) - pow(n_float - 1, 4)) / 25.0)
+# 获取强化值（英雄等级n时，从qh_lv升到qh_lv+1的强化值）
+func get_m(hero_lv: int, qh_lv: int) -> int:
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return 0
+	# 目标等级 m = qh_lv + 1
+	return json.calc_qh_m(hero_lv, qh_lv + 1)
 
 # 从存档加载角色装备
 func load_helo_ZB() -> void:
@@ -576,14 +583,14 @@ func QH_upd_1() -> void:
 	# 获取当前装备强化等级
 	var QH_lv = get_QH_lv()
 	# 如果已满级
-	if QH_lv >= QH_MAX:
+	if QH_lv >= get_QH_MAX():
 		SR_lbl.text = "强化已满级！"
 		SR_lbl.add_theme_color_override("font_color", Color("#FFFFFF"))
 		S_add_lbl.text = "无需消耗！"
 		QH_btn.visible = false
 		return
 	# 获取当前等级对应的m值
-	var m = get_m(QH_lv)
+	var m = get_m(get_hero_lv(), QH_lv)
 	# 获得n值
 	var n = get_n()
 	# 成功率=min(1,2n/m)
@@ -633,11 +640,11 @@ func QH_zhi_xing() -> void:
 	# 获取当前强化等级
 	var QH_lv = get_QH_lv()
 	# 如果已满级
-	if QH_lv >= QH_MAX:
+	if QH_lv >= get_QH_MAX():
 		提示弹幕.wen_ben("有BUG，快去找虹！", 0)
 		return
 	# 获取m值
-	var m = get_m(QH_lv)
+	var m = get_m(get_hero_lv(), QH_lv)
 	# 计算n值
 	var n = get_n()
 	# 计算成功率
@@ -815,7 +822,7 @@ func wu_pin_XX(idx: int) -> void:
 			var shu_xing_text = "无"
 			if QH_lv >= 1:
 				# 有强化等级时显示强化信息和属性
-				if QH_lv > QH_MAX:
+				if QH_lv > get_QH_MAX():
 					QH_text = "开了！"
 				else:
 					QH_text = "+%d" % QH_lv

@@ -484,7 +484,8 @@ func C_sheng_li() -> void:
 	var exp_0 = data.get("经验", 0)
 	data["经验"] = exp_0 + exp_add
 	# 调用游戏存档的升级检查函数
-	json.chk_lv(data)
+	var old_lv = int(data.get("等级", 1))
+	var new_lv = json.chk_lv(data)
 	# 同步背包物品到存档
 	var wu_pin_ls = guan_qia.BB_ls
 	if not wu_pin_ls.is_empty():
@@ -500,8 +501,8 @@ func C_sheng_li() -> void:
 	var S = data.get("银币", 0)
 	data["银币"] = S
 	json.bao_cun(guan_qia.json_id, data)
-	# 经验弹幕
-	提示弹幕.wen_ben("获得" + str(exp_add) + "经验。", 0)
+	if new_lv <= old_lv:
+		提示弹幕.wen_ben("获得" + str(exp_add) + "经验。", 0)
 	# 判断是否是最后一关，最后一关不显示下一关按钮
 	var end = 关卡数据.guan_kia_n()
 	var xian_shi_an_niu = guan_qia.guan_kia_id < end - 1
