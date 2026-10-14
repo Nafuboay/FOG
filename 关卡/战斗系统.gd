@@ -354,7 +354,7 @@ func attack_1() -> void:
 	helo.attack_xin_hao.connect(helo_shang_hai_0)
 	# 先记录战斗开始时间并打印（首次攻击信号在play_attack内同步发出，回合开始的生命打印依赖此时间戳）
 	zhan_dou_time = Time.get_ticks_msec()
-	print("\n战斗开始")
+	print("战斗开始")
 	helo.play_attack()
 	guai_wu_ing.play_attack()
 
@@ -388,8 +388,8 @@ func helo_shang_hai_0() -> void:
 		if guai_wu_ing == null or not is_instance_valid(guai_wu_ing):
 			return
 		var GZ = guan_qia.GZ
-		# 获取怪物属性
-		var guai_wu_fy: float = GZ[guai_wu_y][guai_wu_x]["fy"]
+		# 获取怪物属性（四项属性最低为1，防御为除数必须≥1）
+		var guai_wu_fy: float = max(1, GZ[guai_wu_y][guai_wu_x]["fy"])
 		var guai_wu_lv: float = GZ[guai_wu_y][guai_wu_x]["lv"]
 		var guai_wu_hp: float = GZ[guai_wu_y][guai_wu_x]["hp"]
 		# 获取人物属性
@@ -419,9 +419,11 @@ func helo_shang_hai_1(ji_shu: int) -> void:
 	var helo_ll = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_ll, "ll")
 	var helo_ct = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_ct, "ct")
 	var helo_attack_n = guan_qia.helo.attack_n
+	# 打印时怪物防御同样按最低为1取值，与伤害计算一致
+	var guai_wu_fy = max(1, guan_qia.GZ[guai_wu_y][guai_wu_x]["fy"])
 	# 打印伤害信息
 	var time_1 = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	print("%.2f秒 英雄造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷%d"%[time_1,ji_shu,helo_ll,helo_ct,guan_qia.GZ[guai_wu_y][guai_wu_x]["fy"],guan_qia.GZ[guai_wu_y][guai_wu_x]["lv"],helo_lv, helo_attack_n])
+	print("%.2f秒 英雄造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷%d"%[time_1,ji_shu,helo_ll,helo_ct,guai_wu_fy,guan_qia.GZ[guai_wu_y][guai_wu_x]["lv"],helo_lv, helo_attack_n])
 	# 使用统一函数处理伤害（包含血条更新和飘字显示）
 	shang_hai(guai_wu_x, guai_wu_y, ji_shu, false)
 	# BOSS受击类技能（猛犸王重甲/蠃虫王硬化/邪花王反伤）
@@ -462,9 +464,9 @@ func guai_wu_shang_hai_0(yan_chi: float = 0.2) -> void:
 	if helo == null or not is_instance_valid(helo):
 		return
 	var GZ = guan_qia.GZ
-	# 获取怪物攻击属性
-	var guai_wu_ll: float = GZ[guai_wu_y][guai_wu_x]["ll"]
-	var guai_wu_ct: float = GZ[guai_wu_y][guai_wu_x]["ct"]
+	# 获取怪物攻击属性（四项属性最低为1）
+	var guai_wu_ll: float = max(1, GZ[guai_wu_y][guai_wu_x]["ll"])
+	var guai_wu_ct: float = max(1, GZ[guai_wu_y][guai_wu_x]["ct"])
 	var guai_wu_lv: float = GZ[guai_wu_y][guai_wu_x]["lv"]
 	# 获取人物防御属性
 	var helo_fy = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_fy, "fy")
@@ -481,10 +483,10 @@ func guai_wu_shang_hai_0(yan_chi: float = 0.2) -> void:
 
 # 应用怪物对人物的伤害
 func guai_wu_shang_hai_1(ji_shu: int) -> void:
-	# 打印伤害信息
+	# 打印伤害信息（怪物力量/穿透按最低为1取值，与伤害计算一致）
 	var GZ = guan_qia.GZ
-	var guai_wu_ll = GZ[guai_wu_y][guai_wu_x]["ll"]
-	var guai_wu_ct = GZ[guai_wu_y][guai_wu_x]["ct"]
+	var guai_wu_ll = max(1, GZ[guai_wu_y][guai_wu_x]["ll"])
+	var guai_wu_ct = max(1, GZ[guai_wu_y][guai_wu_x]["ct"])
 	var guai_wu_lv = GZ[guai_wu_y][guai_wu_x]["lv"]
 	var helo_fy = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_fy, "fy")
 	var helo_lv = guan_qia.helo_lv

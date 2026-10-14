@@ -37,18 +37,19 @@ func _ready() -> void:
 	play_idle()
 
 # 计算属性最终值（基础属性 + 装备加成 + 战斗临时加成）
+# 生命上限/力量/防御/穿透最终值最低为1（如扣属性装备导致≤1时按1计算）；当前生命hp不受此限
 func shu_xing_upd(jc: int, type: String = "ll") -> int:
 	match type:
 		"shp":
-			return jc + shp_add_0 + shp_add_1
+			return max(1, jc + shp_add_0 + shp_add_1)
 		"hp":
 			return jc + shp_add_0 + hp_add_1
 		"ll":
-			return jc + ll_add_0 + ll_add_1
+			return max(1, jc + ll_add_0 + ll_add_1)
 		"fy":
-			return jc + fy_add_0 + fy_add_1
+			return max(1, jc + fy_add_0 + fy_add_1)
 		"ct":
-			return jc + ct_add_0 + ct_add_1
+			return max(1, jc + ct_add_0 + ct_add_1)
 		_:
 			return jc
 

@@ -161,6 +161,11 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 		fy = GZ1["fy"]
 		ct = GZ1["ct"]
 		guai_wu_name = GZ1.get("名字", "未知")
+	# 四项属性最低为1（当前生命hp不受此限）
+	shp = max(1, shp)
+	ll = max(1, ll)
+	fy = max(1, fy)
+	ct = max(1, ct)
 	# 计算生命值百分比
 	var hp_pct = ji_suan_hp_pct(hp, shp)
 	# 计算战力
@@ -275,12 +280,15 @@ func ji_suan_exp_pct(exp_0: int, lv: int) -> int:
 		exp_pct = 99
 	return exp_pct
 
-# 获取属性字符串
+# 获取属性字符串（基础值+加成）
+# 最终值最低为1：加成为负且会扣到1以下时，按实际生效量显示
 func get_str(ji_chu: int, add: int) -> String:
+	if add == 0:
+		return str(max(1, ji_chu))
+	# 加成钳制：保证 基础+加成 不小于1
+	add = max(add, 1 - ji_chu)
 	if add > 0:
 		return str(ji_chu) + "+" + str(add)
-	elif add == 0:
-		return str(ji_chu)
 	else:
 		return str(ji_chu) + str(add)
 
