@@ -163,13 +163,13 @@ func calc_qh_m(hero_lv: int, m: int) -> int:
 # 重置强化系统（英雄升级时调用）
 # hero_lv 旧英雄等级（用于计算已消耗的强化值）
 func rst_qh(data: Dictionary, hero_lv: int) -> void:
-	var QHs = data.get("强化", {"生命":0, "力量":0, "防御":0, "穿透":0})
-	var keys = ["生命", "力量", "防御", "穿透"]
+	# 强化数据为按第1~4件装备位的等级数组
+	var QHs = data.get("强化", [0, 0, 0, 0])
 	# 用旧英雄等级计算总强化值
 	var total = 0
-	for key in keys:
-		var qh_lv = int(QHs.get(key, 0))
-		# 累计该属性从1级到当前等级的强化值
+	for idx in range(4):
+		var qh_lv = int(QHs[idx]) if idx < QHs.size() else 0
+		# 累计该装备位从1级到当前等级的强化值
 		for m in range(1, qh_lv + 1):
 			total += calc_qh_m(hero_lv, m)
 	# 按每满1024返1金条（向下取整）
@@ -179,9 +179,7 @@ func rst_qh(data: Dictionary, hero_lv: int) -> void:
 		bag["金条"] = int(bag.get("金条", 0)) + jt
 		data["背包"] = bag
 	# 强化全部归零
-	for key in keys:
-		QHs[key] = 0
-	data["强化"] = QHs
+	data["强化"] = [0, 0, 0, 0]
 	# 升级提示弹幕（新等级已在 chk_lv 中写入 data）
 	var new_lv = int(data.get("等级", hero_lv))
 	提示弹幕.wen_ben("恭喜升到%d级！当前总强化值%d，返还金条×%d！" % [new_lv, total, jt], 0)

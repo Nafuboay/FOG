@@ -163,12 +163,11 @@ func get_FH_jt() -> int:
 		return 0
 	var data = json.du_qu(json.id)
 	var hero_lv = int(data.get("等级", 1))
-	var QHs = data.get("强化", {"生命":0, "力量":0, "防御":0, "穿透":0})
-	var keys = ["生命", "力量", "防御", "穿透"]
-	# 累计四属性已消耗的总强化值（与升级时 rst_qh 的计算一致）
+	var QHs = data.get("强化", [0, 0, 0, 0])
+	# 累计四件装备已消耗的总强化值（与升级时 rst_qh 的计算一致）
 	var total = 0
-	for key in keys:
-		var qh_lv = int(QHs.get(key, 0))
+	for idx in range(4):
+		var qh_lv = int(QHs[idx]) if idx < QHs.size() else 0
 		for m in range(1, qh_lv + 1):
 			total += json.calc_qh_m(hero_lv, m)
 	# 按每满1024返1金条（向下取整）
@@ -610,22 +609,16 @@ func get_QH_lv() -> int:
 	# 检查是否选中了有效的装备
 	if ZB_idx < 0 or ZB_idx >= ZB_ing.size():
 		return 0
-	# 获取装备名称
-	var wu_ming = ZB_ing[ZB_idx]
-	# 获取装备对应的属性类型
-	var shu_xing = 装备信息.get_shu_xing(wu_ming)
-	if shu_xing == "":
-		return 0
 	# 获取存档节点
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json == null:
 		return 0
 	# 读取存档数据
 	var data = json.du_qu(json.id)
-	# 获取强化数据，默认值为0级
-	var QHs = data.get("强化", {"生命":0, "力量":0, "防御":0, "穿透":0})
-	# 返回该属性的强化等级
-	return QHs.get(shu_xing, 0)
+	# 获取强化数据（按第1~4件装备位的等级数组）
+	var QHs = data.get("强化", [0, 0, 0, 0])
+	# 返回该装备位的强化等级
+	return int(QHs[ZB_idx]) if ZB_idx < QHs.size() else 0
 
 # 更新强化信息（成功率和消耗）
 func QH_upd_1() -> void:
@@ -683,9 +676,6 @@ func QH_zhi_xing() -> void:
 	if ZB_idx < 0 or ZB_idx >= ZB_ing.size():
 		return
 	var wu_ming = ZB_ing[ZB_idx]
-	var shu_xing = 装备信息.get_shu_xing(wu_ming)
-	if shu_xing == "":
-		return
 	# 获取当前强化等级
 	var QH_lv = get_QH_lv()
 	# 如果已满级
@@ -729,9 +719,9 @@ func QH_zhi_xing() -> void:
 	# 如果成功
 	if lv_add:
 		QH_lv += 1
-		# 更新存档中的强化等级
-		var QHs = data.get("强化", {"生命":0, "力量":0, "防御":0, "穿透":0})
-		QHs[shu_xing] = QH_lv
+		# 更新存档中的强化等级（按装备位）
+		var QHs = data.get("强化", [0, 0, 0, 0])
+		QHs[ZB_idx] = QH_lv
 		data["强化"] = QHs
 		# 保存存档
 		json.bao_cun(json.id, data)
@@ -839,15 +829,13 @@ func wu_pin_XX(idx: int) -> void:
 			if i >= ZB_ing.size():
 				return
 			var wu_ming = ZB_ing[i]
-			# 获取实际强化等级
-			var shu_xing = 装备信息.get_shu_xing(wu_ming)
+			# 获取实际强化等级（按装备位）
 			var QH_lv = 0
-			if shu_xing != "":
-				var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-				if json != null:
-					var data = json.du_qu(json.id)
-					var QHs = data.get("强化", {"生命":0, "力量":0, "防御":0, "穿透":0})
-					QH_lv = QHs.get(shu_xing, 0)
+			var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+			if json != null:
+				var data = json.du_qu(json.id)
+				var QHs = data.get("强化", [0, 0, 0, 0])
+				QH_lv = int(QHs[i]) if i < QHs.size() else 0
 			# 创建面板
 			var win_y = int(win_size.y)
 			var win_x = int(win_size.x)
@@ -877,8 +865,16 @@ func wu_pin_XX(idx: int) -> void:
 					QH_text = "开了！"
 				else:
 					QH_text = "+%d" % QH_lv
-				# 属性显示"属性名+等级"
-				shu_xing_text = "%s+%d" % [shu_xing, QH_lv] if shu_xing != "" else "无"
+				# 按 生命/力量/防御/穿透 顺序拼接各属性加成（加成=每级数值×强化等级，可为负）
+				var jia_cheng = 装备信息.get_jia_cheng(wu_ming)
+				var key_names = {"shp": "生命", "ll": "力量", "fy": "防御", "ct": "穿透"}
+				var parts = []
+				for key in ["shp", "ll", "fy", "ct"]:
+					if jia_cheng.has(key):
+						var val = jia_cheng[key] * QH_lv
+						parts.append("%s%+d" % [key_names[key], val])
+				if parts.size() > 0:
+					shu_xing_text = " ".join(parts)
 			else:
 				# 0级时显示默认文本
 				QH_text = XX.get("强化", "未强化")

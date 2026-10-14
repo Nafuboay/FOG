@@ -19,8 +19,10 @@ var an_niu_hover: Texture2D
 @onready var helo_xuan_ze = $人物选择面板
 @onready var Alice = $人物选择面板/爱丽丝按钮
 @onready var xuan_ge = $人物选择面板/玄戈按钮
+@onready var cheng_gan_qi = $人物选择面板/秤干戚按钮
 @onready var Alice_idle = $人物选择面板/爱丽丝待机
 @onready var xuan_ge_idle = $人物选择面板/玄戈待机
+@onready var cheng_gan_qi_idle = $人物选择面板/秤干戚待机
 @onready var fan_hui = $人物选择面板/返回按钮
 # 返回按钮图片
 var fan_hui_normal: Texture2D
@@ -54,6 +56,8 @@ var json: Node
 var json_id: int = 0
 # 玄戈是否处于锁定状态（历史成就《不朽者》未完成时为true）
 var xuan_ge_suo: bool = false
+# 秤干戚是否处于锁定状态（历史成就《救世主》未完成时为true）
+var cheng_gan_qi_suo: bool = false
 # 存档数量
 const cao_wei: int = 6
 
@@ -128,11 +132,12 @@ func _ready() -> void:
 	else:
 		# 已有存档节点，直接获取
 		json = get_node("/root/游戏存档")
-	# 设置人物选择按钮位置（1行2列布局）
-	var an_nius_2 = [Alice, xuan_ge]
+	# 设置人物选择按钮位置（1行3列布局）
+	var an_nius_2 = [Alice, xuan_ge, cheng_gan_qi]
 	var hang_shu_2 = 1  # 行数
-	var lie_shu_2 = 2    # 列数
-	var idle = [Alice_idle, xuan_ge_idle]
+	var lie_shu_2 = 3    # 列数
+	var idle = [Alice_idle, xuan_ge_idle, cheng_gan_qi_idle]
+	var helo_ming = ["爱丽丝", "玄戈", "秤干戚"]
 	for i in range(an_nius_2.size()):
 		var m = i % lie_shu_2
 		var n = int(i / float(lie_shu_2))
@@ -142,8 +147,7 @@ func _ready() -> void:
 		# 设置待机动画位置与按钮相同
 		idle[i].position = Vector2(x + 47, y + 47)
 		# 加载预定义的待机动画
-		var idle_n = load("res://角色/人物/爱丽丝/爱丽丝动画.tres") if i == 0 else load("res://角色/人物/玄戈/玄戈动画.tres")
-		idle[i].sprite_frames = idle_n
+		idle[i].sprite_frames = load("res://角色/人物/" + helo_ming[i] + "/" + helo_ming[i] + "动画.tres")
 		idle[i].play("idle")
 		idle[i].speed_scale = 0.4
 		# 设置按钮背景
@@ -214,13 +218,14 @@ func an_niu_upd() -> void:
 			var lv = data.get("等级", 1)
 			an_nius_1[i].text = "   %d\n\n\n\n    Lv.%d" % [i + 1, lv]
 			shan_chus[i].visible = true
-			# 显示待机动画
+			# 显示待机动画（英雄名无效时跳过，避免加载失败）
 			var ming_zi = data.get("英雄", "")
-			var dong_hua = load("res://角色/人物/爱丽丝/爱丽丝动画.tres") if ming_zi == "爱丽丝" else load("res://角色/人物/玄戈/玄戈动画.tres")
-			json_idle[i].sprite_frames = dong_hua
-			json_idle[i].visible = true
-			json_idle[i].play("idle")
-			json_idle[i].speed_scale = 0.4
+			var dong_hua = load("res://角色/人物/" + ming_zi + "/" + ming_zi + "动画.tres")
+			if dong_hua != null:
+				json_idle[i].sprite_frames = dong_hua
+				json_idle[i].visible = true
+				json_idle[i].play("idle")
+				json_idle[i].speed_scale = 0.4
 		else:
 			an_nius_1[i].text = "   %d\n\n\n\n\n" % (i + 1)
 			# 隐藏删除按钮
@@ -305,9 +310,9 @@ func dian_ji(dang_wei: int) -> void:
 		# 检查任务字段
 		if not data.has("任务"):
 			data["任务"] = 1
-		# 检查强化字段
-		if not data.has("强化"):
-			data["强化"] = {"生命":0, "力量":0, "防御":0, "穿透":0}
+		# 检查强化字段（按第1~4件装备位的等级数组；旧字典格式存档直接重置）
+		if not data.has("强化") or not data["强化"] is Array:
+			data["强化"] = [0, 0, 0, 0]
 		# 检查成就字段
 		if not data.has("成就"):
 			data["成就"] = [0,0,0]
@@ -344,21 +349,31 @@ func dian_ji(dang_wei: int) -> void:
 		# 隐藏存档返回按钮
 		json_fan_hui.visible = false
 		helo_xuan_ze.visible = true
-		# 显示前刷新玄戈的解锁/锁定状态
+		# 显示前刷新玄戈与秤干戚的解锁/锁定状态
 		upd_xuan_ge_suo()
+		upd_cheng_gan_qi_suo()
 
 # 刷新玄戈的解锁状态：历史成就《不朽者》（索引0）未完成时锁定
 func upd_xuan_ge_suo() -> void:
 	# 任意存档领取过《不朽者》即解锁（通用存档历史成就，跨存档永久保留）
 	xuan_ge_suo = not json.has_ach_ty(0)
 	if xuan_ge_suo:
-		# 锁定：按钮与待机动画一起暗淡（暗淡程度参考选关面板禁用关卡）
+		# 锁定：按钮与待机动画一起暗淡
 		xuan_ge.modulate = Color(0.5, 0.5, 0.5, 1)
 		xuan_ge_idle.modulate = Color(0.5, 0.5, 0.5, 1)
 	else:
 		# 已解锁：恢复正常亮度
 		xuan_ge.modulate = Color(1, 1, 1, 1)
 		xuan_ge_idle.modulate = Color(1, 1, 1, 1)
+# 刷新秤干戚的解锁状态：历史成就《救世主》（索引1）未完成时锁定
+func upd_cheng_gan_qi_suo() -> void:
+	cheng_gan_qi_suo = not json.has_ach_ty(1)
+	if cheng_gan_qi_suo:
+		cheng_gan_qi.modulate = Color(0.5, 0.5, 0.5, 1)
+		cheng_gan_qi_idle.modulate = Color(0.5, 0.5, 0.5, 1)
+	else:
+		cheng_gan_qi.modulate = Color(1, 1, 1, 1)
+		cheng_gan_qi_idle.modulate = Color(1, 1, 1, 1)
 
 # 点击爱丽丝
 func _on_爱丽丝按钮_input() -> void:
@@ -370,6 +385,12 @@ func _on_玄戈按钮_input() -> void:
 		提示弹幕.wen_ben("完成成就《不朽者》解锁英雄【玄戈】！", 0)
 		return
 	C_json("玄戈")
+# 点击秤干戚
+func _on_秤干戚按钮_input() -> void:
+	if cheng_gan_qi_suo:
+		提示弹幕.wen_ben("完成成就《救世主》解锁英雄【秤干戚】！", 0)
+		return
+	C_json("秤干戚")
 
 # 爱丽丝按钮悬停
 func _on_爱丽丝按钮_hover() -> void:
@@ -389,6 +410,16 @@ func _on_玄戈按钮_exit() -> void:
 	if xuan_ge_suo:
 		return
 	xuan_ge.modulate = Color(1, 1, 1, 1)
+# 秤干戚按钮悬停
+func _on_秤干戚按钮_hover() -> void:
+	if cheng_gan_qi_suo:
+		return
+	cheng_gan_qi.modulate = Color(0.5, 2, 1, 1)
+# 秤干戚按钮离开
+func _on_秤干戚按钮_exit() -> void:
+	if cheng_gan_qi_suo:
+		return
+	cheng_gan_qi.modulate = Color(1, 1, 1, 1)
 
 # 选择人物并创建存档
 func C_json(helo_name: String) -> void:
@@ -406,7 +437,7 @@ func C_json(helo_name: String) -> void:
 		"银币": 0,
 		"进度": 1,
 		"任务": 1,
-		"强化": {"生命":0, "力量":0, "防御":0, "穿透":0},
+		"强化": [0, 0, 0, 0],
 		"成就": [0,0,0]
 	}
 	# 释放临时人物节点

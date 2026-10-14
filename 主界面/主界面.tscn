@@ -187,11 +187,20 @@ offset_top = 250.0
 offset_right = 808.0
 offset_bottom = 378.0
 
+[node name="秤干戚按钮" type="Button" parent="人物选择面板"]
+layout_mode = 1
+offset_left = 440.0
+offset_top = 250.0
+offset_right = 568.0
+offset_bottom = 378.0
+
 [node name="爱丽丝待机" type="AnimatedSprite2D" parent="人物选择面板"]
 sprite_frames = SubResource("SpriteFrames_cw6yo")
 
 [node name="玄戈待机" type="AnimatedSprite2D" parent="人物选择面板"]
 sprite_frames = SubResource("SpriteFrames_36hkx")
+
+[node name="秤干戚待机" type="AnimatedSprite2D" parent="人物选择面板"]
 
 [node name="返回按钮" type="Button" parent="人物选择面板"]
 layout_mode = 1
@@ -232,4 +241,7 @@ script = ExtResource("6")
 [connection signal="mouse_entered" from="人物选择面板/玄戈按钮" to="." method="_on_玄戈按钮_hover"]
 [connection signal="mouse_exited" from="人物选择面板/玄戈按钮" to="." method="_on_玄戈按钮_exit"]
 [connection signal="pressed" from="人物选择面板/玄戈按钮" to="." method="_on_玄戈按钮_input"]
+[connection signal="mouse_entered" from="人物选择面板/秤干戚按钮" to="." method="_on_秤干戚按钮_hover"]
+[connection signal="mouse_exited" from="人物选择面板/秤干戚按钮" to="." method="_on_秤干戚按钮_exit"]
+[connection signal="pressed" from="人物选择面板/秤干戚按钮" to="." method="_on_秤干戚按钮_input"]
 [connection signal="fan_hui" from="人物选择面板/返回按钮" to="." method="_on_返回按钮_input"]

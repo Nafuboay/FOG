@@ -771,18 +771,32 @@ func get_ZB(data: Dictionary) -> void:
 	# 检查人物节点是否有效
 	if helo == null:
 		return
-	# 从存档中获取强化数据
-	var QHs = data.get("强化", {})
-	# 获取各属性的强化等级
-	var hp_lv = QHs.get("生命", 0)
-	var ll_lv = QHs.get("力量", 0)
-	var fy_lv = QHs.get("防御", 0)
-	var ct_lv = QHs.get("穿透", 0)
+	# 从存档中获取强化数据（按第1~4件装备位的等级数组）
+	var QHs = data.get("强化", [0, 0, 0, 0])
+	# 获取当前英雄的4件装备
+	var ZB_list = 装备信息.get_helo(data.get("英雄", ""))
+	# 汇总各装备 强化等级×每级加成 得到总加成
+	var shp_add = 0
+	var ll_add = 0
+	var fy_add = 0
+	var ct_add = 0
+	for idx in range(min(QHs.size(), ZB_list.size())):
+		var qh_lv = int(QHs[idx])
+		if qh_lv == 0:
+			continue
+		var jia_cheng = 装备信息.get_jia_cheng(ZB_list[idx])
+		for key in jia_cheng:
+			var val = jia_cheng[key] * qh_lv
+			match key:
+				"shp": shp_add += val
+				"ll": ll_add += val
+				"fy": fy_add += val
+				"ct": ct_add += val
 	# 应用装备强化等级到装备加成字段（诛邪模式下xue=诛邪等级，装备生命也乘生命系数）
-	helo.shp_add_0 = hp_lv * xue
-	helo.ll_add_0 = ll_lv
-	helo.fy_add_0 = fy_lv
-	helo.ct_add_0 = ct_lv
+	helo.shp_add_0 = shp_add * xue
+	helo.ll_add_0 = ll_add
+	helo.fy_add_0 = fy_add
+	helo.ct_add_0 = ct_add
 	# 更新当前生命值上限
 	helo_shp = helo.shu_xing_upd(helo_jc_shp, "shp")
 	helo_hp = helo_shp
