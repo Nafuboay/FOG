@@ -597,6 +597,10 @@ func guai_wu_xian_shi(x: int, y: int, cai: bool = false) -> void:
 	GZ[y][x]["fy"] = guai_wu1.FY * shuang + add
 	GZ[y][x]["ct"] = guai_wu1.CT * shuang + add
 	GZ[y][x]["add"] = add  # 存储魔法树加成值
+	# 属性变化值（所有增益与降低的总和，供信息面板拆分显示；初始仅有魔法树加成）
+	GZ[y][x]["ll_bian"] = add
+	GZ[y][x]["fy_bian"] = add
+	GZ[y][x]["ct_bian"] = add
 	# 计算格子中心位置
 	var GZ_z = GZ_zhong(x, y)
 	# 缩放后偏移也要乘以缩放比例
@@ -659,6 +663,10 @@ func BOSS_xian_shi() -> void:
 				GZ[by][bx]["ll"] = boss_ll
 				GZ[by][bx]["fy"] = boss_fy
 				GZ[by][bx]["ct"] = boss_ct
+				# 属性变化值初始为0（BOSS无魔法树加成，重甲技能初始化会在下方累加）
+				GZ[by][bx]["ll_bian"] = 0
+				GZ[by][bx]["fy_bian"] = 0
+				GZ[by][bx]["ct_bian"] = 0
 				# BOSS技能初始化（主线与诛邪通用，逻辑在特殊技能.gd）
 				特殊技能_SCRIPT.BOSS_ji_neng_chu_shi(GZ[by][bx], guai_wu_id, boss_lv)
 		# 计算显示位置（格子中心）

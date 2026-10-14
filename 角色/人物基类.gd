@@ -36,6 +36,10 @@ func _ready() -> void:
 	s.animation_finished.connect(attack_end)
 	play_idle()
 
+# 伤害系数：默认按攻击次数均分每段伤害（爱丽丝1段×1、玄戈2段×0.5），特殊英雄重写（秤干戚重击×2.5/轻击×0.625）
+func shang_hai_xi_shu() -> float:
+	return 1.0 / attack_n
+
 # 计算属性最终值（基础属性 + 装备加成 + 战斗临时加成）
 # 生命上限/力量/防御/穿透最终值最低为1（如扣属性装备导致≤1时按1计算）；当前生命hp不受此限
 func shu_xing_upd(jc: int, type: String = "ll") -> int:

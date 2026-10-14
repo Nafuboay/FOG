@@ -23,6 +23,8 @@ static func BOSS_ji_neng_chu_shi(cell: Dictionary, guai_wu_id: String, boss_lv: 
 	if guai_wu_id == "猛犸王·犽翡":
 		fy_add_4 = 32 * boss_lv
 		cell["fy"] += fy_add_4
+		# 同步属性变化值（供信息面板拆分显示）
+		cell["fy_bian"] = cell.get("fy_bian", 0) + fy_add_4
 	# 写入重甲防御加成（供受击减防和信息面板读取）
 	cell["fy_add_4"] = fy_add_4
 
@@ -51,6 +53,8 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 				for bx in range(boss_x, boss_x + range_n):
 					GZ[by][bx]["fy_add_4"] = fy_add_4  # 更新重甲加成
 					GZ[by][bx]["fy"] -= boss_lv  # 减少实际防御
+					# 同步属性变化值（供信息面板拆分显示）
+					GZ[by][bx]["fy_bian"] = GZ[by][bx].get("fy_bian", 0) - boss_lv
 	# 蠃虫王【硬化】技能：受击增加防御
 	elif guai_wu_id == "蠃虫王·犄眦":
 		# 获取BOSS等级
@@ -76,6 +80,8 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 				for bx in range(boss_x, boss_x + range_n):
 					GZ[by][bx]["fy_add_5"] = fy_add_5  # 更新硬化加成
 					GZ[by][bx]["fy"] += fy_zeng  # 增加实际防御
+					# 同步属性变化值（供信息面板拆分显示）
+					GZ[by][bx]["fy_bian"] = GZ[by][bx].get("fy_bian", 0) + fy_zeng
 	# 邪花王【荆棘】技能：受击造成固定反伤
 	elif guai_wu_id == "邪花王·荆冠":
 		# 获取BOSS等级作为反伤伤害

@@ -396,8 +396,10 @@ func helo_shang_hai_0() -> void:
 		var helo_lv = guan_qia.helo_lv
 		var helo_ll = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_ll, "ll")
 		var helo_ct = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_ct, "ct")
-		# 计算伤害：人物力量×人物穿透÷怪物防御÷max(怪物等级÷人物等级,1)÷攻击次数
-		var shang_hai_zhi:float=helo_ll*helo_ct/guai_wu_fy/max(guai_wu_lv/helo_lv,1.0)/helo_attack_n
+		# 获取本次伤害系数（基类默认1/攻击次数：爱丽丝×1、玄戈×0.5；秤干戚在此判定轻重击×2.5/×0.625）
+		var xi_shu: float = guan_qia.helo.shang_hai_xi_shu()
+		# 计算伤害：人物力量×人物穿透÷怪物防御÷max(怪物等级÷人物等级,1)×伤害系数
+		var shang_hai_zhi:float=helo_ll*helo_ct/guai_wu_fy/max(guai_wu_lv/helo_lv,1.0)*xi_shu
 		# 计算秒杀倍率：伤害（取整前）/怪物血量上限
 		var ming: float = shang_hai_zhi / guai_wu_hp
 		zhan_dou_ming = ming
@@ -406,24 +408,27 @@ func helo_shang_hai_0() -> void:
 		var gai_Lv: float = shang_hai_zhi - ji_shu
 		if randf() < gai_Lv:
 			ji_shu += 1
-		# 应用伤害到怪物
-		helo_shang_hai_1(ji_shu)
+		# 应用伤害到怪物（传入本次伤害系数用于打印）
+		helo_shang_hai_1(ji_shu, xi_shu)
 	# 人物攻击循环结束后，立即触发怪物攻击
 	if zhan_dou_ing and guai_wu_x >= 0 and guai_wu_y >= 0:
 		guai_wu_shang_hai_0(0)
 
-# 应用人物对怪物的伤害
-func helo_shang_hai_1(ji_shu: int) -> void:
+# 应用人物对怪物的伤害（xi_shu为本次伤害系数，仅用于打印）
+func helo_shang_hai_1(ji_shu: int, xi_shu: float) -> void:
 	# 获取人物属性用于打印
 	var helo_lv = guan_qia.helo_lv
 	var helo_ll = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_ll, "ll")
 	var helo_ct = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_ct, "ct")
-	var helo_attack_n = guan_qia.helo.attack_n
 	# 打印时怪物防御同样按最低为1取值，与伤害计算一致
 	var guai_wu_fy = max(1, guan_qia.GZ[guai_wu_y][guai_wu_x]["fy"])
+	# 轻重击标签（秤干戚专属：返回【重击】/【轻击】，其他英雄无此方法取空串）
+	var biao_qian: String = ""
+	if guan_qia.helo.has_method("zhong_qing_biao_qian"):
+		biao_qian = guan_qia.helo.zhong_qing_biao_qian()
 	# 打印伤害信息
 	var time_1 = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	print("%.2f秒 英雄造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷%d"%[time_1,ji_shu,helo_ll,helo_ct,guai_wu_fy,guan_qia.GZ[guai_wu_y][guai_wu_x]["lv"],helo_lv, helo_attack_n])
+	print("%.2f秒 英雄造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)×%s%s"%[time_1,ji_shu,helo_ll,helo_ct,guai_wu_fy,guan_qia.GZ[guai_wu_y][guai_wu_x]["lv"],helo_lv, str(xi_shu), biao_qian])
 	# 使用统一函数处理伤害（包含血条更新和飘字显示）
 	shang_hai(guai_wu_x, guai_wu_y, ji_shu, false)
 	# BOSS受击类技能（猛犸王重甲/蠃虫王硬化/邪花王反伤）

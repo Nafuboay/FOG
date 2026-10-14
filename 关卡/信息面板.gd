@@ -161,7 +161,10 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 		fy = GZ1["fy"]
 		ct = GZ1["ct"]
 		guai_wu_name = GZ1.get("名字", "未知")
-	# 四项属性最低为1（当前生命hp不受此限）
+	# 四项属性最低为1（当前生命hp不受此限）；ll/fy/ct钳制前保留原始值用于拆分显示
+	var ll_yuan: int = ll
+	var fy_yuan: int = fy
+	var ct_yuan: int = ct
 	shp = max(1, shp)
 	ll = max(1, ll)
 	fy = max(1, fy)
@@ -170,23 +173,10 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 	var hp_pct = ji_suan_hp_pct(hp, shp)
 	# 计算战力
 	var guai_wu_zl = lv * hp * ll * fy * ct
-	# 获取各项属性加成
-	var add = GZ1.get("add", 0)  # 魔法树四项属性加成值
-	var fy_add_4 = GZ1.get("fy_add_4", 0)  # 重甲防御加成
-	var fy_add_5 = GZ1.get("fy_add_5", 0)  # 硬化防御加成
-	var fy_add = add + fy_add_4 + fy_add_5
-	# 格式化力量显示（基础值+加成）
-	var ll_str = str(ll)
-	if add > 0:
-		ll_str = str(ll - add) + "+" + str(add)
-	# 格式化防御显示（基础值+加成）
-	var fy_str = str(fy)
-	if fy_add > 0:
-		fy_str = str(fy - fy_add) + "+" + str(fy_add)
-	# 格式化穿透显示（基础值+加成）
-	var ct_str = str(ct)
-	if add > 0:
-		ct_str = str(ct - add) + "+" + str(add)
+	# 格式化力量/防御/穿透显示（初始值±变化值：变化值为所有增益与降低的总和，各效果的规则与上限互不影响、独立累计）
+	var ll_str = ge_shi_sx(ll_yuan, GZ1.get("ll_bian", 0))
+	var fy_str = ge_shi_sx(fy_yuan, GZ1.get("fy_bian", 0))
+	var ct_str = ge_shi_sx(ct_yuan, GZ1.get("ct_bian", 0))
 	# 获取怪物描述
 	var guai_wu_miao_shu = GZ1.get("miao_shu", "")
 	var miao_shu_str = ""
@@ -198,6 +188,15 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 	]
 	# 创建标签
 	C_label(text, guan_qia.look_guai_wu)
+
+# 格式化属性显示：初始值±变化值（变化值为正显示+n、为负显示-m、为零只显示初始值；初始值=原始总值-变化值）
+func ge_shi_sx(yuan: int, bian: int) -> String:
+	var ji_chu: int = yuan - bian
+	if bian > 0:
+		return str(ji_chu) + "+" + str(bian)
+	elif bian < 0:
+		return str(ji_chu) + str(bian)  # 负数自带负号
+	return str(ji_chu)
 
 # 刷新信息面板
 func on_shu_wu_upd() -> void:
