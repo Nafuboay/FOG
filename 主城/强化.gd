@@ -874,13 +874,13 @@ func wu_pin_XX(idx: int) -> void:
 						var val = jia_cheng[key] * QH_lv
 						parts.append("%s%+d" % [key_names[key], val])
 				if parts.size() > 0:
-					shu_xing_text = " ".join(parts)
+					shu_xing_text = "\n        ".join(parts)
 			else:
 				# 0级时显示默认文本
-				QH_text = XX.get("强化", "未强化")
-				shu_xing_text = "无"
+				QH_text = XX.get("强化", "+0")
+				shu_xing_text = XX.get("属性", "无")
 			# 显示
-			var text = "\n  【装备】%s\n  【强化】%s\n  【属性】%s\n  【特性】%s\n      %s" % [
+			var text = "\n  装备：%s\n  强化：%s\n  属性：%s\n  特性：%s\n  描述：%s" % [
 				wu_ming, QH_text, shu_xing_text, 
 				XX.get("特性", "无"), XX.get("描述", "")
 			]
