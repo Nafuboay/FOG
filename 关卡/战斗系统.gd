@@ -515,8 +515,8 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 		# 场景已切换/释放中时不再使用恢复符
 		if not is_inside_tree():
 			return
-		# 人物未死亡，延迟0.5秒后尝试使用恢复符
-		await get_tree().create_timer(0.5).timeout
+		# 人物未死亡，延迟0.4秒后尝试使用恢复符
+		await get_tree().create_timer(0.4).timeout
 		# 检查战斗是否还在进行中
 		if zhan_dou_ing:
 			hui_fu_fu()
@@ -575,7 +575,7 @@ func hui_fu_n() -> void:
 	# 恢复人物血量（使用总恢复量）
 	hui_fu(0, 0, zong_hui_fu, true)
 	# 打印恢复信息
-	print("战斗开始 英雄使用%d个%s恢复生命：%d" % [shi_ji_shu_liang, wu_ming, zong_hui_fu])
+	print("英雄使用%d个%s恢复生命：%d" % [shi_ji_shu_liang, wu_ming, zong_hui_fu])
 	# 刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# 刷新道具显示
@@ -723,6 +723,10 @@ func zhan_dou_end() -> void:
 	guan_qia.guai_wu_y_ing = -1
 	# 清除BOSS战斗反转标记
 	fan3 = false
+	# 清理人物身上的流血层数meta（防止残留到下一场战斗）
+	if guan_qia.helo != null and is_instance_valid(guan_qia.helo):
+		if guan_qia.helo.has_meta("liu_xue_n"):
+			guan_qia.helo.set_meta("liu_xue_n", 0)
 	# 恢复撤退按钮图片
 	guan_qia.guan_ui.che_tui.texture = guan_qia.guan_ui.che_tui_1
 	# 隐藏撤退按钮

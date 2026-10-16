@@ -124,12 +124,17 @@ func gong_ji_ji_neng(x: int, y: int) -> void:
 
 # 葵花王【向阳】技能协程：战斗时回血
 func hp_add(x: int, y: int) -> void:
-	await zhan_dou.get_tree().create_timer(0.5).timeout
+	# 记录当前战斗会话时间戳，防止旧协程跨战斗触发
+	var _session_time = zhan_dou.zhan_dou_time
+	await zhan_dou.get_tree().create_timer(0.4).timeout
 	# 场景已切换/释放中时终止协程
 	if not zhan_dou.is_inside_tree():
 		return
 	# 检查战斗是否还在进行
 	if not zhan_dou.zhan_dou_ing:
+		return
+	# 检查是否已切换到新战斗会话（旧协程跨战斗时 zhan_dou_time 已被重置）
+	if zhan_dou.zhan_dou_time != _session_time:
 		return
 	var GZ = guan_qia.GZ
 	# 检查怪物是否有效
@@ -148,12 +153,17 @@ func hp_add(x: int, y: int) -> void:
 
 # 双狼王【流血】技能：攻击造成流血，可叠加
 func liu_xue() -> void:
-	await zhan_dou.get_tree().create_timer(0.7).timeout
+	# 记录当前战斗会话时间戳，防止旧协程跨战斗触发
+	var _session_time = zhan_dou.zhan_dou_time
+	await zhan_dou.get_tree().create_timer(0.6).timeout
 	# 场景已切换/释放中时终止协程
 	if not zhan_dou.is_inside_tree():
 		return
 	# 检查战斗是否还在进行
 	if not zhan_dou.zhan_dou_ing:
+		return
+	# 检查是否已切换到新战斗会话（旧协程跨战斗时 zhan_dou_time 已被重置）
+	if zhan_dou.zhan_dou_time != _session_time:
 		return
 	# 检查人物是否有效
 	if guan_qia.helo == null or not is_instance_valid(guan_qia.helo):
