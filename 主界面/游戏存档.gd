@@ -212,6 +212,30 @@ func rst_zx_lv(guan_kia_id: int) -> void:
 		data["诛邪等级"] = zx_data
 		bao_cun(id, data)
 
+# 获取关卡道具携带配置（道具选择界面保存的物品名有序数组，最多10个）
+# 存档无记录或记录为空数组时均返回默认顺序；有内容时按内容来
+func get_dao_ju_xz() -> Array:
+	get_dang_wei()
+	var data = du_qu(id)
+	# 字段不存在或为空数组=从未主动选择/主动全取消，均走默认顺序
+	if not data.has("道具选择") or data.get("道具选择", []).is_empty():
+		return 物品信息.guan_kia_dao_ju.duplicate()
+	# 字段存在且有内容：过滤掉已不在可用道具表中的项、去重、截断10个
+	var jie_guo: Array = []
+	for wu_ming in data.get("道具选择", []):
+		if 物品信息.guan_kia_dao_ju.has(wu_ming) and not jie_guo.has(wu_ming):
+			jie_guo.append(wu_ming)
+		if jie_guo.size() >= 10:
+			break
+	return jie_guo
+
+# 保存关卡道具携带配置（xz为物品名有序数组，允许空数组）
+func bao_cun_dao_ju_xz(xz: Array) -> void:
+	get_dang_wei()
+	var data = du_qu(id)
+	data["道具选择"] = xz
+	bao_cun(id, data)
+
 # 获取存档的模式（0=主线，1=诛邪）
 func get_mode() -> int:
 	get_dang_wei()

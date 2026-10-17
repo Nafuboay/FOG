@@ -12,6 +12,10 @@ extends Node2D
 @onready var shu_wu_btn = $树屋按钮
 # 树屋面板引用
 var shu_wu: Control = null
+# 道具选择界面引用
+var dao_ju_xz: Control = null
+# 道具选择入口按钮（图标，主城直接创建管理，不随选关面板隐藏）
+var dao_ju_btn: TextureRect = null
 # 背景是否已切换
 var mi_wu: bool = false
 # 背包引用
@@ -74,6 +78,14 @@ func _ready() -> void:
 	shu_wu = load("res://主城/树屋.gd").new()
 	shu_wu.name = "树屋"
 	add_child(shu_wu)
+	# 实例化道具选择界面
+	dao_ju_xz = load("res://主城/道具选择.gd").new()
+	dao_ju_xz.name = "道具选择"
+	add_child(dao_ju_xz)
+	# 创建道具选择入口按钮（主城直接管理）
+	chuang_jian_dao_ju_btn()
+	# 道具选择关闭：重新显示选关面板
+	dao_ju_xz.guan_bi.connect(_on_dao_ju_xz_guan_bi)
 	# 实例化音量调节系统
 	VOL = load("res://音乐/音量调节.gd").new()
 	VOL.name = "音量调节"
@@ -102,6 +114,8 @@ func _input(_event: InputEvent) -> void:
 		dang_qian_jie_mian = "QH"
 	elif shu_wu != null and shu_wu.visible:
 		dang_qian_jie_mian = "shu_wu"
+	elif dao_ju_xz != null and dao_ju_xz.visible:
+		dang_qian_jie_mian = "dao_ju"
 	# 根据当前界面状态调整UI
 	if dang_qian_jie_mian != "":
 		# 有界面打开时，隐藏通用UI
@@ -191,6 +205,9 @@ func _on_选关按钮_pressed() -> void:
 	# 显示选关面板
 	提示弹幕.wen_ben("已激活浮空岛传送阵，请选择传送关卡。",0.5)
 	xuan_guan.xian_shi()
+	# 显示道具选择入口按钮
+	if dao_ju_btn != null:
+		dao_ju_btn.visible = true
 	# 隐藏选关按钮
 	xuan_guan_btn.visible = false
 	# 隐藏树屋按钮
@@ -208,10 +225,49 @@ func _on_选关按钮_pressed() -> void:
 	shop.off_npc()
 	QH.off_npc()
 
+# 创建道具选择入口按钮（图标版：道具1/道具2.png 悬停切换，64×64原始大小，位于模式切换按钮(1000,600)右侧）
+# 由主城直接创建管理，不随选关面板隐藏；z_index=1001 保证在道具选择界面(1000)之上仍可点击
+func chuang_jian_dao_ju_btn() -> void:
+	var dao_ju_1 = load("res://主城/图片/道具1.png")
+	var dao_ju_2 = load("res://主城/图片/道具2.png")
+	dao_ju_btn = TextureRect.new()
+	dao_ju_btn.texture = dao_ju_1
+	dao_ju_btn.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	dao_ju_btn.size = Vector2(64, 64)
+	dao_ju_btn.position = Vector2(1080, 600)
+	dao_ju_btn.z_index = 1001 # 高于道具选择界面的 1000，保证打开道具选择后按钮仍可点击
+	dao_ju_btn.visible = false # 初始隐藏，打开选关面板时显示
+	# 悬停切换贴图
+	dao_ju_btn.mouse_entered.connect(func(): dao_ju_btn.texture = dao_ju_2)
+	dao_ju_btn.mouse_exited.connect(func(): dao_ju_btn.texture = dao_ju_1)
+	# 点击切换道具选择界面开关
+	dao_ju_btn.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			_on_dao_ju_an_niu_pressed()
+	)
+	add_child(dao_ju_btn)
+
+# 道具选择按钮：切换道具选择界面开关（已打开则关闭，未打开则打开）
+func _on_dao_ju_an_niu_pressed() -> void:
+	if dao_ju_xz.visible:
+		# 道具选择已打开，再点一次关闭
+		dao_ju_xz.guan_bi_zk()
+	else:
+		# 打开道具选择，选关面板隐藏但道具按钮保持显示
+		xuan_guan.yin_cang()
+		dao_ju_xz.open()
+
+# 道具选择界面关闭：重新显示选关面板
+func _on_dao_ju_xz_guan_bi() -> void:
+	xuan_guan.xian_shi()
+
 # 选关返回按钮被按下时的回调函数
 func _on_选关返回按钮_pressed() -> void:
 	# 隐藏选关面板
 	xuan_guan.yin_cang()
+	# 隐藏道具选择入口按钮
+	if dao_ju_btn != null:
+		dao_ju_btn.visible = false
 	# 显示选关按钮
 	xuan_guan_btn.visible = true
 	# 显示树屋按钮

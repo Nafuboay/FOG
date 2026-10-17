@@ -248,8 +248,8 @@ func dao_ju_upd() -> void:
 	var data = json.du_qu(guan_qia.json_id)
 	# 获取背包物品
 	var wu_pin = data.get("背包", {})
-	# 道具列表
-	var dao_ju_list = ["1级恢复符","2级恢复符","3级恢复符","4级恢复符","5级恢复符","6级恢复符","优秀探测器","精良探测器","史诗探测器","神话探测器"]
+	# 携带道具列表：读存档的道具选择配置（从未选择时返回默认顺序；最多10个；可能为空数组=全不带）
+	var dao_ju_list = json.get_dao_ju_xz()
 	var p_x = 110
 	var p_y = 631
 	var p_1 = 50  # 物品宽度
@@ -293,6 +293,8 @@ func dao_ju_upd() -> void:
 						var wu_n = Label.new()
 						wu_n.text = str(n)
 						wu_n.add_theme_color_override("font_color", Color.BLACK)
+						# 角标点击穿透，避免挡住道具图标的点击
+						wu_n.mouse_filter = Control.MOUSE_FILTER_IGNORE
 						wu_n.position = Vector2(p_x+idx*p_2+p_1-wu_n.get_minimum_size().x+10,p_y+p_1-wu_n.get_minimum_size().y+10)
 						wu_n.z_index = 1000
 						dao_ju.add_child(wu_n)
