@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cg1p6v8uw171f"]
+[gd_scene load_steps=25 format=3 uid="uid://cg1p6v8uw171f"]
 
 [ext_resource type="Texture2D" uid="uid://rpel5sg448u1" path="res://主界面/图片/游戏开始0.jpg" id="1"]
 [ext_resource type="Texture2D" uid="uid://emp0o01kp17h" path="res://主界面/图片/游戏开始1.png" id="2"]
@@ -31,6 +31,24 @@ texture_margin_bottom = 10.0
 [sub_resource type="SpriteFrames" id="SpriteFrames_cw6yo"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_36hkx"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle6"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle7"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle8"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle9"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle10"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle11"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle12"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle13"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_idle14"]
 
 [node name="开始游戏" type="Node2D"]
 script = ExtResource("3")
@@ -97,6 +115,78 @@ offset_bottom = 334.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
+[node name="存档按钮6" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮7" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮8" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮9" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮10" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮11" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮12" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮13" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
+[node name="存档按钮14" type="Button" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
+
 [node name="存档待机0" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_5ijne")
 
@@ -115,6 +205,33 @@ sprite_frames = SubResource("SpriteFrames_fx08e")
 [node name="存档待机5" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_cne6s")
 
+[node name="存档待机6" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle6")
+
+[node name="存档待机7" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle7")
+
+[node name="存档待机8" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle8")
+
+[node name="存档待机9" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle9")
+
+[node name="存档待机10" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle10")
+
+[node name="存档待机11" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle11")
+
+[node name="存档待机12" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle12")
+
+[node name="存档待机13" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle13")
+
+[node name="存档待机14" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_idle14")
+
 [node name="删除按钮0" type="Button" parent="."]
 visible = false
 
@@ -131,6 +248,33 @@ visible = false
 visible = false
 
 [node name="删除按钮5" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮6" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮7" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮8" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮9" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮10" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮11" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮12" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮13" type="Button" parent="."]
+visible = false
+
+[node name="删除按钮14" type="Button" parent="."]
 visible = false
 
 [node name="二次确定" type="Control" parent="."]
@@ -209,30 +353,6 @@ script = ExtResource("6")
 [connection signal="input_event" from="按钮/感应区域" to="." method="_on_button_input"]
 [connection signal="mouse_entered" from="按钮/感应区域" to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="按钮/感应区域" to="." method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="存档按钮0" to="." method="_on_存档按钮0_hover"]
-[connection signal="mouse_exited" from="存档按钮0" to="." method="_on_存档按钮0_exit"]
-[connection signal="pressed" from="存档按钮0" to="." method="_on_存档按钮0_input"]
-[connection signal="mouse_entered" from="存档按钮1" to="." method="_on_存档按钮1_hover"]
-[connection signal="mouse_exited" from="存档按钮1" to="." method="_on_存档按钮1_exit"]
-[connection signal="pressed" from="存档按钮1" to="." method="_on_存档按钮1_input"]
-[connection signal="mouse_entered" from="存档按钮2" to="." method="_on_存档按钮2_hover"]
-[connection signal="mouse_exited" from="存档按钮2" to="." method="_on_存档按钮2_exit"]
-[connection signal="pressed" from="存档按钮2" to="." method="_on_存档按钮2_input"]
-[connection signal="mouse_entered" from="存档按钮3" to="." method="_on_存档按钮3_hover"]
-[connection signal="mouse_exited" from="存档按钮3" to="." method="_on_存档按钮3_exit"]
-[connection signal="pressed" from="存档按钮3" to="." method="_on_存档按钮3_input"]
-[connection signal="mouse_entered" from="存档按钮4" to="." method="_on_存档按钮4_hover"]
-[connection signal="mouse_exited" from="存档按钮4" to="." method="_on_存档按钮4_exit"]
-[connection signal="pressed" from="存档按钮4" to="." method="_on_存档按钮4_input"]
-[connection signal="mouse_entered" from="存档按钮5" to="." method="_on_存档按钮5_hover"]
-[connection signal="mouse_exited" from="存档按钮5" to="." method="_on_存档按钮5_exit"]
-[connection signal="pressed" from="存档按钮5" to="." method="_on_存档按钮5_input"]
-[connection signal="pressed" from="删除按钮0" to="." method="_on_删除按钮0_input"]
-[connection signal="pressed" from="删除按钮1" to="." method="_on_删除按钮1_input"]
-[connection signal="pressed" from="删除按钮2" to="." method="_on_删除按钮2_input"]
-[connection signal="pressed" from="删除按钮3" to="." method="_on_删除按钮3_input"]
-[connection signal="pressed" from="删除按钮4" to="." method="_on_删除按钮4_input"]
-[connection signal="pressed" from="删除按钮5" to="." method="_on_删除按钮5_input"]
 [connection signal="pressed" from="二次确定/确定按钮" to="." method="_on_确定按钮_input"]
 [connection signal="pressed" from="二次确定/取消按钮" to="." method="_on_取消按钮_input"]
 [connection signal="mouse_entered" from="人物选择面板/爱丽丝按钮" to="." method="_on_爱丽丝按钮_hover"]

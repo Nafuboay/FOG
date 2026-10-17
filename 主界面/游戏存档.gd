@@ -1,9 +1,9 @@
 class_name 游戏存档 extends Node
-# 存档槽位数量（支持6个存档）
-const cao_wei: int = 6
+# 存档槽位数量（支持15个存档）
+const cao_wei: int = 15
 # 角色最高等级（开放更高等级只需改此处）
 const MAX_LV: int = 4
-# 当前使用的存档槽位编号(0~5)
+# 当前使用的存档槽位编号(0~14)
 var id: int = 0
 # 存档文件夹路径（与exe文件同目录）
 var mi_wu_json: String = ""
@@ -69,7 +69,7 @@ func get_stg() -> int:
 	return round(data.get("进度", 1))
 
 # 保存游戏数据到指定槽位
-# json_id 存档槽位编号(0~5)
+# json_id 存档槽位编号(0~14)
 func bao_cun(json_id: int, data: Dictionary) -> bool:
 	wen_jian_jia()
 	# 获取存档文件路径
@@ -109,7 +109,7 @@ func get_lu_jing(json_id: int) -> String:
 	return mi_wu_json + "/存档" + str(json_id + 1) + ".json"
 
 # 删除存档文件
-# json_id 存档槽位编号(0~5)
+# json_id 存档槽位编号(0~14)
 func shan_chu(json_id: int) -> bool:
 	wen_jian_jia()
 	# 检查存档是否存在
