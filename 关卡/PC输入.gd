@@ -268,7 +268,7 @@ func RMB(x: int, y: int) -> void:
 	var guai_wu_str = "BOSS" if GZ1.get("BOSS", false) else ("怪物" if GZ1["guai_wu"] else ("障碍" if GZ1.get("zhang_ai",false) else "空地"))
 	var yi_kai_str = "已翻开" if GZ1["fan_kai"] else "未翻开"
 	var biao_ji_str = "已标记" if GZ1["biao_ji"] else "未标记"
-	print("(%d,%d) %s %s %s" % [x+1, y+1, yi_kai_str, biao_ji_str, guai_wu_str])
+	日志.打印("(%d,%d) %s %s %s" % [x+1, y+1, yi_kai_str, biao_ji_str, guai_wu_str])
 
 # 坐标转换：将屏幕坐标转换为网格坐标
 func win_xy_GZ(xy: Vector2) -> Vector2:

@@ -17,7 +17,7 @@ func _init(gq: Node2D, zd: Node) -> void:
 # 人物死亡统一处理：添加破损稻草人、清除人物、显示失败图片并结束战斗
 func helo_si_wang() -> void:
 	var shi_jian = (Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0
-	print("%.2f秒 英雄死亡\n" % shi_jian)
+	日志.打印("%.2f秒 英雄死亡\n" % shi_jian)
 	# 人物死亡时添加破损稻草人到永久背包
 	var json = guan_qia.get_node("/root/游戏存档") if guan_qia.has_node("/root/游戏存档") else null
 	if json != null:
@@ -60,7 +60,7 @@ func guai_wu_die() -> void:
 	var tile_shu_zi = guan_qia.tile_shu_zi
 	# 打印怪物死亡时间
 	var shi_jian = (Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0
-	print("%.2f秒 怪物死亡" % shi_jian)
+	日志.打印("%.2f秒 怪物死亡" % shi_jian)
 	# 计算掉落并显示弹幕
 	var diao_luo_ing = 掉落物.diao_luo_wu(guan_qia, die_x, die_y)
 	# 在背包中显示掉落的物品
@@ -134,7 +134,7 @@ func guai_wu_die() -> void:
 	zhan_dou.fan1 = false
 	zhan_dou.fan2 = false
 	guan_qia.helo_move(die_x, die_y)
-	print("%.2f秒 战斗胜利\n" % ((Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0))
+	日志.打印("%.2f秒 战斗胜利\n" % ((Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0))
 
 # BOSS死亡后生成宝箱
 func C_BX(boss_x: int, boss_y: int) -> void:

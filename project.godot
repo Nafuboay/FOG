@@ -20,6 +20,7 @@ config/unique_name="com.mist.game"
 
 Danmaku="*res://全局/提示弹幕.gd"
 "数据管理"="*res://全局/数据管理.gd"
+"日志"="*res://全局/日志.gd"
 
 [display]
 

@@ -42,10 +42,10 @@ func nie_pan_pan_ding(zd: Node, ben_ci_shang_hai: int) -> void:
 	# 概率判定
 	if randf() < gai_lv:
 		var hui_fu_zhi: int = sheng_ming - dang_qian_sheng_ming
-		print("%.2f秒 涅槃概率：%.2f%%=%.2f%%×%.2f%%÷%d=(%d-%d)×%d÷%d^2÷%d，涅槃成功，恢复%d生命" % [shi_jian, gai_lv * 100, sun_shi_bi * 100, shang_hai_bi * 100, ci_shu, sheng_ming, dang_qian_sheng_ming, ben_ci_shang_hai, sheng_ming, ci_shu, hui_fu_zhi])
+		日志.打印("%.2f秒 涅槃概率：%.2f%%=%.2f%%×%.2f%%÷%d=(%d-%d)×%d÷%d^2÷%d，涅槃成功，恢复%d生命" % [shi_jian, gai_lv * 100, sun_shi_bi * 100, shang_hai_bi * 100, ci_shu, sheng_ming, dang_qian_sheng_ming, ben_ci_shang_hai, sheng_ming, ci_shu, hui_fu_zhi])
 		# 走统一恢复流程（含血条刷新与绿色恢复飘字）
 		zd.hui_fu(0, 0, hui_fu_zhi, true)
 		zd.guan_qia.shu_wu_upd.emit()
 		nie_pan_ci_shu += 1
 	else:
-		print("%.2f秒 涅槃概率：%.2f%%=%.2f%%×%.2f%%÷%d=(%d-%d)×%d÷%d^2÷%d，本次未触发" % [shi_jian, gai_lv * 100, sun_shi_bi * 100, shang_hai_bi * 100, ci_shu, sheng_ming, dang_qian_sheng_ming, ben_ci_shang_hai, sheng_ming, ci_shu])
+		日志.打印("%.2f秒 涅槃概率：%.2f%%=%.2f%%×%.2f%%÷%d=(%d-%d)×%d÷%d^2÷%d，本次未触发" % [shi_jian, gai_lv * 100, sun_shi_bi * 100, shang_hai_bi * 100, ci_shu, sheng_ming, dang_qian_sheng_ming, ben_ci_shang_hai, sheng_ming, ci_shu])

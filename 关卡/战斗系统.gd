@@ -354,7 +354,7 @@ func attack_1() -> void:
 	helo.attack_xin_hao.connect(helo_shang_hai_0)
 	# 先记录战斗开始时间并打印（首次攻击信号在play_attack内同步发出，回合开始的生命打印依赖此时间戳）
 	zhan_dou_time = Time.get_ticks_msec()
-	print("战斗开始")
+	日志.打印("战斗开始")
 	helo.play_attack()
 	guai_wu_ing.play_attack()
 
@@ -428,7 +428,7 @@ func helo_shang_hai_1(ji_shu: int, xi_shu: float) -> void:
 		biao_qian = guan_qia.helo.zhong_qing_biao_qian()
 	# 打印伤害信息
 	var time_1 = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	print("%.2f秒 英雄造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)×%s%s"%[time_1,ji_shu,helo_ll,helo_ct,guai_wu_fy,guan_qia.GZ[guai_wu_y][guai_wu_x]["lv"],helo_lv, str(xi_shu), biao_qian])
+	日志.打印("%.2f秒 英雄造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)×%s%s"%[time_1,ji_shu,helo_ll,helo_ct,guai_wu_fy,guan_qia.GZ[guai_wu_y][guai_wu_x]["lv"],helo_lv, str(xi_shu), biao_qian])
 	# 使用统一函数处理伤害（包含血条更新和飘字显示）
 	shang_hai(guai_wu_x, guai_wu_y, ji_shu, false)
 	# BOSS受击类技能（猛犸王重甲/蠃虫王硬化/邪花王反伤）
@@ -496,7 +496,7 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 	var helo_fy = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_fy, "fy")
 	var helo_lv = guan_qia.helo_lv
 	var shi_jian = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	print("%.2f秒 怪物造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷max(%.2f,1)"%[shi_jian,ji_shu,guai_wu_ll,guai_wu_ct,helo_fy,helo_lv,guai_wu_lv,zhan_dou_ming])
+	日志.打印("%.2f秒 怪物造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷max(%.2f,1)"%[shi_jian,ji_shu,guai_wu_ll,guai_wu_ct,helo_fy,helo_lv,guai_wu_lv,zhan_dou_ming])
 	# 使用统一函数处理伤害（包含血条更新和飘字显示）
 	shang_hai(0, 0, ji_shu, true)
 	# 受到常规攻击，消耗1个启用中的玄武盾符（流血/荆棘反伤等真伤不经过本函数故不消耗）
@@ -612,7 +612,7 @@ func hui_fu_n() -> void:
 	# 恢复人物血量（使用总恢复量）
 	hui_fu(0, 0, zong_hui_fu, true)
 	# 打印恢复信息
-	print("英雄使用%d个%s恢复生命：%d" % [shi_ji_shu_liang, wu_ming, zong_hui_fu])
+	日志.打印("英雄使用%d个%s恢复生命：%d" % [shi_ji_shu_liang, wu_ming, zong_hui_fu])
 	# 刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# 刷新道具显示
@@ -661,7 +661,7 @@ func hui_fu_fu() -> void:
 	hui_fu(0, 0, shi_ji_hui_fu, true)
 	# 打印恢复信息
 	var shi_jian = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	print("%.2f秒 英雄恢复生命：%d" % [shi_jian, shi_ji_hui_fu])
+	日志.打印("%.2f秒 英雄恢复生命：%d" % [shi_jian, shi_ji_hui_fu])
 	# 刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# 刷新道具显示
@@ -681,18 +681,18 @@ func che_tui_0() -> void:
 		che_tui_hui = helo_hui
 	# 设置撤退标记
 	che_tui_ing = true
-	print("%.2f秒 准备撤退" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
+	日志.打印("%.2f秒 准备撤退" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
 
 # 战斗回合
 func zhan_dou_hui() -> void:
 	helo_hui += 1
 	# 每回合开始后台打印轮次与双方当前生命（怪物取BOSS/怪物主格数据）
 	var GZ = guan_qia.GZ
-	print("第%d轮" % helo_hui)
-	print("%.2f秒 英雄当前生命：%d 怪物当前生命：%d" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0, guan_qia.helo_hp, GZ[guai_wu_y][guai_wu_x]["hp"]])
+	日志.打印("第%d轮" % helo_hui)
+	日志.打印("%.2f秒 英雄当前生命：%d 怪物当前生命：%d" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0, guan_qia.helo_hp, GZ[guai_wu_y][guai_wu_x]["hp"]])
 	# 判断条件：已点击撤退 且 记录过回合数 且 当前回合等于撤退回合+1
 	if che_tui_ing and che_tui_hui > 0 and helo_hui == che_tui_hui + 1:
-		print("%.2f秒 开始撤退" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
+		日志.打印("%.2f秒 开始撤退" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
 		# 开始人物待机计时
 		che_tui_t = 0
 		# 立即让人物进入待机状态
@@ -717,7 +717,7 @@ func zhan_dou_hui() -> void:
 func che_tui_1() -> void:
 	# 撤退成功，隐藏怪物血条
 	xue_tiao_qi.xue_tiao_3.visible = false
-	print("%.2f秒 撤退成功\n" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
+	日志.打印("%.2f秒 撤退成功\n" % [(Time.get_ticks_msec() - zhan_dou_time) / 1000.0])
 	# 怪物待机
 	if guai_wu_ing != null and is_instance_valid(guai_wu_ing):
 		var GZ = guan_qia.GZ
