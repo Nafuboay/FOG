@@ -29,6 +29,8 @@ var hp_add_1: int = 0
 var ll_add_1: int = 0
 var fy_add_1: int = 0
 var ct_add_1: int = 0
+# 玄武盾符启用中的临时防御加成（取消启用/数量用完时清零）
+var fy_add_2: int = 0
 
 # 节点就绪时调用
 func _ready() -> void:
@@ -51,7 +53,7 @@ func shu_xing_upd(jc: int, type: String = "ll") -> int:
 		"ll":
 			return max(1, jc + ll_add_0 + ll_add_1)
 		"fy":
-			return max(1, jc + fy_add_0 + fy_add_1)
+			return max(1, jc + fy_add_0 + fy_add_1 + fy_add_2)
 		"ct":
 			return max(1, jc + ct_add_0 + ct_add_1)
 		_:

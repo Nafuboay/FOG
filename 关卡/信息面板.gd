@@ -50,9 +50,9 @@ func look_helo_upd() -> void:
 		child.queue_free()
 	# 计算生命值百分比
 	var hp_pct = ji_suan_hp_pct(guan_qia.helo_hp, guan_qia.helo_shp)
-	# 获取属性字符串（装备加成 + 战斗临时加成）
+	# 获取属性字符串（装备加成 + 战斗临时加成 + 玄武盾符临时防御加成）
 	var ll_str = get_str(guan_qia.helo_jc_ll, guan_qia.helo.ll_add_0 + guan_qia.helo.ll_add_1)
-	var fy_str = get_str(guan_qia.helo_jc_fy, guan_qia.helo.fy_add_0 + guan_qia.helo.fy_add_1)
+	var fy_str = get_str(guan_qia.helo_jc_fy, guan_qia.helo.fy_add_0 + guan_qia.helo.fy_add_1 + guan_qia.helo.fy_add_2)
 	var ct_str = get_str(guan_qia.helo_jc_ct, guan_qia.helo.ct_add_0 + guan_qia.helo.ct_add_1)
 	# 获取计算后的属性值
 	var ll_upd = guan_qia.helo.shu_xing_upd(guan_qia.helo_jc_ll, "ll")

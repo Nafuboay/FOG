@@ -16,6 +16,10 @@ var dao_ju: Control = null
 var hui_fu_lv: int = 0
 # 恢复符启用中
 var hui_fu_ing: TextureRect = null
+# 启用中的玄武盾符等级（0表示未启用，1-6对应等级）
+var xuan_wu_lv: int = 0
+# 玄武盾符启用中
+var xuan_wu_ing: TextureRect = null
 # 人物按钮
 var helo_btn: TextureRect = null
 var png1: Texture2D = null  # 人物按钮图片
@@ -257,6 +261,8 @@ func dao_ju_upd() -> void:
 	var idx = 0
 	# 记录恢复符位置用于显示启用标记
 	var hui_fu_xy = Vector2(-1, -1)
+	# 记录玄武盾符位置用于显示启用标记
+	var xuan_wu_xy = Vector2(-1, -1)
 	for wu_ming in dao_ju_list:
 		if wu_pin.has(wu_ming):
 			var n = int(wu_pin[wu_ming])
@@ -287,6 +293,17 @@ func dao_ju_upd() -> void:
 						# 记录当前选定恢复符的位置
 						if hui_fu_lv == lv:
 							hui_fu_xy = Vector2(p_x+idx*p_2, p_y)
+					# 为玄武盾符添加点击事件
+					if wu_ming.find("玄武盾符") != -1:
+						var wv = int(wu_ming[0])  # 获取玄武盾符等级
+						wu_pin_tu.gui_input.connect(func(event, wu_lv=wv):
+							if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+								xuan_wu_ING(wu_lv)
+								get_viewport().gui_release_focus()
+						)
+						# 记录当前启用玄武盾符的位置
+						if xuan_wu_lv == wv:
+							xuan_wu_xy = Vector2(p_x+idx*p_2, p_y)
 					dao_ju.add_child(wu_pin_tu)
 					# 如果数量大于1，显示数量标签
 					if n > 1:
@@ -310,6 +327,17 @@ func dao_ju_upd() -> void:
 		# 取消启用中遮盖
 		hui_fu_ing.mouse_filter = TextureRect.MOUSE_FILTER_IGNORE
 		dao_ju.add_child(hui_fu_ing)
+	# 显示玄武盾符启用中标记
+	if xuan_wu_lv > 0 and xuan_wu_xy.x >= 0:
+		xuan_wu_ing = TextureRect.new()
+		xuan_wu_ing.texture = load("res://关卡/信息/启用中.png")
+		xuan_wu_ing.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		xuan_wu_ing.size = Vector2(p_1, p_1)
+		xuan_wu_ing.position = xuan_wu_xy
+		xuan_wu_ing.z_index = 1001
+		# 取消启用中遮盖
+		xuan_wu_ing.mouse_filter = TextureRect.MOUSE_FILTER_IGNORE
+		dao_ju.add_child(xuan_wu_ing)
 	# 设置可见性
 	dao_ju.visible = idx > 0
 
@@ -323,6 +351,30 @@ func hui_fu_ING(lv: int) -> void:
 		hui_fu_lv = lv
 	# 刷新道具显示
 	dao_ju_upd()
+
+# 玄武盾符启用处理
+func xuan_wu_ING(lv: int) -> void:
+	if xuan_wu_lv == lv:
+		xuan_wu_lv = 0
+	else:
+		xuan_wu_lv = lv
+	# 同步防御加成到人物
+	xuan_wu_fy_upd()
+	dao_ju_upd()
+
+# 按启用状态同步玄武盾符的临时防御加成到人物（取消启用/数量用完时清零）
+func xuan_wu_fy_upd() -> void:
+	# 人物无效时跳过
+	if guan_qia.helo == null or not is_instance_valid(guan_qia.helo):
+		return
+	# 未启用时清零
+	if xuan_wu_lv <= 0:
+		guan_qia.helo.fy_add_2 = 0
+	else:
+		# 防御增加量同恢复符对应等级恢复量（复用战斗系统的回血量表）
+		guan_qia.helo.fy_add_2 = guan_qia.zhan_dou.get_hui_fu_zhi(xuan_wu_lv)
+	# 刷新人物面板显示
+	guan_qia.shu_wu_upd.emit()
 
 # 使用探测器
 func Tan_ce_qi(wu_ming: String) -> void:

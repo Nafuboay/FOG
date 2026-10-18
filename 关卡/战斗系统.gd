@@ -499,6 +499,8 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 	print("%.2f秒 怪物造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷max(%.2f,1)"%[shi_jian,ji_shu,guai_wu_ll,guai_wu_ct,helo_fy,helo_lv,guai_wu_lv,zhan_dou_ming])
 	# 使用统一函数处理伤害（包含血条更新和飘字显示）
 	shang_hai(0, 0, ji_shu, true)
+	# 受到常规攻击，消耗1个启用中的玄武盾符（流血/荆棘反伤等真伤不经过本函数故不消耗）
+	xuan_wu_kou_chu()
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# BOSS攻击类技能（葵花王向阳/双狼王流血）
@@ -527,6 +529,41 @@ func get_hui_fu_zhi(lv: int) -> int:
 	if lv < 1 or lv > hui_fu_zhi_biao.size() - 1:
 		return 0
 	return hui_fu_zhi_biao[lv]
+
+# 受到常规攻击后消耗1个启用中的玄武盾符（数量用完自动取消启用并清空防御加成）
+func xuan_wu_kou_chu() -> void:
+	# 未启用玄武盾符时跳过
+	var lv = guan_qia.guan_ui.xuan_wu_lv
+	if lv <= 0:
+		return
+	# 获取存档节点
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return
+	# 读取存档数据
+	var data = json.du_qu(guan_qia.json_id)
+	# 获取背包物品
+	var wu_pin = data.get("背包", {})
+	# 检查玄武盾符数量
+	var wu_ming = str(lv) + "级玄武盾符"
+	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
+		# 数量异常时兜底取消启用并清空防御
+		guan_qia.guan_ui.xuan_wu_lv = 0
+		guan_qia.guan_ui.xuan_wu_fy_upd()
+		guan_qia.guan_ui.dao_ju_upd()
+		return
+	# 消耗1个玄武盾符
+	wu_pin[wu_ming] = int(wu_pin[wu_ming]) - 1
+	# 数量变为0时删除该物品字段，并取消启用（清空防御加成）
+	if int(wu_pin[wu_ming]) <= 0:
+		wu_pin.erase(wu_ming)
+		guan_qia.guan_ui.xuan_wu_lv = 0
+		guan_qia.guan_ui.xuan_wu_fy_upd()
+	# 保存存档
+	data["背包"] = wu_pin
+	json.bao_cun(guan_qia.json_id, data)
+	# 刷新道具显示
+	guan_qia.guan_ui.dao_ju_upd()
 
 # 战斗开始时自动使用恢复符（血量不足时）
 func hui_fu_n() -> void:

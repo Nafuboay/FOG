@@ -12,7 +12,7 @@ var GZ_png1: Texture2D = null # 普通格子贴图
 var GZ_png2: Texture2D = null # 已选格子贴图
 
 const ZUI_DUO: int = 10 # 携带栏位上限
-const H_LIE: int = 5 # 候选网格每行列数
+const H_LIE: int = 6 # 候选网格每行列数
 const H_DA: int = 64 # 候选格子边长（格子间不留缝隙）
 const X_DA: int = 48 # 携带格子边长（格子间不留缝隙）
 
@@ -46,13 +46,13 @@ func C_mian_ban() -> void:
 	biao_ti.position = Vector2(0, 20)
 	biao_ti.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	rong_qi.add_child(biao_ti)
-	# 候选网格容器（5列×2行，64格无缝，共320宽，居中起点90）
+	# 候选网格容器（6列×3行，64格无缝，共384宽，居中起点58）
 	hou_xuan = Control.new()
-	hou_xuan.position = Vector2(90, 100)
+	hou_xuan.position = Vector2(58, 100)
 	rong_qi.add_child(hou_xuan)
-	# 携带栏容器（10格48无缝，共480宽，起点10）
+	# 携带栏容器（10格48无缝，共480宽，起点10；候选3行后下移）
 	xie_dai = Control.new()
-	xie_dai.position = Vector2(10, 288)
+	xie_dai.position = Vector2(10, 312)
 	rong_qi.add_child(xie_dai)
 
 # 创建楷体文字标签（统一字体入口）
@@ -69,10 +69,12 @@ func C_label(wen: String, da_xiao: int, yan_se: Color) -> Label:
 # 打开界面：读取存档配置并刷新
 func open() -> void:
 	var json = get_node_or_null("/root/游戏存档")
-	if json == null:
-		xuan_ze = []
-	else:
-		xuan_ze = json.get_dao_ju_xz()
+	xuan_ze = []
+	if json != null:
+		var data = json.du_qu(json.id)
+		# 字段存在且有内容=主动选择过，走统一过滤读取；否则视为默认携带，界面显示为空（不显示成全选）
+		if data.has("道具选择") and not data["道具选择"].is_empty():
+			xuan_ze = json.get_dao_ju_xz()
 	visible = true
 	upd()
 
@@ -80,13 +82,6 @@ func open() -> void:
 func guan_bi_zk() -> void:
 	visible = false
 	guan_bi.emit()
-
-# 读取当前存档的背包数量字典
-func du_qu_bei_bao() -> Dictionary:
-	var json = get_node_or_null("/root/游戏存档")
-	if json == null:
-		return {}
-	return json.du_qu(json.id).get("背包", {})
 
 # 保存当前选择配置到存档
 func bao_cun() -> void:
@@ -96,14 +91,11 @@ func bao_cun() -> void:
 	json.bao_cun_dao_ju_xz(xuan_ze)
 
 # 点击道具：已选则取消（后面的自动前移），未选则追加到末尾，满10个给提示
-# 取消最后一个后自动恢复默认顺序，实现"一个都没选=默认携带"
+# 全取消后xuan_ze为空数组，保存后存档语义=默认携带，界面保持空显示
 func qie_huan(wu_ming: String) -> void:
 	var idx = xuan_ze.find(wu_ming)
 	if idx >= 0:
 		xuan_ze.remove_at(idx)
-		# 全取消后视为默认携带
-		if xuan_ze.is_empty():
-			xuan_ze = 物品信息.guan_kia_dao_ju.duplicate()
 	elif xuan_ze.size() >= ZUI_DUO:
 		提示弹幕.wen_ben("最多只能携带%d个道具！" % ZUI_DUO, 0)
 		return
@@ -114,12 +106,11 @@ func qie_huan(wu_ming: String) -> void:
 
 # 刷新候选网格与携带栏
 func upd() -> void:
-	var bag = du_qu_bei_bao()
-	upd_hou_xuan(bag)
-	upd_xie_dai(bag)
+	upd_hou_xuan()
+	upd_xie_dai()
 
 # 刷新候选道具网格（全部关卡可用道具，已选用闪光格子高亮）
-func upd_hou_xuan(bag: Dictionary) -> void:
+func upd_hou_xuan() -> void:
 	for c in hou_xuan.get_children():
 		c.queue_free()
 	for i in range(物品信息.guan_kia_dao_ju.size()):
@@ -137,7 +128,6 @@ func upd_hou_xuan(bag: Dictionary) -> void:
 				qie_huan(ming)
 		)
 		hou_xuan.add_child(ge)
-		var n = int(bag.get(wu_ming, 0))
 		# 道具图标（数量为0也正常显示，便于预选）
 		if 物品信息.wu_pin_png.has(wu_ming):
 			var tu = TextureRect.new()
@@ -147,16 +137,9 @@ func upd_hou_xuan(bag: Dictionary) -> void:
 			tu.position = Vector2((H_DA - 50) / 2.0, (H_DA - 50) / 2.0)
 			tu.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			ge.add_child(tu)
-		# 拥有数量角标（右下角，与背包一致仅数量>1时显示）
-		if n > 1:
-			var shu = C_label(str(n), 16, Color.BLACK)
-			shu.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			ge.add_child(shu)
-			var shu_ju = shu.get_minimum_size()
-			shu.position = Vector2(H_DA - shu_ju.x - 4, H_DA - shu_ju.y - 2)
 
 # 刷新携带栏（固定10格，按选择顺序排列；空格只显示底框；点击已放置道具=取消）
-func upd_xie_dai(bag: Dictionary) -> void:
+func upd_xie_dai() -> void:
 	for c in xie_dai.get_children():
 		c.queue_free()
 	for i in range(ZUI_DUO):
@@ -178,7 +161,6 @@ func upd_xie_dai(bag: Dictionary) -> void:
 		if i >= xuan_ze.size():
 			continue
 		var wu_ming = xuan_ze[i]
-		var n = int(bag.get(wu_ming, 0))
 		# 点击已放置道具=取消选择
 		ge.gui_input.connect(func(event, ming=wu_ming):
 			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -193,10 +175,3 @@ func upd_xie_dai(bag: Dictionary) -> void:
 			tu.position = Vector2((X_DA - 40) / 2.0, (X_DA - 40) / 2.0)
 			tu.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			ge.add_child(tu)
-		# 拥有数量角标（与背包一致仅数量>1时显示）
-		if n > 1:
-			var shu = C_label(str(n), 14, Color.BLACK)
-			shu.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			ge.add_child(shu)
-			var shu_ju = shu.get_minimum_size()
-			shu.position = Vector2(X_DA - shu_ju.x - 3, X_DA - shu_ju.y - 1)
