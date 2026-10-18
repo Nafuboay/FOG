@@ -343,8 +343,6 @@ func attack_1() -> void:
 	if guai_wu_ing == null or not is_instance_valid(guai_wu_ing):
 		zhan_dou_end()
 		return
-	# 战斗开始时检查血量，自动使用恢复符
-	hui_fu_n()
 	# 先设置朝向
 	chao_xiang()
 	# 断开人物攻击信号（避免重复连接）
@@ -565,64 +563,7 @@ func xuan_wu_kou_chu() -> void:
 	# 刷新道具显示
 	guan_qia.guan_ui.dao_ju_upd()
 
-# 战斗开始时自动使用恢复符（血量不足时）
-func hui_fu_n() -> void:
-	# 获取当前选定的恢复符等级
-	var lv = guan_qia.guan_ui.hui_fu_lv
-	if lv <= 0:
-		return
-	# 获取存档节点
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json == null:
-		return
-	# 读取存档数据
-	var data = json.du_qu(guan_qia.json_id)
-	# 获取背包物品
-	var wu_pin = data.get("背包", {})
-	# 检查恢复符数量
-	var wu_ming = str(lv) + "级恢复符"
-	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
-		return
-	# 获取恢复符回血量
-	var hui_fu_zhi = get_hui_fu_zhi(lv)
-	# 等级无效时不使用恢复符
-	if hui_fu_zhi <= 0:
-		return
-	# 计算需要使用的恢复符数量
-	var hp_que_que = guan_qia.helo_shp - guan_qia.helo_hp
-	if hp_que_que <= 0:
-		return
-	# 计算需要多少个恢复符（向下取整，避免浪费）
-	var shu_liang = int(floor(float(hp_que_que) / float(hui_fu_zhi)))
-	# 获取当前拥有的恢复符数量
-	var you_shu_liang = int(wu_pin[wu_ming])
-	# 实际使用数量取两者最小值
-	var shi_ji_shu_liang = min(shu_liang, you_shu_liang)
-	if shi_ji_shu_liang <= 0:
-		return
-	# 计算总恢复量
-	var zong_hui_fu = shi_ji_shu_liang * hui_fu_zhi
-	# 使用恢复符
-	wu_pin[wu_ming] = you_shu_liang - shi_ji_shu_liang
-	# 如果数量变为0，删除该物品字段
-	if int(wu_pin[wu_ming]) <= 0:
-		wu_pin.erase(wu_ming)
-	data["背包"] = wu_pin
-	json.bao_cun(guan_qia.json_id, data)
-	# 恢复人物血量（使用总恢复量）
-	hui_fu(0, 0, zong_hui_fu, true)
-	# 打印恢复信息
-	日志.打印("英雄使用%d个%s恢复生命：%d" % [shi_ji_shu_liang, wu_ming, zong_hui_fu])
-	# 刷新面板
-	guan_qia.shu_wu_upd.emit()
-	# 刷新道具显示
-	guan_qia.guan_ui.dao_ju_upd()
-	# 如果用完了当前等级的恢复符，取消选定
-	if not wu_pin.has(wu_ming):
-		guan_qia.guan_ui.hui_fu_lv = 0
-		guan_qia.guan_ui.dao_ju_upd()
-
-# 执行恢复符效果
+# 受击后使用恢复符（血量缺口足够时）
 func hui_fu_fu() -> void:
 	# 获取当前选定的恢复符等级
 	var lv = guan_qia.guan_ui.hui_fu_lv
