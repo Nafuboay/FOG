@@ -96,14 +96,14 @@ func C_P() -> void:
 	dB_S = HSlider.new()
 	dB_S.position = Vector2(484,412) # 滑块位置
 	dB_S.size = Vector2(312,20) # 滑块大小
-	# 音量范围
-	dB_S.min_value = -40
-	dB_S.max_value = 12
+	# 音量范围（-80等同静音，0为标准音量）
+	dB_S.min_value = -80
+	dB_S.max_value = 0
 	# 调节步长
 	dB_S.step = 1
 	dB_S.value = dB_ing
-	# 刻度数量
-	dB_S.tick_count = 53
+	# 刻度数量（范围+1）
+	dB_S.tick_count = 81
 	# 连接值变化信号
 	dB_S.connect("value_changed", func(value):
 		dB_ing = int(value)
@@ -149,11 +149,8 @@ func upd() -> void:
 		dB_lbl.text = "分贝：+%d" % dB_ing
 	else:
 		dB_lbl.text = "分贝：%d" % dB_ing
-	# 根据dB值决定显示格式：
-	if dB_ing <= -21:
-		pct_lbl.text = "音量: %.1f%%" % pct
-	else:
-		pct_lbl.text = "音量: %d%%" % int(pct)
+	# 音量百分比
+	pct_lbl.text = "音量: %s" % get_pct_text(pct)
 	# 同步滑块位置
 	if dB_S != null and int(dB_S.value) != dB_ing:
 		dB_S.value = dB_ing
@@ -166,6 +163,22 @@ func upd() -> void:
 # dB值转音量百分比
 func get_pct(db: int) -> float:
 	return pow(10, db / 20.0) * 100
+
+# 百分比转显示文本
+func get_pct_text(pct: float) -> String:
+	# 10%及以上直接取整显示
+	if pct >= 10.0:
+		return "%d%%" % int(pct)
+	# 两位有效数字对应的小数位数：1~10%为1位，0.1~1%为2位，0.01~0.1%为3位……
+	var decimals: int = maxi(1, 1 - floori(log(pct) / log(10.0)))
+	var s: String = "%.*f" % [decimals, pct]
+	# 去掉小数末尾多余的0（1.0→1.、0.10→0.1、0.010→0.01）
+	while s.ends_with("0"):
+		s = s.left(s.length() - 1)
+	# 小数点被露出来时一并去掉（1.→1）
+	if s.ends_with("."):
+		s = s.left(s.length() - 1)
+	return s + "%"
 
 # 静音切换
 func mut_sw() -> void:
@@ -208,7 +221,7 @@ func load_dB() -> void:
 	if json != null:
 		var data = json.du_qu_ty()
 		# 读取保存的分贝值，默认为0
-		dB_ing = int(data.get("分贝", 0))
+		dB_ing = clampi(int(data.get("分贝", 0)), -80, 0)
 		# 读取静音状态（1表示静音，0表示非静音）
 		is_mut = data.get("静音", 0) == 1
 		# 如果是静音状态，设置静音图标
