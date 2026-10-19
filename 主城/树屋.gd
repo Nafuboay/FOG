@@ -10,10 +10,10 @@ var ach: Control # 成就容器
 var tsk_1: Array = [] # 任务项列表
 var ach_1: Array = [] # 成就项列表
 var ach_2: Array = [0, 0, 0] # 当前存档的成就状态
-var ach_data: Array = [ # 成就配置数据: [成就名称,条件类型,条件值,奖励金条数量,条件描述]
-	["不朽者", 0, "破损稻草人", 1, "拥有【破损稻草人】"],
-	["救世主", 1, 31, 10, "击败犽翡及其爪牙"],
-	["饮虹使", 0, "彩虹", 100, "拥有【彩虹】"]
+var ach_data: Array = [ # 成就配置数据: [成就名称,条件类型,条件值,奖励物品名,奖励数量,条件描述]
+	["不朽者", 0, "破损稻草人", "朱雀圣像", 1, "拥有【破损稻草人】"],
+	["救世主", 1, 31, "金条", 10, "击败犽翡及其爪牙"],
+	["饮虹使", 0, "彩虹", "金条", 100, "拥有【彩虹】"]
 ]
 
 func _ready() -> void: # 初始化函数
@@ -229,7 +229,8 @@ func C_ach(idx: int, state: int) -> Control:
 	# 获取成就配置数据
 	var config = ach_data[idx]
 	var ach_name = config[0]
-	var reward = config[3]
+	var jiang_li = config[3]      # 奖励物品名
+	var jiang_li_n = config[4]    # 奖励数量
 	# 创建成就背景（使用签名框背景）
 	var ach_bg = TextureRect.new()
 	ach_bg.texture = load("res://关卡/信息/签名框1.png")
@@ -253,8 +254,8 @@ func C_ach(idx: int, state: int) -> Control:
 		lbl.add_theme_color_override("font_color", Color("000000"))
 	else:
 		# 未完成或可领取状态：显示完成条件和奖励
-		var cond_text = config[4]  # 使用配置中的条件描述
-		lbl.text = "\n%s\n奖励：金条×%d" % [cond_text, reward]
+		var cond_text = config[5]  # 使用配置中的条件描述
+		lbl.text = "\n%s\n奖励：%s×%d" % [cond_text, jiang_li, jiang_li_n]
 		if chk_ach(idx): # 可领取状态：绿色文本
 			lbl.add_theme_color_override("font_color", Color("00ff00"))
 		else: # 未完成状态：黑色文本
@@ -276,15 +277,16 @@ func get_ach_R(idx: int) -> void:
 		return
 	var config = ach_data[idx]
 	var ach_name = config[0]
-	var reward = config[3]
+	var jiang_li = config[3]      # 奖励物品名
+	var jiang_li_n = config[4]    # 奖励数量
 	# 获取存档数据
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json_1 == null:
 		return
 	var data = json_1.du_qu(json_1.id)
-	# 增加金条奖励
+	# 发放奖励物品
 	var bag = data.get("背包", {})
-	bag["金条"] = int(bag.get("金条", 0)) + reward
+	bag[jiang_li] = int(bag.get(jiang_li, 0)) + jiang_li_n
 	data["背包"] = bag
 	# 更新成就状态为已领取
 	ach_2[idx] = 1
@@ -294,7 +296,7 @@ func get_ach_R(idx: int) -> void:
 	# 同步记录到通用存档历史成就
 	json_1.add_ach_ty(idx, ach_data.size())
 	# 显示获得提示
-	提示弹幕.wen_ben("恭喜获得成就《%s》！\n奖励金条×%d！" % [ach_name, reward], 0)
+	提示弹幕.wen_ben("恭喜获得成就《%s》！\n奖励%s×%d！" % [ach_name, jiang_li, jiang_li_n], 0)
 	# 刷新成就列表
 	upd_ach()
 

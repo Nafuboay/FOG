@@ -1,6 +1,10 @@
 class_name 关卡UI extends Node
+# 道具使用处理器脚本
+const 道具使用_SCRIPT = preload("res://关卡/道具使用.gd")
 # 父节点引用（关卡节点）
 var guan_qia: Node
+# 道具使用处理器
+var dao_ju_yong
 # 撤退按钮
 var che_tui: TextureRect
 # 撤退图片引用
@@ -12,12 +16,8 @@ var BB: Control = null
 var YL: Control = null
 # 道具容器
 var dao_ju: Control = null
-# 选定恢复等级（0表示未选定，1-6对应等级）
-var hui_fu_lv: int = 0
 # 恢复符启用中
 var hui_fu_ing: TextureRect = null
-# 启用中的玄武盾符等级（0表示未启用，1-6对应等级）
-var xuan_wu_lv: int = 0
 # 玄武盾符启用中
 var xuan_wu_ing: TextureRect = null
 # 人物按钮
@@ -34,6 +34,8 @@ func _ready() -> void:
 	if not (parent is 关卡基类):
 		parent = parent.get_parent()
 	guan_qia = parent
+	# 创建道具使用处理器
+	dao_ju_yong = 道具使用_SCRIPT.new(guan_qia, guan_qia.zhan_dou)
 	# 实例化背包系统
 	BB = load("res://全局/空间袋.gd").new()
 	BB.name = "背包"
@@ -279,7 +281,7 @@ func dao_ju_upd() -> void:
 					if wu_ming in ["优秀探测器","精良探测器","史诗探测器","神话探测器"]:
 						wu_pin_tu.gui_input.connect(func(event):
 							if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-								Tan_ce_qi(wu_ming)
+								dao_ju_yong.use_tan_ce_qi(wu_ming)
 								get_viewport().gui_release_focus()
 						)
 					# 为恢复符添加点击事件
@@ -287,23 +289,30 @@ func dao_ju_upd() -> void:
 						var lv = int(wu_ming[0])  # 获取恢复符等级
 						wu_pin_tu.gui_input.connect(func(event, wu_lv=lv):
 							if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-								hui_fu_ING(wu_lv)
+								dao_ju_yong.hui_fu_ING(wu_lv)
 								get_viewport().gui_release_focus()
 						)
 						# 记录当前选定恢复符的位置
-						if hui_fu_lv == lv:
+						if dao_ju_yong.hui_fu_lv == lv:
 							hui_fu_xy = Vector2(p_x+idx*p_2, p_y)
 					# 为玄武盾符添加点击事件
 					if wu_ming.find("玄武盾符") != -1:
 						var wv = int(wu_ming[0])  # 获取玄武盾符等级
 						wu_pin_tu.gui_input.connect(func(event, wu_lv=wv):
 							if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-								xuan_wu_ING(wu_lv)
+								dao_ju_yong.xuan_wu_ING(wu_lv)
 								get_viewport().gui_release_focus()
 						)
 						# 记录当前启用玄武盾符的位置
-						if xuan_wu_lv == wv:
+						if dao_ju_yong.xuan_wu_lv == wv:
 							xuan_wu_xy = Vector2(p_x+idx*p_2, p_y)
+					# 为朱雀圣像添加点击事件（仅非战斗时可用）
+					if wu_ming == "朱雀圣像":
+						wu_pin_tu.gui_input.connect(func(event):
+							if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+								dao_ju_yong.use_zhu_que_sheng_xiang()
+								get_viewport().gui_release_focus()
+						)
 					dao_ju.add_child(wu_pin_tu)
 					# 如果数量大于1，显示数量标签
 					if n > 1:
@@ -317,7 +326,7 @@ func dao_ju_upd() -> void:
 						dao_ju.add_child(wu_n)
 					idx += 1
 	# 显示启用中标记
-	if hui_fu_lv > 0 and hui_fu_xy.x >= 0:
+	if dao_ju_yong.hui_fu_lv > 0 and hui_fu_xy.x >= 0:
 		hui_fu_ing = TextureRect.new()
 		hui_fu_ing.texture = load("res://关卡/信息/启用中.png")
 		hui_fu_ing.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -328,7 +337,7 @@ func dao_ju_upd() -> void:
 		hui_fu_ing.mouse_filter = TextureRect.MOUSE_FILTER_IGNORE
 		dao_ju.add_child(hui_fu_ing)
 	# 显示玄武盾符启用中标记
-	if xuan_wu_lv > 0 and xuan_wu_xy.x >= 0:
+	if dao_ju_yong.xuan_wu_lv > 0 and xuan_wu_xy.x >= 0:
 		xuan_wu_ing = TextureRect.new()
 		xuan_wu_ing.texture = load("res://关卡/信息/启用中.png")
 		xuan_wu_ing.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -340,98 +349,6 @@ func dao_ju_upd() -> void:
 		dao_ju.add_child(xuan_wu_ing)
 	# 设置可见性
 	dao_ju.visible = idx > 0
-
-# 恢复符选定处理
-func hui_fu_ING(lv: int) -> void:
-	# 点击同一个恢复符，取消选定
-	if hui_fu_lv == lv:
-		hui_fu_lv = 0
-	else:
-		# 点击不同的恢复符，切换选定
-		hui_fu_lv = lv
-	# 刷新道具显示
-	dao_ju_upd()
-
-# 玄武盾符启用处理
-func xuan_wu_ING(lv: int) -> void:
-	if xuan_wu_lv == lv:
-		xuan_wu_lv = 0
-	else:
-		xuan_wu_lv = lv
-	# 同步防御加成到人物
-	xuan_wu_fy_upd()
-	dao_ju_upd()
-
-# 按启用状态同步玄武盾符的临时防御加成到人物（取消启用/数量用完时清零）
-func xuan_wu_fy_upd() -> void:
-	# 人物无效时跳过
-	if guan_qia.helo == null or not is_instance_valid(guan_qia.helo):
-		return
-	# 未启用时清零
-	if xuan_wu_lv <= 0:
-		guan_qia.helo.fy_add_2 = 0
-	else:
-		# 防御增加量同恢复符对应等级恢复量（复用战斗系统的回血量表）
-		guan_qia.helo.fy_add_2 = guan_qia.zhan_dou.get_hui_fu_zhi(xuan_wu_lv)
-	# 刷新人物面板显示
-	guan_qia.shu_wu_upd.emit()
-
-# 使用探测器
-func Tan_ce_qi(wu_ming: String) -> void:
-	# 获取存档节点
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json == null:
-		return
-	# 读取存档数据
-	var data = json.du_qu(guan_qia.json_id)
-	# 获取背包物品
-	var wu_pin = data.get("背包", {})
-	# 检查道具数量
-	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
-		return
-	# 探测器探测半径配置{名称: 半径}，实际边长=半径×2+1
-	var fan_wei_biao = {"优秀探测器": 1, "精良探测器": 2, "史诗探测器": 4, "神话探测器": 49}
-	# 获取当前探测器的探测半径（神话半径49，超出地图边界遍历时自动截断，等同探明全图）
-	var fan_wei = int(fan_wei_biao.get(wu_ming, -1))
-	# 非探测器物品直接返回
-	if fan_wei < 0:
-		return
-	# 获取人物当前位置（转换为0开始索引）
-	var helo_x = guan_qia.helo_x - 1
-	var helo_y = guan_qia.helo_y - 1
-	# 检查范围内是否有未翻开的格子
-	var you_wei_fan_kai = false
-	for y in range(max(0, helo_y - fan_wei), min(guan_qia.GZ_y, helo_y + fan_wei + 1)):
-		for x in range(max(0, helo_x - fan_wei), min(guan_qia.GZ_x, helo_x + fan_wei + 1)):
-			if not guan_qia.GZ[y][x]["fan_kai"]:
-				you_wei_fan_kai = true
-				break
-		if you_wei_fan_kai:
-			break
-	# 如果范围内所有格子都已翻开，不使用探测器并提示
-	if not you_wei_fan_kai:
-			提示弹幕.wen_ben("周围已经没有未探明的区域！", 0)
-			return
-	# 减少道具数量
-	wu_pin[wu_ming] = int(wu_pin[wu_ming]) - 1
-	# 如果数量变为0，删除该物品字段
-	if int(wu_pin[wu_ming]) <= 0:
-		wu_pin.erase(wu_ming)
-	data["背包"] = wu_pin
-	json.bao_cun(guan_qia.json_id, data)
-	# 遍历范围内的格子并翻开（批量翻开时关闭每格自动排雷/和弦，避免重复全图扫描造成卡顿）
-	for y in range(max(0, helo_y - fan_wei), min(guan_qia.GZ_y, helo_y + fan_wei + 1)):
-		for x in range(max(0, helo_x - fan_wei), min(guan_qia.GZ_x, helo_x + fan_wei + 1)):
-			# 如果格子未翻开，则翻开（空白格的洪水填充仍会立即执行）
-			if not guan_qia.GZ[y][x]["fan_kai"]:
-				guan_qia.fan_kai.kai_ge_zi(x, y, false, false)
-	# 全部翻完后统一执行一次自动排雷与和弦收敛，结果与逐格翻开完全一致
-	guan_qia.fan_kai.yi_jian_kai_ping()
-	# 刷新道具显示
-	dao_ju_upd()
-	# 显示提示弹幕（显示探测器配置的名义边长）
-	var shi_ji_fan_wei = fan_wei * 2 + 1
-	提示弹幕.wen_ben("使用【" + wu_ming + "】探明了" + str(shi_ji_fan_wei) + "×" + str(shi_ji_fan_wei) + "及周边区域！", 0)
 
 # 重新挑战按钮点击事件
 func on_again() -> void:

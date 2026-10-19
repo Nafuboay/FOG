@@ -217,9 +217,17 @@ func rst_zx_lv(guan_kia_id: int) -> void:
 func get_dao_ju_xz() -> Array:
 	get_dang_wei()
 	var data = du_qu(id)
-	# 字段不存在或为空数组=从未主动选择/主动全取消，均走默认顺序（最多携带前10个，防止候选池新增道具撑爆道具栏）
+	# 字段不存在或为空数组=从未主动选择/主动全取消，均走默认顺序
+	# 默认顺序：按候选池顺序取玩家当前拥有（背包数量>0）的道具，最多10种
 	if not data.has("道具选择") or data.get("道具选择", []).is_empty():
-		return 物品信息.guan_kia_dao_ju.slice(0, 10)
+		var bag = data.get("背包", {})
+		var mo_ren: Array = []
+		for wu_ming in 物品信息.guan_kia_dao_ju:
+			if int(bag.get(wu_ming, 0)) > 0:
+				mo_ren.append(wu_ming)
+				if mo_ren.size() >= 10:
+					break
+		return mo_ren
 	# 字段存在且有内容：过滤掉已不在可用道具表中的项、去重、截断10个
 	var jie_guo: Array = []
 	for wu_ming in data.get("道具选择", []):

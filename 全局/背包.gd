@@ -222,8 +222,8 @@ func get_cao_zuo_png0() -> Texture2D:
 	return null
 func get_cao_zuo_png1() -> Texture2D:
 	return null
-# 是否显示操作按钮
-func yao_xian_shi_cao_zuo_btn() -> bool:
+# 是否显示操作按钮（wu_ming为当前选中物品名，子类可据此按物品判断）
+func yao_xian_shi_cao_zuo_btn(_wu_ming: String) -> bool:
 	return false
 # 显示物品信息面板
 func wu_pin_XX(wu_ming: String) -> void:
@@ -256,9 +256,16 @@ func wu_pin_XX(wu_ming: String) -> void:
 	# 获取售价（调用虚方法）
 	var shou_jia_zi_duan = get_shou_jia_zi_duan()
 	var shou_jia = XX.get(shou_jia_zi_duan, 0)
-	var text = "\n  【物品】%s\n  【获取】%s\n  【用途】%s\n  【售价】%d银币" % [
-		wu_ming, XX.get("获取", ""), XX.get("用途", ""), shou_jia
-	]
+	# 不可出售的物品不显示售价行（价格与出售相关内容一并去掉）
+	var text = ""
+	if 物品信息.shi_fou_ke_chu_shou(wu_ming):
+		text = "\n  【物品】%s\n  【获取】%s\n  【用途】%s\n  【售价】%d银币" % [
+			wu_ming, XX.get("获取", ""), XX.get("用途", ""), shou_jia
+		]
+	else:
+		text = "\n  【物品】%s\n  【获取】%s\n  【用途】%s" % [
+			wu_ming, XX.get("获取", ""), XX.get("用途", "")
+		]
 	# 创建文本标签
 	var label = Label.new()
 	label.text = text
@@ -270,7 +277,7 @@ func wu_pin_XX(wu_ming: String) -> void:
 		label.add_theme_font_override("font", font_file)
 	wu_pin_kuai.add_child(label)
 	# 判断是否显示操作按钮（调用虚方法）
-	if yao_xian_shi_cao_zuo_btn():
+	if yao_xian_shi_cao_zuo_btn(wu_ming):
 		# 创建操作按钮容器（水平排列3个按钮）
 		create_cao_zuo_buttons()
 

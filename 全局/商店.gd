@@ -118,7 +118,7 @@ func get_cao_zuo_png0() -> Texture2D:
 func get_cao_zuo_png1() -> Texture2D:
 	return cao_zuo_png1
 # 是否显示购买按钮（商店始终显示）
-func yao_xian_shi_cao_zuo_btn() -> bool:
+func yao_xian_shi_cao_zuo_btn(_wu_ming: String) -> bool:
 	return true
 
 # 获取购买按钮文本（重写基类）

@@ -163,9 +163,9 @@ func get_cao_zuo_png0() -> Texture2D:
 	return cao_zuo_png0
 func get_cao_zuo_png1() -> Texture2D:
 	return cao_zuo_png1
-# 是否显示出售按钮（主城场景显示）
-func yao_xian_shi_cao_zuo_btn() -> bool:
-	return is_zhu
+# 是否显示出售按钮（主城场景显示，且该物品可出售）
+func yao_xian_shi_cao_zuo_btn(wu_ming: String) -> bool:
+	return is_zhu and 物品信息.shi_fou_ke_chu_shou(wu_ming)
 
 # 获取出售按钮文本（重写基类）
 func get_cao_zuo_texts() -> Array:

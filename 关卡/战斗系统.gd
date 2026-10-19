@@ -43,8 +43,6 @@ var fan2: bool = false
 var fan3: bool = false
 # 是否找到BOSS战斗位置的标记
 var is_BOSS_xy: bool = false
-# 各等级恢复符的单个回血量（下标0未使用，1-6对应1-6级恢复符）
-const hui_fu_zhi_biao: Array[int] = [0, 1, 3, 7, 20, 55, 148]
 
 # 获取父节点，如果父节点是容器则继续往上找真正的关卡节点
 func _ready() -> void:
@@ -497,8 +495,8 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 	日志.打印("%.2f秒 怪物造成伤害：%d=%d×%d÷%d÷max(%d÷%d,1)÷max(%.2f,1)"%[shi_jian,ji_shu,guai_wu_ll,guai_wu_ct,helo_fy,helo_lv,guai_wu_lv,zhan_dou_ming])
 	# 使用统一函数处理伤害（包含血条更新和飘字显示）
 	shang_hai(0, 0, ji_shu, true)
-	# 受到常规攻击，消耗1个启用中的玄武盾符（流血/荆棘反伤等真伤不经过本函数故不消耗）
-	xuan_wu_kou_chu()
+	# 受到常规攻击，消耗1个启用中的玄武盾符（流血/荆棘反伤等真伤不经过本函数故不消耗；逻辑在道具使用.gd）
+	guan_qia.guan_ui.dao_ju_yong.xuan_wu_kou_chu()
 	# 发出伤害信号刷新面板
 	guan_qia.shu_wu_upd.emit()
 	# BOSS攻击类技能（葵花王向阳/双狼王流血）
@@ -519,98 +517,7 @@ func guai_wu_shang_hai_1(ji_shu: int) -> void:
 		await get_tree().create_timer(0.4).timeout
 		# 检查战斗是否还在进行中
 		if zhan_dou_ing:
-			hui_fu_fu()
-
-# 获取指定等级恢复符的单个回血量
-func get_hui_fu_zhi(lv: int) -> int:
-	# 等级超出1-6范围时返回0
-	if lv < 1 or lv > hui_fu_zhi_biao.size() - 1:
-		return 0
-	return hui_fu_zhi_biao[lv]
-
-# 受到常规攻击后消耗1个启用中的玄武盾符（数量用完自动取消启用并清空防御加成）
-func xuan_wu_kou_chu() -> void:
-	# 未启用玄武盾符时跳过
-	var lv = guan_qia.guan_ui.xuan_wu_lv
-	if lv <= 0:
-		return
-	# 获取存档节点
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json == null:
-		return
-	# 读取存档数据
-	var data = json.du_qu(guan_qia.json_id)
-	# 获取背包物品
-	var wu_pin = data.get("背包", {})
-	# 检查玄武盾符数量
-	var wu_ming = str(lv) + "级玄武盾符"
-	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
-		# 数量异常时兜底取消启用并清空防御
-		guan_qia.guan_ui.xuan_wu_lv = 0
-		guan_qia.guan_ui.xuan_wu_fy_upd()
-		guan_qia.guan_ui.dao_ju_upd()
-		return
-	# 消耗1个玄武盾符
-	wu_pin[wu_ming] = int(wu_pin[wu_ming]) - 1
-	# 数量变为0时删除该物品字段，并取消启用（清空防御加成）
-	if int(wu_pin[wu_ming]) <= 0:
-		wu_pin.erase(wu_ming)
-		guan_qia.guan_ui.xuan_wu_lv = 0
-		guan_qia.guan_ui.xuan_wu_fy_upd()
-	# 保存存档
-	data["背包"] = wu_pin
-	json.bao_cun(guan_qia.json_id, data)
-	# 刷新道具显示
-	guan_qia.guan_ui.dao_ju_upd()
-
-# 受击后使用恢复符（血量缺口足够时）
-func hui_fu_fu() -> void:
-	# 获取当前选定的恢复符等级
-	var lv = guan_qia.guan_ui.hui_fu_lv
-	if lv <= 0:
-		return
-	# 获取存档节点
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json == null:
-		return
-	# 读取存档数据
-	var data = json.du_qu(guan_qia.json_id)
-	# 获取背包物品
-	var wu_pin = data.get("背包", {})
-	# 检查恢复符数量
-	var wu_ming = str(lv) + "级恢复符"
-	if not wu_pin.has(wu_ming) or int(wu_pin[wu_ming]) <= 0:
-		return
-	# 获取恢复符回血量
-	var hui_fu_zhi = get_hui_fu_zhi(lv)
-	# 等级无效时不使用恢复符
-	if hui_fu_zhi <= 0:
-		return
-	# 检查是否值得使用恢复符
-	if (guan_qia.helo_shp - guan_qia.helo_hp) < hui_fu_zhi:
-		return
-	# 恢复
-	var shi_ji_hui_fu = hui_fu_zhi
-	# 使用恢复符
-	wu_pin[wu_ming] = int(wu_pin[wu_ming]) - 1
-	# 如果数量变为0，删除该物品字段
-	if int(wu_pin[wu_ming]) <= 0:
-		wu_pin.erase(wu_ming)
-	data["背包"] = wu_pin
-	json.bao_cun(guan_qia.json_id, data)
-	# 恢复人物血量
-	hui_fu(0, 0, shi_ji_hui_fu, true)
-	# 打印恢复信息
-	var shi_jian = (Time.get_ticks_msec() - zhan_dou_time) / 1000.0
-	日志.打印("%.2f秒 英雄恢复生命：%d" % [shi_jian, shi_ji_hui_fu])
-	# 刷新面板
-	guan_qia.shu_wu_upd.emit()
-	# 刷新道具显示
-	guan_qia.guan_ui.dao_ju_upd()
-	# 如果用完了当前等级的恢复符，取消选定
-	if not wu_pin.has(wu_ming):
-		guan_qia.guan_ui.hui_fu_lv = 0
-		guan_qia.guan_ui.dao_ju_upd()
+			guan_qia.guan_ui.dao_ju_yong.hui_fu_fu()
 
 # 开始撤退
 func che_tui_0() -> void:
