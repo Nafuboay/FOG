@@ -244,7 +244,7 @@ func bao_cun_dao_ju_xz(xz: Array) -> void:
 	data["道具选择"] = xz
 	bao_cun(id, data)
 
-# 获取存档的模式（0=主线，1=诛邪）
+# 获取存档的模式（0=主线，1=诛邪，2=支线）
 func get_mode() -> int:
 	get_dang_wei()
 	var data = du_qu(id)

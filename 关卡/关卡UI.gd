@@ -109,13 +109,15 @@ func C_guan_kia_lbl() -> void:
 	# 创建Label对象
 	guan_qia.guan_kia_lbl = Label.new()
 	guan_qia.guan_kia_lbl.size = Vector2(166, 32)
-	# 根据模式设置标题：诛邪为「诛邪·m级」，主线为「主线·n关」
+	# 根据模式设置标题：诛邪为「诛邪·m级」，支线为「支线·n关」，主线为「主线·n关」
 	var cur_mode = 0
 	if has_node("/root/数据管理"):
 		cur_mode = get_node("/root/数据管理").mode
 	var zx_lv = guan_qia.get("zx_lv")
 	if cur_mode == 1 and zx_lv != null:
 		guan_qia.guan_kia_lbl.text = "诛邪·" + str(int(zx_lv)) + "级"
+	elif cur_mode == 2:
+		guan_qia.guan_kia_lbl.text = "支线·" + str(guan_qia.guan_kia_id + 1) + "关"
 	else:
 		guan_qia.guan_kia_lbl.text = "主线·" + str(guan_qia.guan_kia_id + 1) + "关"
 	# 设置文字颜色为纯黑色
@@ -442,6 +444,52 @@ func C_zx_sheng_li() -> void:
 func on_zx_xia_yi_ji() -> void:
 	guan_qia._zhu_xie_win()
 
+# 创建支线模式胜利界面：结算掉落/经验/银币并推进支线进度
+# 与主线C_sheng_li的区别：进度按「支线·n关（30+n）」推进，经验用支线倍率（普通怪×27、BOSS×512），下一关回支线场景
+func C_zhi_xian_sheng_li() -> void:
+	# 更新存档进度：只有当前这一关（支线·n关 = 进度-30）通关才推进，回头重打不推进
+	var json = get_node("/root/游戏存档")
+	var data = json.du_qu(guan_qia.json_id)
+	var stg = round(data.get("进度", 1))
+	if 30 + guan_qia.guan_kia_id + 1 == stg:
+		data["进度"] = stg + 1
+	# 计算并添加经验（支线：普通怪×27，BOSS×512）
+	var exp_add = ji_suan_exp(27.0, 512.0)
+	var exp_0 = data.get("经验", 0)
+	data["经验"] = exp_0 + exp_add
+	# 调用游戏存档的升级检查函数
+	var old_lv = int(data.get("等级", 1))
+	var new_lv = json.chk_lv(data)
+	# 同步背包物品到存档
+	var wu_pin_ls = guan_qia.BB_ls
+	if not wu_pin_ls.is_empty():
+		var wu_pin = data.get("背包", {})
+		for wu_ming in wu_pin_ls:
+			var n = wu_pin_ls[wu_ming]
+			if wu_pin.has(wu_ming):
+				wu_pin[wu_ming] += n
+			else:
+				wu_pin[wu_ming] = n
+		data["背包"] = wu_pin
+	# 保存银币数据
+	var S = data.get("银币", 0)
+	data["银币"] = S
+	json.bao_cun(guan_qia.json_id, data)
+	if new_lv <= old_lv:
+		提示弹幕.wen_ben("获得" + str(exp_add) + "经验。", 0)
+	# 支线最后一关不显示下一关按钮
+	var end = 关卡数据.guan_kia_n()
+	var xian_shi_an_niu = guan_qia.guan_kia_id < end - 1
+	_C_sheng_li_jie_mian(on_zhi_xian_xia_yi_guan, xian_shi_an_niu)
+
+# 支线模式下一关按钮点击事件：进入支线下一关（同一关地图）
+func on_zhi_xian_xia_yi_guan() -> void:
+	# 将下一关ID保存到数据管理节点
+	if has_node("/root/数据管理"):
+		get_node("/root/数据管理").stg = guan_qia.guan_kia_id + 1
+	# 切换到支线场景
+	get_tree().change_scene_to_file("res://关卡/支线.tscn")
+
 # 创建胜利界面
 func C_sheng_li() -> void:
 	# 更新存档进度
@@ -488,7 +536,9 @@ func on_xia_yi_guan() -> void:
 	get_tree().change_scene_to_file("res://关卡/关卡.tscn")
 
 # 根据关卡初始怪物数据计算获得的经验
-func ji_suan_exp() -> int:
+# pu_tong_bei: 普通怪物经验倍率（主线1，支线27）
+# boss_bei: BOSS经验倍率（主线27，支线512）
+func ji_suan_exp(pu_tong_bei: float = 1.0, boss_bei: float = 27.0) -> int:
 	# 获取当前关卡数据
 	var guan_kia = 关卡数据.guan_kia(guan_qia.guan_kia_id)
 	# 获取怪物类型列表和数量列表
@@ -501,15 +551,15 @@ func ji_suan_exp() -> int:
 		var guai_wu_ming = guai_wu[i]
 		var n = guai_wu_n[i] if i < guai_wu_n.size() else 0
 		var exp_1 = get_exp(guai_wu_ming)
-		exp_n += exp_1 * n
+		exp_n += int(exp_1 * n * pu_tong_bei)
 	# 获取BOSS列表和数量
 	var boss_list = guan_kia.get("BOSS", [])
 	var boss_n = guan_kia.get("BOSS_n", [])
-	# 遍历BOSS计算经验（乘以243倍）
+	# 遍历BOSS计算经验
 	for i in range(boss_list.size()):
 		var boss_ming = boss_list[i]
 		var n = boss_n[i] if i < boss_n.size() else 0
-		var exp_1 = get_exp(boss_ming) * 243
+		var exp_1 = int(get_exp(boss_ming) * boss_bei)
 		exp_n += exp_1 * n
 	return exp_n
 

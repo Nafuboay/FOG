@@ -339,7 +339,8 @@ func helo_move(x: int, y: int) -> void:
 	# 血条位置（血条显示逻辑在血条飘字.gd）
 	if guan_qia.zhan_dou.xue_tiao_qi != null and guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0 != null:
 		guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0.position = Vector2(GZ_z.x - guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0.size.x / 2, GZ_z.y - 74)
-		guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
+		# 血条层级 = 人物层级 + 1，确保角色变大时血条仍显示在角色之上
+		guan_qia.zhan_dou.xue_tiao_qi.xue_tiao_0.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y + 1
 	# 人物层级
 	guan_qia.helo.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
 	# 重新播放待机动画

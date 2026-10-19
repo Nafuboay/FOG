@@ -59,8 +59,8 @@ func C_xue_tiao_1() -> void:
 	var helo_y0 = guan_qia.helo_y - 1
 	var GZ_z = guan_qia.GZ_zhong(helo_x0, helo_y0)
 	xue_tiao_0.position = Vector2(GZ_z.x-xue_tiao_0.size.x/2,GZ_z.y-74)
-	# 设置血条层级为人物所在格的层级
-	xue_tiao_0.z_index = (guan_qia.GZ_x - helo_x0) + helo_y0 * guan_qia.GZ_y
+	# 血条层级 = 人物所在格层级 + 1，确保角色变大时血条仍显示在角色之上
+	xue_tiao_0.z_index = (guan_qia.GZ_x - helo_x0) + helo_y0 * guan_qia.GZ_y + 1
 	# 创建满的血条显示节点
 	xue_tiao_2 = AtlasTexture.new()
 	xue_tiao_2.atlas = xue_tiao  # 原始血条图片
@@ -140,8 +140,12 @@ func xue_tiao_upd_2(x: int, y: int) -> void:
 		xue_tiao_3.position = Vector2(GZ_z.x-17,GZ_z.y-76)
 	else:
 		xue_tiao_3.position = Vector2(GZ_z.x-17.5,GZ_z.y-74)
-	# 设置血条层级（与怪物层级一致，确保显示在怪物上方）
-	xue_tiao_3.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y
+	# 血条层级 = 怪物所在格层级 + 1（BOSS自身层级为(y+1)*GZ_y，需同步+1）
+	# 确保角色（尤其大尺寸BOSS）变大时血条仍显示在角色之上
+	if is_boss:
+		xue_tiao_3.z_index = (guan_qia.GZ_x - x) + (y + 1) * guan_qia.GZ_y + 1
+	else:
+		xue_tiao_3.z_index = (guan_qia.GZ_x - x) + y * guan_qia.GZ_y + 1
 	# 获取怪物的最大HP和当前HP
 	var shp = GZ1.get("shp", 1)  # 最大HP
 	var hp = GZ1.get("hp", 1)    # 当前HP

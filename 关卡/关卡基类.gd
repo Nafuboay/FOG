@@ -117,6 +117,21 @@ var BOSS: Array = [] # BOSS类型列表
 var json_id: int = 0 # 当前使用的存档槽位
 # 血量倍数
 var xue = 1
+# ---- 模式参数（默认值=主线模式；支线等模式场景在_ready中覆盖）----
+# 排雷怪物（翻开时自动出现的小怪）等级/生命/力量/防御/穿透倍率
+var pai_lei_bei: int = 1
+# 踩雷怪物（踩到触发的那只）等级/生命/力量/防御/穿透倍率
+var cai_lei_bei: int = 2
+# 排雷怪物显示大小（缩放比例）
+var pai_lei_scale: float = 0.5
+# 踩雷怪物显示大小（缩放比例）
+var cai_lei_scale: float = 1.0
+# BOSS等级倍率（BOSS等级 = 基础LV × 该值）
+var BOSS_lv_bei: int = 2
+# BOSS血量系数（BOSS生命 = 基础HP × 该系数 × BOSS等级 × 血量倍数xue）
+var BOSS_xue_bei: float = 7.59375
+# BOSS显示大小（缩放比例）
+var BOSS_scale: float = 1.5
 
 # 生命周期函数
 func _ready() -> void:
@@ -211,14 +226,18 @@ func du_qu_guan_kia() -> void:
 	BOSS = guan_kia.get("BOSS", [])
 	BOSS_n = guan_kia.get("BOSS_n", [0])
 	# 根据关卡显示提示弹幕
-	if guan_kia_id == 0:
-		提示弹幕.wen_ben("花精灵·沙华：\"英雄，快去击退那些被邪力污染的怪物吧！\"",1)
-	elif guan_kia_id == 1:
-		提示弹幕.wen_ben("花精灵·沙华：\"迷雾就是那些魔法树带来的，看起来被邪力影响很深！\"",1)
-	elif guan_kia_id == 23:
-		提示弹幕.wen_ben("花精灵·沙华：\"荆冠是早期被邪力影响的怪物，非常强大！\"",1)
-	elif guan_kia_id == 29:
-		提示弹幕.wen_ben("花精灵·沙华：\"犽翡是邪力最初的载体，击败他或许一切就结束了！\"",1)
+	var cur_mode = 0
+	if has_node("/root/数据管理"):
+		cur_mode = get_node("/root/数据管理").mode
+	if cur_mode == 0:
+		if guan_kia_id == 0:
+			提示弹幕.wen_ben("花精灵·沙华：\"英雄，快去击退那些被邪力污染的怪物吧！\"",1)
+		elif guan_kia_id == 1:
+			提示弹幕.wen_ben("花精灵·沙华：\"迷雾就是那些魔法树带来的，看起来被邪力影响很深！\"",1)
+		elif guan_kia_id == 23:
+			提示弹幕.wen_ben("花精灵·沙华：\"荆冠是早期被邪力影响的怪物，非常强大！\"",1)
+		elif guan_kia_id == 29:
+			提示弹幕.wen_ben("花精灵·沙华：\"犽翡是邪力最初的载体，击败他或许一切就结束了！\"",1)
 
 # 创建网格
 func C_GZ() -> void:
@@ -583,11 +602,11 @@ func guai_wu_xian_shi(x: int, y: int, cai: bool = false) -> void:
 	guai_wu1.set_meta("grid_y", y)
 	# 存储怪物名称到GZ数据（直接用关卡数据里的名字）
 	GZ[y][x]["名字"] = guai_wu_id
-	# 从掉落物脚本获取怪物描述
-	GZ[y][x]["miao_shu"] = 掉落物.guai_wu_miao_shu.get(guai_wu_id, "")
-	# 设置怪物属性：大怪物×2，小怪物直接调用脚本中的初始值
-	var shuang = 2 if cai else 1
+	# 设置怪物属性：踩雷怪物按踩雷倍率，排雷怪物按排雷倍率（主线为2/1）
+	var shuang = cai_lei_bei if cai else pai_lei_bei
 	GZ[y][x]["lv"] = guai_wu1.LV * shuang
+	# 从掉落物脚本生成怪物描述（1倍值 × 当前模式的判定次数倍率）
+	GZ[y][x]["miao_shu"] = 掉落物.diao_luo_miao_shu(self, guai_wu_id, false, GZ[y][x]["lv"])
 	# 魔法树加成
 	var add = 0
 	add = fan_kai.zhang_ai_n9(x, y)
@@ -603,18 +622,14 @@ func guai_wu_xian_shi(x: int, y: int, cai: bool = false) -> void:
 	GZ[y][x]["ct_bian"] = add
 	# 计算格子中心位置
 	var GZ_z = GZ_zhong(x, y)
-	# 缩放后偏移也要乘以缩放比例
-	var suo_fang = 0.5
+	# 缩放后偏移也要乘以缩放比例（排雷/踩雷使用各自模式参数）
+	var suo_fang = cai_lei_scale if cai else pai_lei_scale
 	var pian_yi_x1 = role_pian_yi_x * suo_fang
 	var pian_yi_y1 = role_pian_yi_y * suo_fang
-	if cai:
-		suo_fang = 1.0
-		pian_yi_x1 = role_pian_yi_x * suo_fang
-		pian_yi_y1 = role_pian_yi_y * suo_fang
 	guai_wu1.position = Vector2(GZ_z.x - pian_yi_x1, GZ_z.y - pian_yi_y1)
 	# 设置层级：左边比右边高，下边比上边高，左下角最高
 	guai_wu1.z_index = (GZ_x - x) + y * GZ_y
-	# 排雷0.5倍，踩雷1倍（先设置位置，缩放会改变位置）
+	# 排雷与踩雷使用各自的显示大小（先设置位置，缩放会改变位置）
 	guai_wu1.scale = Vector2(suo_fang, suo_fang)
 	# 添加到游戏容器
 	rong_qi.add_child(guai_wu1)
@@ -641,12 +656,12 @@ func BOSS_xian_shi() -> void:
 		# 存储网格坐标到怪物节点元数据
 		guai_wu1.set_meta("grid_x", x)
 		guai_wu1.set_meta("grid_y", y)
-		# 计算BOSS属性
-		var boss_lv = guai_wu1.LV * 2
-		var boss_shp = int(round(guai_wu1.HP * 15.1875)) * xue
-		var boss_ll = guai_wu1.LL * 2
-		var boss_fy = guai_wu1.FY * 2
-		var boss_ct = guai_wu1.CT * 2
+		# 计算BOSS属性（生命 = 基础HP × 血量系数 × BOSS等级 × 血量倍数；三围 = 基础值 × BOSS等级倍率）
+		var boss_lv = guai_wu1.LV * BOSS_lv_bei
+		var boss_shp = int(round(guai_wu1.HP * BOSS_xue_bei * boss_lv)) * xue
+		var boss_ll = guai_wu1.LL * BOSS_lv_bei
+		var boss_fy = guai_wu1.FY * BOSS_lv_bei
+		var boss_ct = guai_wu1.CT * BOSS_lv_bei
 		var shp_1 = boss_shp # 记录基础生命值（用于热血技能动态计算）
 		if guai_wu_id == "野猪王·冕笑":
 			var shp_add = (guai_wu_xian - 1) * boss_lv
@@ -655,7 +670,7 @@ func BOSS_xian_shi() -> void:
 		for by in range(y, y + 2):
 			for bx in range(x, x + 2):
 				GZ[by][bx]["名字"] = guai_wu_id
-				GZ[by][bx]["miao_shu"] = 掉落物.guai_wu_miao_shu.get(guai_wu_id, "")
+				GZ[by][bx]["miao_shu"] = 掉落物.diao_luo_miao_shu(self, guai_wu_id, true, boss_lv)
 				GZ[by][bx]["lv"] = boss_lv
 				GZ[by][bx]["shp_1"] = shp_1  # 存储基础生命值
 				GZ[by][bx]["shp"] = boss_shp
@@ -671,8 +686,8 @@ func BOSS_xian_shi() -> void:
 				特殊技能_SCRIPT.BOSS_ji_neng_chu_shi(GZ[by][bx], guai_wu_id, boss_lv)
 		# 计算显示位置（格子中心）
 		var GZ_z = GZ_zhong(x, y)
-		# 缩放比例1.5倍（比大怪物更大）
-		var suo_fang = 1.5
+		# 缩放比例（主线1.5倍，比大怪物更大；支线等模式由成员变量覆盖）
+		var suo_fang = BOSS_scale
 		# 计算偏移量（根据缩放比例调整）
 		var pian_yi_x1 = role_pian_yi_x*suo_fang-18
 		var pian_yi_y1 = role_pian_yi_y*suo_fang-18

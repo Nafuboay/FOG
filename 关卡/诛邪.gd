@@ -223,6 +223,8 @@ func _zhu_xie_guai_wu() -> void:
 	GZ[monster_y][monster_x]["ll"] = guai_wu1.LL * zx_lv
 	GZ[monster_y][monster_x]["fy"] = guai_wu1.FY * zx_lv
 	GZ[monster_y][monster_x]["ct"] = guai_wu1.CT * zx_lv
+	# 怪物描述（1倍值 × 诛邪判定次数=怪物等级³）
+	GZ[monster_y][monster_x]["miao_shu"] = 掉落物.diao_luo_miao_shu(self, zx_monster_name, false, GZ[monster_y][monster_x]["lv"])
 	# 属性变化值初始为0（诛邪无魔法树加成，重甲技能初始化会在下方累加）
 	GZ[monster_y][monster_x]["ll_bian"] = 0
 	GZ[monster_y][monster_x]["fy_bian"] = 0

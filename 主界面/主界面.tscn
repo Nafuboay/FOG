@@ -28,10 +28,6 @@ texture_margin_bottom = 10.0
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_cne6s"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_cw6yo"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_36hkx"]
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_idle6"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_idle7"]
@@ -49,6 +45,10 @@ texture_margin_bottom = 10.0
 [sub_resource type="SpriteFrames" id="SpriteFrames_idle13"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_idle14"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cw6yo"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_36hkx"]
 
 [node name="开始游戏" type="Node2D"]
 script = ExtResource("3")
@@ -116,72 +116,54 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮6" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮7" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮8" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮9" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮10" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮11" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮12" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮13" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = SubResource("StyleBoxTexture_bei_jing")
 
 [node name="存档按钮14" type="Button" parent="."]
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 128.0
 offset_bottom = 128.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)

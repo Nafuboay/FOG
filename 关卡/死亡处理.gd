@@ -126,6 +126,9 @@ func guai_wu_die() -> void:
 		if guan_qia.has_method("_zhu_xie_win"):
 			if guan_qia.guan_ui != null:
 				guan_qia.guan_ui.C_zx_sheng_li()
+		# 支线模式：结算掉落/经验/银币并推进支线进度（内部完成结算）
+		elif guan_qia.has_method("_zhi_xian_win"):
+			guan_qia._zhi_xian_win()
 		# 主线模式：显示胜利UI（内部完成进度/经验/背包结算）
 		elif guan_qia.guan_ui != null:
 			guan_qia.guan_ui.C_sheng_li()

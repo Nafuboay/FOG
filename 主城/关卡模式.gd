@@ -1,11 +1,14 @@
 extends TextureRect # 关卡模式切换按钮
-enum Mode { ZHU_XIAN, ZHU_XIE }
+# 模式循环顺序（对应数据管理.mode：0=主线, 1=诛邪, 2=支线）
+const MODE_XU_LIE: Array[int] = [0, 2, 1]
 const TEX_MAIN_NORMAL: Texture2D = preload("res://主城/图片/主线1.png")    # 主线普通状态
 const TEX_MAIN_HOVER: Texture2D = preload("res://主城/图片/主线2.png")      # 主线鼠标悬浮
+const TEX_ZHI_XIAN_NORMAL: Texture2D = preload("res://主城/图片/支线1.png")    # 支线普通状态
+const TEX_ZHI_XIAN_HOVER: Texture2D = preload("res://主城/图片/支线2.png")      # 支线鼠标悬浮
 const TEX_ZHUXIE_NORMAL: Texture2D = preload("res://主城/图片/诛邪1.png")    # 诛邪普通状态
 const TEX_ZHUXIE_HOVER: Texture2D = preload("res://主城/图片/诛邪2.png")    # 诛邪鼠标悬浮
-# 当前选中的游戏模式，初始默认主线
-var current_mode: Mode = Mode.ZHU_XIAN
+# 当前选中的游戏模式（0=主线, 1=诛邪, 2=支线），初始默认主线
+var current_mode: int = 0
 # 标记鼠标是否悬浮在按钮上
 var is_hover: bool = false
 
@@ -20,13 +23,14 @@ func _ready() -> void:
 		get_tree().root.add_child(json)
 	json.get_dang_wei()
 	var saved_mode = json.get_mode()
-	if saved_mode == 1:
-		current_mode = Mode.ZHU_XIE
+	# 兼容旧存档：只识别 0/1/2 三种模式，其他值回退主线
+	if saved_mode in MODE_XU_LIE:
+		current_mode = saved_mode
 	else:
-		current_mode = Mode.ZHU_XIAN
+		current_mode = 0
 	# 同步到数据管理节点
 	if has_node("/root/数据管理"):
-		get_node("/root/数据管理").mode = saved_mode
+		get_node("/root/数据管理").mode = current_mode
 	# 鼠标进入按钮区域，开启悬浮标记，刷新按钮贴图
 	mouse_entered.connect(func(): is_hover = true; _upd())
 	# 鼠标离开按钮区域，关闭悬浮标记，刷新按钮贴图
@@ -47,8 +51,9 @@ func _ready() -> void:
 func _on_click(event: InputEvent) -> void:
 	# 判断：鼠标左键按下
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		# 模式循环切换：主线 ↔ 诛邪
-		current_mode = Mode.ZHU_XIE if current_mode == Mode.ZHU_XIAN else Mode.ZHU_XIAN
+		# 模式循环切换：主线 → 支线 → 诛邪 → 主线
+		var idx = MODE_XU_LIE.find(current_mode)
+		current_mode = MODE_XU_LIE[(idx + 1) % MODE_XU_LIE.size()]
 		# 通知数据管理节点模式变化
 		if has_node("/root/数据管理"):
 			get_node("/root/数据管理").mode = current_mode
@@ -73,7 +78,7 @@ func _sync_mode() -> void:
 
 # 重置按钮状态：恢复默认主线模式，清除悬浮标记
 func _reset() -> void:
-	current_mode = Mode.ZHU_XIAN
+	current_mode = 0
 	is_hover = false
 	# 通知数据管理节点模式变化
 	if has_node("/root/数据管理"):
@@ -83,9 +88,12 @@ func _reset() -> void:
 # 更新按钮贴图：根据【当前模式】+【是否悬浮】赋值对应预加载纹理
 func _upd() -> void:
 	var target_tex: Texture2D
-	if current_mode == Mode.ZHU_XIAN:
+	if current_mode == 0:
 		# 主线模式：悬浮取主线2，普通状态取主线1
 		target_tex = TEX_MAIN_HOVER if is_hover else TEX_MAIN_NORMAL
+	elif current_mode == 2:
+		# 支线模式：悬浮取支线2，普通状态取支线1
+		target_tex = TEX_ZHI_XIAN_HOVER if is_hover else TEX_ZHI_XIAN_NORMAL
 	else:
 		# 诛邪模式：悬浮取诛邪2，普通状态取诛邪1
 		target_tex = TEX_ZHUXIE_HOVER if is_hover else TEX_ZHUXIE_NORMAL

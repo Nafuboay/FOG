@@ -427,6 +427,14 @@ func jin_ru_guan_kia(guan_kia_id: int) -> void:
 		if guan_num >= stg:
 			提示弹幕.wen_ben("请先通过主线该关！", 1)
 			return
+	elif cur_mode == 2:
+		# 支线模式：主线30关全通（进度≥31）后开放「支线·1关」，之后按进度逐关开放（支线·n关需进度≥30+n）
+		if 30 + guan_num > stg:
+			if stg <= 30:
+				提示弹幕.wen_ben("请先通关主线模式！", 1)
+			else:
+				提示弹幕.wen_ben("请先通过前一关！", 1)
+			return
 	else:
 		# 主线模式：检查是否已解锁
 		if guan_num > stg:
@@ -443,6 +451,9 @@ func jin_ru_guan_kia(guan_kia_id: int) -> void:
 	if cur_mode == 1:
 		# 诛邪模式使用诛邪场景
 		get_tree().change_scene_to_file("res://关卡/诛邪.tscn")
+	elif cur_mode == 2:
+		# 支线模式使用支线场景
+		get_tree().change_scene_to_file("res://关卡/支线.tscn")
 	else:
 		# 主线模式使用主线场景
 		get_tree().change_scene_to_file("res://关卡/关卡.tscn")

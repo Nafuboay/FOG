@@ -15,6 +15,9 @@ var ach_data: Array = [ # 成就配置数据: [成就名称,条件类型,条件�
 	["救世主", 1, 31, "金条", 10, "击败犽翡及其爪牙"],
 	["饮虹使", 0, "彩虹", "金条", 100, "拥有【彩虹】"]
 ]
+# 支线任务金条奖励表（支线1~30关，对应总任务31~60）
+# 1~6关各3根；7~23关各4根；24~28关各32根；29关12根；30关100根
+const ZX_JIN_TIAO: Array = [3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,32,32,32,32,32,12,100]
 
 func _ready() -> void: # 初始化函数
 	visible = false
@@ -96,9 +99,9 @@ func upd_tsk() -> void:
 	var stg = get_stg()
 	# 获取当前任务进度
 	var tsk_ing = get_tsk()
-	# 创建任务项（最多显示8个）
+	# 创建任务项（主线1~30关 + 支线31~60关，共60个；最多显示8个）
 	var tsk_8 = 0
-	for T_id in range(tsk_ing, 31):
+	for T_id in range(tsk_ing, 61):
 		if tsk_8 >= 8:
 			break
 		var F = stg > T_id
@@ -124,13 +127,21 @@ func C_tsk(T_id: int, F: bool) -> Control:
 	# 创建任务文本
 	var lbl = Label.new()
 	lbl.name = "任务文本"
-	# 根据关卡显示不同奖励
-	if T_id > 23:
-		lbl.text = "通过主线·%d关   奖励：金条×1" % T_id
-	elif T_id > 9:
-		lbl.text = "通过主线·%d关   奖励：100银币" % T_id
+	# 根据关卡显示不同奖励（关号统一两位补零：01~09、10~30）
+	if T_id > 30:
+		# 支线任务（31~60关对应支线1~30关）
+		var zx_n = T_id - 30
+		var zx_jt = ZX_JIN_TIAO[zx_n - 1]
+		lbl.text = "通过支线·%02d关   奖励：金条×%d" % [zx_n, zx_jt]
+	elif T_id >= 30:
+		lbl.text = "通过主线·%02d关   奖励：金条×7" % T_id
+	elif T_id > 23:
+		lbl.text = "通过主线·%02d关   奖励：金条×1" % T_id
+	elif T_id == 23:
+		lbl.text = "通过主线·%02d关   奖励：333银币" % T_id
 	else:
-		lbl.text = "通过主线·%d关    奖励：100银币" % T_id
+		# 1~22关：银币按等差数列递增（第n关=10×(n+1)）
+		lbl.text = "通过主线·%02d关   奖励：%d银币" % [T_id, 10 * (T_id + 1)]
 	lbl.size = Vector2(280,54) # 任务文本范围
 	lbl.position = Vector2(24,17) # 任务文本位置
 	var kai_ti = 提示弹幕.get_kai_ti_font()
@@ -161,12 +172,35 @@ func get_tsk_R(T_id: int) -> void:
 	if json_1 != null:
 		var data = json_1.du_qu(json_1.id)
 		# 根据关卡给予不同奖励
-		if T_id < 24:
+		if T_id <= 22:
+			# 1~22关：银币按等差数列递增（第n关=10×(n+1)，即20、30……230）
 			var S = int(data.get("银币", 0))
-			S += 100
+			var jiang_li = 10 * (T_id + 1)
+			S += jiang_li
 			data["银币"] = S
-			提示弹幕.wen_ben("获得100银币！", 0)
+			提示弹幕.wen_ben("获得%d银币！" % jiang_li, 0)
+		elif T_id == 23:
+			# 第23关：333银币
+			var S = int(data.get("银币", 0))
+			S += 333
+			data["银币"] = S
+			提示弹幕.wen_ben("获得333银币！", 0)
+		elif T_id == 30:
+			# 主线第30关：金条×7
+			var bag = data.get("背包", {})
+			bag["金条"] = int(bag.get("金条", 0)) + 7
+			data["背包"] = bag
+			提示弹幕.wen_ben("获得金条×7！", 0)
+		elif T_id > 30:
+			# 支线任务（31~60关）：按支线金条奖励表发放
+			var zx_n = T_id - 30
+			var zx_jt = ZX_JIN_TIAO[zx_n - 1]
+			var bag = data.get("背包", {})
+			bag["金条"] = int(bag.get("金条", 0)) + zx_jt
+			data["背包"] = bag
+			提示弹幕.wen_ben("获得金条×%d！" % zx_jt, 0)
 		else:
+			# 24~29关：金条×1
 			var bag = data.get("背包", {})
 			bag["金条"] = int(bag.get("金条", 0)) + 1
 			data["背包"] = bag

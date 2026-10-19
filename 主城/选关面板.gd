@@ -66,7 +66,7 @@ var idle: Array[Node] = []
 # 各关卡右上角的诛邪重置×按钮（与btn一一对应）
 var chong_zhi_btns: Array[Button] = []
 var guan: int = 30
-var current_mode: int = 0 # 0=主线, 1=诛邪
+var current_mode: int = 0 # 0=主线, 1=诛邪, 2=支线
 # 诛邪模式下禁用的关卡ID列表（第2关为魔法树关，无新怪物）
 const ZX_DISABLED_GUAN: Array[int] = [1]
 # 重置×按钮贴图（与主界面存档删除按钮同款）
@@ -235,6 +235,9 @@ func xian_shi() -> void:
 				if json != null:
 					zx_lv_dang_qian = json.get_zx_lv(i + 1)
 				btn[i].text = "诛邪·"+str(zx_lv_dang_qian)+"级"+"\n\n\n\n\n\n\n"
+			elif current_mode == 2:
+				# 支线模式
+				btn[i].text = "支线·"+str(i+1)+"关"+"\n\n\n\n\n\n\n"
 			else:
 				# 主线模式
 				btn[i].text = "主线·"+str(i+1)+"关"+"\n\n\n\n\n\n\n"
@@ -248,6 +251,10 @@ func xian_shi() -> void:
 					ke_jin = false
 				# 诛邪比主线少一关：主线n关通过，诛邪最多能打到n-1关
 				elif guan_num >= stg:
+					ke_jin = false
+			elif current_mode == 2:
+				# 支线模式：主线30关全通（进度≥31）后开放「支线·1关」，支线·n关需进度≥30+n
+				if 30 + guan_num > stg:
 					ke_jin = false
 			else:
 				# 主线模式
@@ -270,7 +277,7 @@ func xian_shi() -> void:
 				s.visible = true
 			# 重置×跟随关卡模块定位到右上角
 			chong_zhi_btns[i].position = Vector2(x + 104, y - 8)
-			# 仅诛邪模式、且该关通过至少1关（等级≥2）时显示×；主线/未通关关隐藏
+			# 仅诛邪模式、且该关通过至少1关（等级≥2）时显示×；主线/支线/未通关关隐藏
 			chong_zhi_btns[i].visible = current_mode == 1 and zx_lv_dang_qian >= 2
 		else:
 			btn[i].visible = false
