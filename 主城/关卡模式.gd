@@ -67,6 +67,10 @@ func _on_click(event: InputEvent) -> void:
 		# 通知选关面板刷新显示
 		if get_parent() and get_parent().has_method("set_mode"):
 			get_parent().set_mode(current_mode)
+		# 实时刷新主城迷雾背景（支线→主城2，其余→主城0；初始主城1背景不动）
+		var zhu_cheng = get_parent().get_parent() if get_parent() else null
+		if zhu_cheng and zhu_cheng.has_method("gen_xin_mi_wu_bei_jing"):
+			zhu_cheng.gen_xin_mi_wu_bei_jing()
 		# 切换后刷新按钮显示贴图
 		_upd()
 

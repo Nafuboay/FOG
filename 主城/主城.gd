@@ -180,13 +180,25 @@ func _on_选关按钮_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		_on_选关按钮_pressed()
 
+# 根据当前模式刷新迷雾背景（仅迷雾状态mi_wu=true时生效；初始主城1背景不动）
+func gen_xin_mi_wu_bei_jing() -> void:
+	if not mi_wu:
+		return
+	var bg = get_node("游戏背景")
+	var cur_mode = 0
+	if has_node("/root/数据管理"):
+		cur_mode = get_node("/root/数据管理").mode
+	if cur_mode == 2:
+		bg.texture = load("res://主城/图片/主城2.png")
+	else:
+		bg.texture = load("res://主城/图片/主城0.png")
+
 # 选关按钮被按下时的回调函数
 func _on_选关按钮_pressed() -> void:
 	# 第一次点击：切换背景并显示弹幕
 	if not mi_wu:
 		mi_wu = true
-		var bg = get_node("游戏背景")
-		bg.texture = load("res://主城/图片/主城0.png")
+		gen_xin_mi_wu_bei_jing()
 		提示弹幕.wen_ben("迷雾来袭，请做好战斗准备！", 0)
 		# 显示背包按钮
 		BB.BB_1()
