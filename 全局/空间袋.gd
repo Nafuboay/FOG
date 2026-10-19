@@ -8,6 +8,9 @@ var BB_png1: Texture2D
 # 操作按钮图片
 var cao_zuo_png0: Texture2D
 var cao_zuo_png1: Texture2D
+# 供奉按钮图片（破损朱雀圣像修复按钮）
+var gong_feng_png0: Texture2D
+var gong_feng_png1: Texture2D
 
 # 初始化空间袋
 func _ready() -> void:
@@ -20,6 +23,9 @@ func _ready() -> void:
 	# 加载出售按钮图片（操作按钮图片）
 	cao_zuo_png0 = load("res://全局/图片/出售0.png")
 	cao_zuo_png1 = load("res://全局/图片/出售1.png")
+	# 加载供奉按钮图片（破损朱雀圣像修复按钮）
+	gong_feng_png0 = load("res://全局/图片/供奉0.png")
+	gong_feng_png1 = load("res://全局/图片/供奉1.png")
 	# 创建背包按钮（空间袋特有）
 	BB_btn = TextureRect.new()
 	BB_btn.texture = BB_png0
@@ -163,9 +169,38 @@ func get_cao_zuo_png0() -> Texture2D:
 	return cao_zuo_png0
 func get_cao_zuo_png1() -> Texture2D:
 	return cao_zuo_png1
-# 是否显示出售按钮（主城场景显示，且该物品可出售）
+# 是否显示操作按钮（主城场景显示；可出售物品显示出售按钮，破损朱雀圣像显示供奉按钮）
 func yao_xian_shi_cao_zuo_btn(wu_ming: String) -> bool:
-	return is_zhu and 物品信息.shi_fou_ke_chu_shou(wu_ming)
+	return is_zhu and (物品信息.shi_fou_ke_chu_shou(wu_ming) or wu_ming == "破损朱雀圣像")
+
+# 创建操作按钮（破损朱雀圣像只显示供奉按钮，其他物品沿用出售按钮）
+func create_cao_zuo_buttons() -> void:
+	# 当前选中物品不是破损朱雀圣像时，沿用父类出售按钮
+	var wu_ming = get_wu_ming(GZ_ing)
+	if wu_ming != "破损朱雀圣像":
+		super.create_cao_zuo_buttons()
+		return
+	# 创建供奉按钮（位置沿用原第一个出售按钮位置）
+	var btn = TextureRect.new()
+	btn.texture = gong_feng_png0
+	btn.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	btn.size = Vector2(64, 64)
+	btn.position = Vector2(96, 192)
+	btn.mouse_entered.connect(func(): if btn != null: btn.texture = gong_feng_png1)
+	btn.mouse_exited.connect(func(): if btn != null: btn.texture = gong_feng_png0)
+	btn.gui_input.connect(func(event): cao_zuo_3(event, -2))
+	wu_pin_kuai.add_child(btn)
+	cao_zuo_btn1 = btn
+	# 按钮旁显示消耗材料
+	var font_file = 提示弹幕.get_kai_ti_font()
+	var lbl = Label.new()
+	lbl.text = "金条×1"
+	lbl.add_theme_color_override("font_color", Color.BLACK)
+	lbl.add_theme_font_size_override("font_size", 24)
+	if font_file != null:
+		lbl.add_theme_font_override("font", font_file)
+	lbl.position = Vector2(160, 212)
+	wu_pin_kuai.add_child(lbl)
 
 # 获取出售按钮文本（重写基类）
 func get_cao_zuo_texts() -> Array:
@@ -175,47 +210,100 @@ func get_cao_zuo_texts() -> Array:
 func get_cao_zuo_amounts() -> Array:
 	return [1, 0, -1]
 
-# 出售按钮点击处理
-# amount 为出售模式：1=一件，0=当前数量10%向上取整，-1=全部
+# 操作按钮点击处理
+# amount 为操作模式：1=出售一件，0=出售当前数量10%向上取整，-1=出售全部，-2=供奉修复破损朱雀圣像
 func cao_zuo_3(event: InputEvent, amount: int) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		# 获取当前选中物品名称
-		var wu_ming = get_wu_ming(GZ_ing)
-		if wu_ming == "":
-			return
-		# 获取物品数量
-		var shu_liang = wu_pin_ing.get(wu_ming, 0)
-		if shu_liang <= 0:
-			提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
-			return
-		# 根据出售模式计算实际出售数量
-		var actual: int
-		match amount:
-			1:
-				actual = 1
-			0:  # 10%向上取整
-				actual = int(ceil(shu_liang * 0.1))
-			-1:  # 全部
-				actual = shu_liang
-			_:
-				actual = amount
-		actual = min(actual, shu_liang)
-		if actual <= 0:
-			提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
-			return
-		# 获取物品售价
-		var XX = 物品信息.get_XX(wu_ming)
-		var shou_jia = XX.get("背包售价", 0)
-		# 获取存档节点
-		var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-		if json == null:
-			return
-		# 读取当前存档数据
-		var data = json.du_qu(json.id)
-		var BB = data.get("背包", {})
-		var S_1 = int(data.get("银币", 0))
-		# 执行批量出售
-		chu_shou_batch(wu_ming, shu_liang, shou_jia, BB, S_1, json, actual)
+	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
+		return
+	# 供奉修复破损朱雀圣像
+	if amount == -2:
+		gong_feng_xiu_fu()
+		return
+	# 获取当前选中物品名称
+	var wu_ming = get_wu_ming(GZ_ing)
+	if wu_ming == "":
+		return
+	# 获取物品数量
+	var shu_liang = wu_pin_ing.get(wu_ming, 0)
+	if shu_liang <= 0:
+		提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
+		return
+	# 根据出售模式计算实际出售数量
+	var actual: int
+	match amount:
+		1:
+			actual = 1
+		0:  # 10%向上取整
+			actual = int(ceil(shu_liang * 0.1))
+		-1:  # 全部
+			actual = shu_liang
+		_:
+			actual = amount
+	actual = min(actual, shu_liang)
+	if actual <= 0:
+		提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
+		return
+	# 获取物品售价
+	var XX = 物品信息.get_XX(wu_ming)
+	var shou_jia = XX.get("背包售价", 0)
+	# 获取存档节点
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return
+	# 读取当前存档数据
+	var data = json.du_qu(json.id)
+	var BB = data.get("背包", {})
+	var S_1 = int(data.get("银币", 0))
+	# 执行批量出售
+	chu_shou_batch(wu_ming, shu_liang, shou_jia, BB, S_1, json, actual)
+
+# 供奉修复：消耗1个金条，将1个破损朱雀圣像修复为1个朱雀圣像
+func gong_feng_xiu_fu() -> void:
+	# 当前选中物品必须是破损朱雀圣像
+	var wu_ming = get_wu_ming(GZ_ing)
+	if wu_ming != "破损朱雀圣像":
+		return
+	# 获取存档节点
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return
+	# 读取当前存档数据
+	var data = json.du_qu(json.id)
+	var BB = data.get("背包", {})
+	# 校验破损朱雀圣像数量
+	var po_n = int(BB.get("破损朱雀圣像", 0))
+	if po_n <= 0:
+		提示弹幕.wen_ben("出BUG了，快去找虹！", 0)
+		return
+	# 校验金条数量，不足则修复失败
+	var jin_n = int(BB.get("金条", 0))
+	if jin_n <= 0:
+		提示弹幕.wen_ben("金条不足，供奉失败！", 0)
+		return
+	# 消耗1个金条
+	BB["金条"] = jin_n - 1
+	if int(BB["金条"]) <= 0:
+		BB.erase("金条")
+	# 消耗1个破损朱雀圣像
+	BB["破损朱雀圣像"] = po_n - 1
+	if int(BB["破损朱雀圣像"]) <= 0:
+		BB.erase("破损朱雀圣像")
+	# 增加1个朱雀圣像
+	BB["朱雀圣像"] = int(BB.get("朱雀圣像", 0)) + 1
+	# 保存存档
+	data["背包"] = BB
+	json.bao_cun(json.id, data)
+	# 刷新背包显示
+	wu_pin_ing = BB
+	xian_shi_wu_pin(BB)
+	# 显示成功弹幕
+	提示弹幕.wen_ben("供奉成功，【破损朱雀圣像】修复为【朱雀圣像】！", 0)
+	# 破损朱雀圣像已用完时关闭信息面板
+	if not BB.has("破损朱雀圣像"):
+		GZ_ing = -1
+		for ge in GZ:
+			ge.texture = GZ_png1
+		wu_pin_XX_0()
 
 # 批量出售物品
 func chu_shou_batch(wu_ming: String, shu_liang: int, shou_jia: int, BB: Dictionary, S_1: int, json, amount: int) -> void:
