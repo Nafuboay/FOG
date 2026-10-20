@@ -220,8 +220,8 @@ func load_dB() -> void:
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json != null:
 		var data = json.du_qu_ty()
-		# 读取保存的分贝值，默认为0
-		dB_ing = clampi(int(data.get("分贝", 0)), -80, 0)
+		# 读取保存的分贝值，默认为-40
+		dB_ing = clampi(int(data.get("分贝", -40)), -80, 0)
 		# 读取静音状态（1表示静音，0表示非静音）
 		is_mut = data.get("静音", 0) == 1
 		# 如果是静音状态，设置静音图标

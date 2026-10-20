@@ -297,7 +297,7 @@ func dian_ji(dang_wei: int) -> void:
 			# 静音状态直接压到-80dB，与音量调节.gd的静音处理一致
 			AudioServer.set_bus_volume_db(yue_liang_bus, -80)
 		else:
-			AudioServer.set_bus_volume_db(yue_liang_bus, clampi(int(ty_data.get("分贝", 0)), -80, 0))
+			AudioServer.set_bus_volume_db(yue_liang_bus, clampi(int(ty_data.get("分贝", -40)), -80, 0))
 		# 已有存档，进入主城
 		get_tree().change_scene_to_file("res://主城/主城.tscn")
 	else:

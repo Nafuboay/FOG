@@ -50,8 +50,18 @@ func _ready() -> void:
 	else:
 		# 主线模式：正常调用基类方法
 		du_qu_guan_kia()
-	# 调用后续逻辑
-	_zhu_xie_ready()
+	# 调用基类公共初始化主体（创建容器/各系统模块/网格/人物，与主线共用，不再复制）
+	_guan_qia_chu_shi()
+	# 诛邪模式特殊初始化：显示提示
+	提示弹幕.wen_ben("诛邪·%d级" % [zx_lv], 0)
+	# 刷新所有格子贴图为已翻开（消除迷雾）
+	shu_xing_tie_tu()
+	# 诛邪模式：地图默认缩放为317%档位
+	var zx_suo_fang = pow(2.0, 5.0 / 3.0)
+	rong_qi.scale = Vector2(zx_suo_fang, zx_suo_fang)
+	suo_fang_lal.text = "画面比例：%d%%" % round(zx_suo_fang * 100)
+	# 诛邪模式：按等级比例调整人物和怪物大小
+	_zhu_xie_scale()
 
 # 诛邪模式专用的数据读取（跳过主线剧情弹幕）
 func _zx_du_qu_guan_kia() -> void:
@@ -74,70 +84,6 @@ func _zx_du_qu_guan_kia() -> void:
 	# 获取BOSS生成数量
 	BOSS = guan_kia.get("BOSS", [])
 	BOSS_n = guan_kia.get("BOSS_n", [0])
-
-# 诛邪模式的_ready()后续逻辑（复制关卡基类_ready()的剩余部分）
-func _zhu_xie_ready() -> void:
-	# 获取视口尺寸
-	var viewport_size = get_viewport_rect().size
-	# 计算网格居中偏移
-	WG_pian_yi_x = -GZ_x * GZ_size / 2.0
-	WG_pian_yi_y = -GZ_y * GZ_size / 2.0
-	# 加载背景图片
-	var canvas = CanvasLayer.new()
-	canvas.layer = -1
-	add_child(canvas)
-	var yun_hai = TextureRect.new()
-	yun_hai.texture = load("res://关卡/云海.png")
-	yun_hai.set_anchors_preset(Control.PRESET_FULL_RECT)
-	canvas.add_child(yun_hai)
-	# 创建游戏内容容器
-	rong_qi = Node2D.new()
-	rong_qi.name = "GameContainer"
-	rong_qi.position = viewport_size / 2
-	add_child(rong_qi)
-	# 加载图片资源
-	load_zi_yuan()
-	# 实例化战斗系统
-	zhan_dou = 战斗系统.new()
-	rong_qi.add_child(zhan_dou)
-	# 实例化翻开系统
-	fan_kai = 翻开系统.new()
-	rong_qi.add_child(fan_kai)
-	# 实例化关卡UI
-	guan_ui = 关卡UI.new()
-	add_child(guan_ui)
-	# 实例化信息面板
-	XX = 信息面板.new()
-	add_child(XX)
-	# 加载输入处理模块
-	var pc_input = load("res://关卡/PC输入.gd").new()
-	pc_input.name = "PC输入"
-	add_child(pc_input)
-	# 诛邪模式特殊初始化：显示提示
-	var ti_shi = "诛邪·%d级" % [zx_lv]
-	提示弹幕.wen_ben(ti_shi, 0)
-	# 创建游戏数据网格（使用重写的C_GZ）
-	C_GZ()
-	# 连接伤害信号到面板刷新
-	shu_wu_upd.connect(XX.on_shu_wu_upd)
-	# 创建格子可视化对象
-	C_GZ1()
-	# 刷新所有格子贴图为已翻开（消除迷雾）
-	shu_xing_tie_tu()
-	# 创建人物
-	C_helo()
-	# 创建人物面板
-	XX.C_look_helo()
-	# 创建缩放按钮
-	guan_ui.C_rong_qi()
-	# 创建重新挑战按钮
-	guan_ui.C_again()
-	# 诛邪模式：地图默认缩放为317%档位
-	var zx_suo_fang = pow(2.0, 5.0 / 3.0)
-	rong_qi.scale = Vector2(zx_suo_fang, zx_suo_fang)
-	suo_fang_lal.text = "画面比例：%d%%" % round(zx_suo_fang * 100)
-	# 诛邪模式：按等级比例调整人物和怪物大小
-	_zhu_xie_scale()
 
 # 重写C_GZ()：诛邪模式下只生成1只怪物
 func C_GZ() -> void:
@@ -218,19 +164,13 @@ func _zhu_xie_guai_wu() -> void:
 	guai_wu1.set_meta("grid_y", monster_y)
 	# 诛邪模式下怪物等级 = 基础等级 × 诛邪等级
 	GZ[monster_y][monster_x]["lv"] = guai_wu1.LV * zx_lv
-	GZ[monster_y][monster_x]["shp"] = guai_wu1.HP * zx_lv * zx_lv
-	GZ[monster_y][monster_x]["hp"] = guai_wu1.HP * zx_lv * zx_lv
-	GZ[monster_y][monster_x]["ll"] = guai_wu1.LL * zx_lv
-	GZ[monster_y][monster_x]["fy"] = guai_wu1.FY * zx_lv
-	GZ[monster_y][monster_x]["ct"] = guai_wu1.CT * zx_lv
+	# 基础属性走属性加成模块（诛邪无魔法树无花，来源表为空，总变化量=0）
+	var base = {"shp": guai_wu1.HP * zx_lv * zx_lv, "ll": guai_wu1.LL * zx_lv, "fy": guai_wu1.FY * zx_lv, "ct": guai_wu1.CT * zx_lv}
+	shu_xing.chu_shi_hua(GZ[monster_y][monster_x], base)
 	# 怪物描述（1倍值 × 诛邪判定次数=怪物等级³）
 	GZ[monster_y][monster_x]["miao_shu"] = 掉落物.diao_luo_miao_shu(self, zx_monster_name, false, GZ[monster_y][monster_x]["lv"])
-	# 属性变化值初始为0（诛邪无魔法树加成，重甲技能初始化会在下方累加）
-	GZ[monster_y][monster_x]["ll_bian"] = 0
-	GZ[monster_y][monster_x]["fy_bian"] = 0
-	GZ[monster_y][monster_x]["ct_bian"] = 0
-	# BOSS技能初始化（主线与诛邪通用，逻辑在特殊技能.gd：猛犸王【重甲】等依赖初始字段的技能）
-	特殊技能_SCRIPT.BOSS_ji_neng_chu_shi(GZ[monster_y][monster_x], zx_monster_name, GZ[monster_y][monster_x]["lv"])
+	# BOSS技能初始化（主线与诛邪通用，逻辑在特殊技能.gd；重甲等来源走属性加成模块）
+	特殊技能_SCRIPT.BOSS_ji_neng_chu_shi(shu_xing, [GZ[monster_y][monster_x]], zx_monster_name, GZ[monster_y][monster_x]["lv"])
 	# 计算怪物显示位置
 	var GZ_z = GZ_zhong(monster_x, monster_y)
 	var suo_fang = 1.0

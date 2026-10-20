@@ -179,6 +179,8 @@ func LMB_1(dian_x: int, dian_y: int) -> void:
 			var shang = min(99, max_shang)
 			if shang > 0:
 				guan_qia.helo_hp -= shang
+				# 真伤灰色飘字（与战斗系统英雄受击同位置同写法）
+				guan_qia.zhan_dou.xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, shang, false, false, true)
 			# 采摘得花进临时背包
 			if hua_id != "":
 				guan_qia.BB_ls[hua_id] = guan_qia.BB_ls.get(hua_id, 0) + 1
@@ -188,6 +190,8 @@ func LMB_1(dian_x: int, dian_y: int) -> void:
 			# 失败：恢复 1 生命（满血则不回）
 			if guan_qia.helo_hp < guan_qia.helo_shp:
 				guan_qia.helo_hp = min(guan_qia.helo_hp + 1, guan_qia.helo_shp)
+				# 恢复绿色飘字（满血未恢复则不显示）
+				guan_qia.zhan_dou.xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, 1, true, false)
 		# 无论成功失败，花消失
 		GZ1["hua"] = false
 		GZ1["hua_id"] = ""
@@ -509,4 +513,4 @@ func kai_qi_BX(x: int, y: int) -> void:
 				ti_shi = "第" + str(kao_ci) + "次消耗钥匙获得【" + wu_ming + "】×" + str(n) + "！"
 			提示弹幕.wen_ben(ti_shi, 0)
 	else:
-		提示弹幕.wen_ben("不够好运，没能获得金条！", 0)
+		提示弹幕.wen_ben("不够好运，没能获得宝物！", 0)

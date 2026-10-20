@@ -17,16 +17,15 @@ func _init(gq: Node2D, zd: Node) -> void:
 
 # ---------- 技能初始化 ----------
 # 设置依赖初始字段的BOSS技能数据（主线BOSS_xian_shi与诛邪_zhu_xie_guai_wu通用）
-static func BOSS_ji_neng_chu_shi(cell: Dictionary, guai_wu_id: String, boss_lv: int) -> void:
-	# 猛犸王【重甲】技能：增加防御，受击减少
-	var fy_add_4 = 0
+# shu_xing：属性加成模块；cells：BOSS 占位格子数组（诛邪单格 / 主线2x2共4格）
+static func BOSS_ji_neng_chu_shi(shu_xing, cells: Array, guai_wu_id: String, boss_lv: int) -> void:
+	# 猛犸王【重甲】技能：增加防御，受击减少（防御贡献走属性加成模块"重甲"来源）
 	if guai_wu_id == "猛犸王·犽翡":
-		fy_add_4 = 32 * boss_lv
-		cell["fy"] += fy_add_4
-		# 同步属性变化值（供信息面板拆分显示）
-		cell["fy_bian"] = cell.get("fy_bian", 0) + fy_add_4
-	# 写入重甲防御加成（供受击减防和信息面板读取）
-	cell["fy_add_4"] = fy_add_4
+		var fy_add_4 = 32 * boss_lv
+		shu_xing.she_zhi(cells, "重甲", {"fy": fy_add_4})
+		# 写入重甲计数（供受击递减规则读取）
+		for cell in cells:
+			cell["fy_add_4"] = fy_add_4
 
 # ---------- 受击类技能：怪物被人物攻击时触发 ----------
 # 返回true表示人物已被反伤击杀（战斗已结束），调用方需立即return
@@ -47,14 +46,12 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 			var is_boss = GZ[y][x].get("BOSS", false)
 			var boss_x = int(GZ[y][x].get("BOSS_x", x)) if is_boss else x
 			var boss_y = int(GZ[y][x].get("BOSS_y", y)) if is_boss else y
-			var range_n = 2 if is_boss else 1
-			# 更新猛犸王格子的防御加成和实际防御值
-			for by in range(boss_y, boss_y + range_n):
-				for bx in range(boss_x, boss_x + range_n):
-					GZ[by][bx]["fy_add_4"] = fy_add_4  # 更新重甲加成
-					GZ[by][bx]["fy"] -= boss_lv  # 减少实际防御
-					# 同步属性变化值（供信息面板拆分显示）
-					GZ[by][bx]["fy_bian"] = GZ[by][bx].get("fy_bian", 0) - boss_lv
+			var cells = guan_qia.shu_xing.qu_cells(boss_x, boss_y, is_boss)
+			# 防御贡献走属性加成模块"重甲"来源（覆盖式）
+			guan_qia.shu_xing.she_zhi(cells, "重甲", {"fy": fy_add_4})
+			# 更新重甲计数（受击递减规则）
+			for cell in cells:
+				cell["fy_add_4"] = fy_add_4
 	# 蠃虫王【硬化】技能：受击增加防御
 	elif guai_wu_id == "蠃虫王·犄眦":
 		# 获取BOSS等级
@@ -65,23 +62,18 @@ func shou_ji_ji_neng(x: int, y: int) -> bool:
 		var fy_add_5_max = boss_lv * 32
 		# 未达上限时才增加防御，达到极限后受击不再变化
 		if fy_add_5 < fy_add_5_max:
-			# 记录增加前的加成，并钳制在上限内
-			var fy_add_5_old = fy_add_5
+			# 钳制在上限内（每次受击+自身等级）
 			fy_add_5 = min(fy_add_5_max, fy_add_5 + boss_lv)
-			# 本次实际增加的防御（正常为boss_lv，钳制时取剩余额度）
-			var fy_zeng = fy_add_5 - fy_add_5_old
 			# 根据怪物占位决定更新范围：主线BOSS(2x2)更新4格，诛邪单格只更新当前格
 			var is_boss = GZ[y][x].get("BOSS", false)
 			var boss_x = int(GZ[y][x].get("BOSS_x", x)) if is_boss else x
 			var boss_y = int(GZ[y][x].get("BOSS_y", y)) if is_boss else y
-			var range_n = 2 if is_boss else 1
-			# 更新蠃虫王格子的防御加成和实际防御值
-			for by in range(boss_y, boss_y + range_n):
-				for bx in range(boss_x, boss_x + range_n):
-					GZ[by][bx]["fy_add_5"] = fy_add_5  # 更新硬化加成
-					GZ[by][bx]["fy"] += fy_zeng  # 增加实际防御
-					# 同步属性变化值（供信息面板拆分显示）
-					GZ[by][bx]["fy_bian"] = GZ[by][bx].get("fy_bian", 0) + fy_zeng
+			var cells = guan_qia.shu_xing.qu_cells(boss_x, boss_y, is_boss)
+			# 防御贡献走属性加成模块"硬化"来源（覆盖式）
+			guan_qia.shu_xing.she_zhi(cells, "硬化", {"fy": fy_add_5})
+			# 更新硬化计数（受击叠加上限规则）
+			for cell in cells:
+				cell["fy_add_5"] = fy_add_5
 	# 邪花王【荆棘】技能：受击造成固定反伤
 	elif guai_wu_id == "邪花王·荆冠":
 		# 获取BOSS等级作为反伤伤害
@@ -199,18 +191,12 @@ func guai_wu_die_ji_neng() -> void:
 		var y = int(boss_xy.y)
 		# 检查是否是野猪王
 		if guan_qia.GZ[y][x].get("guai_wu_id", "") == "野猪王·冕笑":
-			# 获取基础生命值和BOSS等级
-			var shp_1 = guan_qia.GZ[y][x].get("shp_1", 0)
+			# 获取BOSS等级
 			var boss_lv = guan_qia.GZ[y][x].get("lv", 1)
-			# 重新计算生命值 = 基础生命 + (场上怪物数 - 1) × BOSS等级
-			var xin_shp = shp_1 + (guan_qia.guai_wu_xian - 1) * boss_lv
-			# 当前HP不能超过新的上限（防止血量溢出）
-			var xin_hp = min(guan_qia.GZ[y][x]["hp"], xin_shp)
-			# 更新野猪王4个格子的生命值（BOSS占用2x2区域）
-			for by in range(y, y + 2):
-				for bx in range(x, x + 2):
-					guan_qia.GZ[by][bx]["shp"] = xin_shp
-					guan_qia.GZ[by][bx]["hp"] = xin_hp
+			# 热血贡献整体替换 = (场上怪物数-1)×BOSS等级；与花/树等来源互不覆盖，
+			# 上限变动时当前生命由属性加成模块同步增减（上限降当前也降）
+			var cells = guan_qia.shu_xing.qu_cells(x, y, true)
+			guan_qia.shu_xing.she_zhi(cells, "热血", {"shp": (guan_qia.guai_wu_xian - 1) * boss_lv})
 			# 如果正在查看野猪王面板，刷新显示
 			if guan_qia.guai_wu_x_ing >= x and guan_qia.guai_wu_x_ing < x + 2 and guan_qia.guai_wu_y_ing >= y and guan_qia.guai_wu_y_ing < y + 2:
 				guan_qia.XX.look(false, x, y)

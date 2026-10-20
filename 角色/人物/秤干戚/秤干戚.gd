@@ -36,14 +36,13 @@ func shang_hai_hou(guan_qia: Node) -> void:
 			# 该怪物被永久累计降低的防御量达到自身等级×32上限后不再降低
 			if GZ[gw_y][gw_x].get("fy_jian", 0) < guan_qia.helo_lv * 32:
 				# 主线BOSS占2×2格需同步降低，诛邪与普通怪物只占1格
-				var fan_wei: int = 2 if GZ[gw_y][gw_x].get("BOSS", false) else 1
-				for dy in range(fan_wei):
-					for dx in range(fan_wei):
-						GZ[gw_y + dy][gw_x + dx]["fy"] -= 1
-						# fy_jian为秤干戚特性专属的降低计数（上限32×自身等级，与其他增减效果互不影响）
-						GZ[gw_y + dy][gw_x + dx]["fy_jian"] = GZ[gw_y + dy][gw_x + dx].get("fy_jian", 0) + 1
-						# 同步属性变化值（供信息面板拆分显示）
-						GZ[gw_y + dy][gw_x + dx]["fy_bian"] = GZ[gw_y + dy][gw_x + dx].get("fy_bian", 0) - 1
+				var fan_wei: bool = GZ[gw_y][gw_x].get("BOSS", false)
+				var cells = guan_qia.shu_xing.qu_cells(gw_x, gw_y, fan_wei)
+				# fy_jian为秤干戚特性专属的降低计数（上限32×自身等级，与其他增减效果互不影响）
+				for cell in cells:
+					cell["fy_jian"] = cell.get("fy_jian", 0) + 1
+				# 防御降低走属性加成模块"秤干戚"来源（贡献 = -累计降低值，永久有效、撤退不恢复）
+				guan_qia.shu_xing.she_zhi(cells, "秤干戚", {"fy": -int(GZ[gw_y][gw_x]["fy_jian"])})
 	else:
 		# 达到自身等级×32上限后不再增加
 		if fy_add_1 < guan_qia.helo_lv * 32:

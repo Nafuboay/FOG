@@ -182,48 +182,11 @@ func hua_xiang_chong_suan_zhou_wei(hx: int, hy: int) -> void:
 		if in_range:
 			_hua_chong_suan_yi_zhi(bx, by, true)
 
-# 内部函数：重算某一只普通怪或某一只 BOSS（4 格同步）的属性
-# hp 等比缩放避免直接扣成 0 或负数
+# 内部函数：重算某一只普通怪或某一只 BOSS（4 格同步）的花香来源
+# 只覆盖"花香"来源贡献，树/热血/重甲等其他来源不受影响；
+# 上限变动时当前生命由属性加成模块统一同步
 func _hua_chong_suan_yi_zhi(x: int, y: int, is_boss: bool) -> void:
-	var guan_qia_zz = guan_qia
-	var add: int = 0
-	if is_boss:
-		add = 0
-	else:
-		add = guan_qia_zz.fan_kai.zhang_ai_n9(x, y)
+	var cells = guan_qia.shu_xing.qu_cells(x, y, is_boss)
+	# 新花香贡献 = 重扫周围现存的花
 	var hua_add = hua_xiang_jia_cheng(x, y, is_boss)
-	var ys = [y, y + 1] if is_boss else [y]
-	var xs = [x, x + 1] if is_boss else [x]
-	for by in ys:
-		for bx in xs:
-			var GZ1 = guan_qia_zz.GZ[by][bx]
-			if GZ1 == null:
-				continue
-			var base_shp = GZ1.get("shp_base", GZ1.get("shp", 1))
-			var base_ll = GZ1.get("ll_base", GZ1.get("ll", 1))
-			var base_fy = GZ1.get("fy_base", GZ1.get("fy", 1))
-			var base_ct = GZ1.get("ct_base", GZ1.get("ct", 1))
-			var new_shp = base_shp + add + hua_add.get("shp", 0)
-			var new_ll = base_ll + add + hua_add.get("ll", 0)
-			var new_fy = base_fy + add + hua_add.get("fy", 0)
-			var new_ct = base_ct + add + hua_add.get("ct", 0)
-			var old_shp = GZ1.get("shp", new_shp)
-			var old_hp = GZ1.get("hp", old_shp)
-			var new_hp: int
-			if old_shp > 0:
-				new_hp = int(round(old_hp * float(new_shp) / float(old_shp)))
-			else:
-				new_hp = old_hp
-			new_hp = clamp(new_hp, 1, max(1, new_shp))
-			GZ1["shp"] = new_shp
-			GZ1["hp"] = new_hp
-			GZ1["ll"] = new_ll
-			GZ1["fy"] = new_fy
-			GZ1["ct"] = new_ct
-			GZ1["add_hua"] = hua_add
-			GZ1["ll_bian"] = add + hua_add.get("ll", 0)
-			GZ1["fy_bian"] = add + hua_add.get("fy", 0)
-			GZ1["ct_bian"] = add + hua_add.get("ct", 0)
-	guan_qia_zz.shu_wu_upd.emit()
-	if guan_qia_zz.zhan_dou != null and guan_qia_zz.zhan_dou.xue_tiao_qi != null:
-		guan_qia_zz.zhan_dou.xue_tiao_qi.xue_tiao_upd_1()
+	guan_qia.shu_xing.she_zhi(cells, "花香", hua_add)
