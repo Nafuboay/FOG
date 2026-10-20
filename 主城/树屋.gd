@@ -9,11 +9,12 @@ var tsk: Control # 任务容器
 var ach: Control # 成就容器
 var tsk_1: Array = [] # 任务项列表
 var ach_1: Array = [] # 成就项列表
-var ach_2: Array = [0, 0, 0] # 当前存档的成就状态
+var ach_2: Array = [0, 0, 0, 0] # 当前存档的成就状态
 var ach_data: Array = [ # 成就配置数据: [成就名称,条件类型,条件值,奖励物品名,奖励数量,条件描述]
 	["不朽者", 0, "破损稻草人", "朱雀圣像", 1, "拥有【破损稻草人】"],
 	["救世主", 1, 31, "金条", 10, "击败犽翡及其爪牙"],
-	["饮虹使", 0, "彩虹", "金条", 100, "拥有【彩虹】"]
+	["饮虹使", 0, "彩虹", "彩虹", 10, "拥有【彩虹】"],
+	["采花贼", 2, "", "奇花", 99, "拥有四种奇花"]
 ]
 # 支线任务金条奖励表（支线1~30关，对应总任务31~60）
 # 1~6关各3根；7~23关各4根；24~28关各32根；29关12根；30关100根
@@ -223,10 +224,13 @@ func get_stg() -> int:
 func get_ach() -> void:
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json_1 == null:
-		ach_2 = [0, 0, 0]
+		ach_2 = [0, 0, 0, 0]
 		return
 	var data = json_1.du_qu(json_1.id)
-	ach_2 = data.get("成就", [0, 0, 0])
+	ach_2 = data.get("成就", [0, 0, 0, 0])
+	# 兼容旧存档：成就数组长度不足时补0
+	while ach_2.size() < ach_data.size():
+		ach_2.append(0)
 
 # 检查背包是否有指定物品
 func has_item(item_name: String) -> bool:
@@ -253,6 +257,9 @@ func chk_ach(idx: int) -> bool:
 	elif type_1 == 1:
 		# 条件类型1：进度检测
 		return get_stg() >= value
+	elif type_1 == 2:
+		# 条件类型2：同时拥有四种奇花
+		return has_item("百合") and has_item("水仙") and has_item("玫瑰") and has_item("鸢尾")
 	return false
 
 # 创建单个成就项
@@ -318,9 +325,25 @@ func get_ach_R(idx: int) -> void:
 	if json_1 == null:
 		return
 	var data = json_1.du_qu(json_1.id)
-	# 发放奖励物品
 	var bag = data.get("背包", {})
-	bag[jiang_li] = int(bag.get(jiang_li, 0)) + jiang_li_n
+	var tip_text = ""
+	if ach_name == "采花贼":
+		# 采花贼特殊奖励：99朵奇花等概率随机分配给四种花
+		var hua_ming = ["百合", "水仙", "玫瑰", "鸢尾"]
+		var hua_n = [0, 0, 0, 0]
+		for i in range(jiang_li_n):
+			hua_n[randi() % 4] += 1
+		# 发放到背包并构建提示文本
+		var parts = []
+		for i in range(4):
+			if hua_n[i] > 0:
+				bag[hua_ming[i]] = int(bag.get(hua_ming[i], 0)) + hua_n[i]
+				parts.append("%s×%d" % [hua_ming[i], hua_n[i]])
+		tip_text = "恭喜获得成就《%s》！\n获得%s！" % [ach_name, "、".join(parts)]
+	else:
+		# 普通成就：直接发放指定物品
+		bag[jiang_li] = int(bag.get(jiang_li, 0)) + jiang_li_n
+		tip_text = "恭喜获得成就《%s》！\n奖励%s×%d！" % [ach_name, jiang_li, jiang_li_n]
 	data["背包"] = bag
 	# 更新成就状态为已领取
 	ach_2[idx] = 1
@@ -330,7 +353,7 @@ func get_ach_R(idx: int) -> void:
 	# 同步记录到通用存档历史成就
 	json_1.add_ach_ty(idx, ach_data.size())
 	# 显示获得提示
-	提示弹幕.wen_ben("恭喜获得成就《%s》！\n奖励%s×%d！" % [ach_name, jiang_li, jiang_li_n], 0)
+	提示弹幕.wen_ben(tip_text, 0)
 	# 刷新成就列表
 	upd_ach()
 

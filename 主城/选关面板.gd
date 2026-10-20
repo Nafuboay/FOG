@@ -267,7 +267,11 @@ func xian_shi() -> void:
 			if idle[i] is Sprite2D and guai_wu_tu_pian[i] != null:
 				var s = idle[i] as Sprite2D
 				s.position = Vector2(x+64,y+64)
-				s.texture = guai_wu_tu_pian[i]
+				# 支线模式第2关预览图改为四种奇花（其他模式保持原图）
+				if current_mode == 2 and i == 1:
+					s.texture = load("res://关卡/草地/四种奇花.png")
+				else:
+					s.texture = guai_wu_tu_pian[i]
 				s.visible = true
 			elif idle[i] is AnimatedSprite2D and guai_wu_dong_hua[i] != null:
 				var s = idle[i] as AnimatedSprite2D
