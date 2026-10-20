@@ -348,7 +348,7 @@ func QH_On1() -> void:
 		fang_zhi_qu = []
 		# 刷新装备显示
 		ZB_upd()
-		# 刷新强化材料显示
+		# 刷新材料显示
 		QH_CL_upd()
 		# 刷新放置区显示
 		fang_zhi_qu_upd()
@@ -433,7 +433,7 @@ func ZB_upd() -> void:
 				wu_pin_tu.position = Vector2(offset, offset)
 				ge.add_child(wu_pin_tu)
 
-# 刷新强化材料显示（第6~7行，堆叠显示）
+# 刷新材料显示（第6~7行，堆叠显示）
 func QH_CL_upd() -> void:
 	# 清理材料区域的格子
 	var start_idx = 5 * x
@@ -446,7 +446,7 @@ func QH_CL_upd() -> void:
 		if idx_1 < GZ.size():
 			for child in GZ[idx_1].get_children():
 				child.queue_free()
-	# 获取背包中的强化材料（带数量）
+	# 获取背包中的材料（带数量）
 	var CL = get_QH_CL()
 	# 按物品顺序显示，堆叠显示
 	var idx = 0
@@ -479,7 +479,7 @@ func QH_CL_upd() -> void:
 				wu_n.position = Vector2(GZ_size - wu_n_size.x - 6, GZ_size - wu_n_size.y - 2)
 			idx += 1
 
-# 获取背包中的强化材料字典（物品名:数量）
+# 获取背包中的材料字典（物品名:数量）
 func get_QH_CL() -> Dictionary:
 	var CL = {}
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
@@ -593,16 +593,25 @@ func GZ_LMB(event: InputEvent, idx: int) -> void:
 				QH_upd_1()
 			return
 
-# 计算放置区材料的总背包售价
-func get_n() -> int:
+# 计算放置区材料的强化数据
+# 返回：total_base=材料背包售价总和, total_cost=未满时消耗银币总和, n=成功率计算值(售价+消耗)
+func get_QH_data() -> Dictionary:
+	var total_base = 0
+	var total_cost = 0
 	var n = 0
 	# 遍历放置区中的每个物品
 	for wu_ming in fang_zhi_qu:
-		# 获取物品信息
-		var XX = 物品信息.get_XX(wu_ming)
-		# 累加背包售价
-		n += XX.get("背包售价", 0)
-	return n
+		# 材料基础价值 = 背包售价
+		var base = 物品信息.get_XX(wu_ming).get("背包售价", 0)
+		# 获取该材料对当前选中装备的倍率
+		var bei_lv = 物品信息.get_QH_bei_lv(wu_ming, ZB_idx)
+		# 未满时该材料消耗银币 = 基础价值 × 倍率
+		var cost = int(round(base * bei_lv))
+		total_base += base
+		total_cost += cost
+		# 成功率计算值 = 基础价值 + 消耗银币
+		n += base + cost
+	return {"total_base": total_base, "total_cost": total_cost, "n": n}
 
 # 获取当前装备的强化等级
 func get_QH_lv() -> int:
@@ -633,18 +642,19 @@ func QH_upd_1() -> void:
 		return
 	# 获取当前等级对应的m值
 	var m = get_m(get_hero_lv(), QH_lv)
-	# 获得n值
-	var n = get_n()
-	# 成功率=min(1,2n/m)
-	var SR = min(1.0, 2.0 * n / float(m))
+	# 获取放置区材料的强化数据
+	var qh_data = get_QH_data()
+	var n = qh_data["n"]
+	# 成功率=min(1, n/m)，n=材料基础价值+消耗银币
+	var SR = min(1.0, float(n) / float(m))
 	# 计算消耗银币
 	var add = 0
-	if 2 * n < m:
-		# 材料不足时，消耗所有材料的总价值
-		add = n
+	if n < m:
+		# 未满时，消耗各材料的(基础价值×倍率)之和
+		add = qh_data["total_cost"]
 	else:
-		# 材料充足时，消耗 m-n（可能为负数，即返还银币）
-		add = m - n
+		# 满时，消耗 m-材料基础价值总和（可能为负数，即返还银币）
+		add = m - qh_data["total_base"]
 	# 自然常数e
 	var e = 2.718281828459045
 	# 更新成功率显示
@@ -684,16 +694,17 @@ func QH_zhi_xing() -> void:
 		return
 	# 获取m值
 	var m = get_m(get_hero_lv(), QH_lv)
-	# 计算n值
-	var n = get_n()
-	# 计算成功率
-	var SR = min(1.0, 2.0 * n / float(m))
+	# 获取放置区材料的强化数据
+	var qh_data = get_QH_data()
+	var n = qh_data["n"]
+	# 计算成功率=min(1, n/m)
+	var SR = min(1.0, float(n) / float(m))
 	# 计算消耗银币
 	var add = 0
-	if 2 * n < m:
-		add = n
+	if n < m:
+		add = qh_data["total_cost"]
 	else:
-		add = m - n
+		add = m - qh_data["total_base"]
 	# 检查银币是否足够
 	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json == null:
