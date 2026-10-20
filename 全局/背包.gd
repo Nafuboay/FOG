@@ -44,6 +44,10 @@ var wen_ben: TextureRect = null
 var cao_zuo_btn1: TextureRect = null  # 第一个按钮
 var cao_zuo_btn10: TextureRect = null  # 第二个按钮
 var cao_zuo_btn100: TextureRect = null  # 第三个按钮
+# 翻页系统脚本
+const 翻页系统_SCRIPT = preload("res://全局/翻页系统.gd")
+# 翻页系统（每页49格，与7×7格子数一致）
+var fan_ye = null
 
 # 初始化
 func _ready() -> void:
@@ -148,6 +152,9 @@ func Bg(text_png: Texture2D = null) -> void:
 		BB_n.add_child(wen_ben)
 	# 创建格子容器
 	C_GZ_1()
+	# 创建翻页系统（每页49格，翻页后重新显示当前页物品）
+	fan_ye = 翻页系统_SCRIPT.new(x * y, _fan_ye_bian_hua)
+	fan_ye.chuang_jian(BB_n)
 
 # 创建格子容器
 func C_GZ_1() -> void:
@@ -187,6 +194,18 @@ func xian_shi_wu_pin(wu_pin_ls: Dictionary) -> void:
 	for ge in GZ:
 		for child in ge.get_children():
 			child.queue_free()
+
+# 翻页变化：清除选中与信息面板后重新显示当前页物品
+func _fan_ye_bian_hua() -> void:
+	GZ_ing = -1
+	for ge in GZ:
+		ge.texture = GZ_png1
+	wu_pin_XX_0()
+	shua_xin_wu_pin()
+
+# 重新显示当前页物品（子类重写：空间袋用已保存的物品字典重显，商店重显商品）
+func shua_xin_wu_pin() -> void:
+	pass
 
 # 格子点击事件处理
 func GZ_LMB(event: InputEvent, idx: int) -> void:

@@ -60,9 +60,14 @@ func btn_BB() -> void:
 	if BB_on:
 		BB_n_xy()
 		S_upd()
+		# 每次打开重置到第一页
+		fan_ye.chong_zhi()
 		# 只有主城模式才从存档读取物品，关卡模式由外部传入临时背包
 		if is_zhu:
 			wu_upd()
+		else:
+			# 关卡临时背包：用已有数据按重置后的页码重新显示
+			xian_shi_wu_pin(wu_pin_ing)
 	if not BB_on:
 		GZ_ing = -1
 		for ge in GZ:
@@ -104,7 +109,7 @@ func btn_xy() -> void:
 	var win_y = win_size.y
 	BB_btn.position = Vector2(32,win_y-96)
 
-# 在背包中显示物品
+# 在背包中显示物品（由翻页系统分页显示，每页49格）
 func xian_shi_wu_pin(BB_ls: Dictionary) -> void:
 	# 保存当前物品字典（用于点击时查找）
 	wu_pin_ing = BB_ls
@@ -112,19 +117,29 @@ func xian_shi_wu_pin(BB_ls: Dictionary) -> void:
 	for ge in GZ:
 		for child in ge.get_children():
 			child.queue_free()
-	# 如果没有物品则直接返回
-	if BB_ls.is_empty():
-		return
+	# 统计可显示物品总数（统计顺序与显示顺序一致）
+	var zong_shu = 0
+	for wu_ming in 物品信息.wu_pin:
+		if BB_ls.has(wu_ming):
+			zong_shu += 1
+	# 设置总数（物品变少导致当前页不存在时，翻页系统会自动删页并回到前一页）
+	fan_ye.she_zhi(zong_shu)
+	# 本页第一个物品的序号
+	var qi = fan_ye.qi_shi()
 	# 按物品列表顺序遍历
 	var index = 0
 	for wu_ming in 物品信息.wu_pin:
-		# 如果背包格子已满则停止显示
-		if index >= GZ.size():
-			break
 		# 如果临时背包中有该物品则显示
 		if BB_ls.has(wu_ming):
+			# 跳过本页之前的物品
+			if index < qi:
+				index += 1
+				continue
+			# 本页已满则停止显示
+			if index >= qi + fan_ye.mei_ye:
+				break
 			var n = BB_ls[wu_ming]
-			var ge = GZ[index]
+			var ge = GZ[index - qi]
 			# 如果物品有对应图片，则显示物品图片
 			if 物品信息.wu_pin_png.has(wu_ming):
 				var wu_pin_tu = TextureRect.new()
@@ -150,13 +165,18 @@ func xian_shi_wu_pin(BB_ls: Dictionary) -> void:
 				wu_n.position = Vector2(GZ_size-wu_n_size.x-6,GZ_size-wu_n_size.y-2)
 			index += 1
 
-# 根据格子索引获取物品名称（重写父类）
+# 翻页后重新显示当前页物品
+func shua_xin_wu_pin() -> void:
+	xian_shi_wu_pin(wu_pin_ing)
+
+# 根据格子索引获取物品名称（重写父类，按当前页偏移查找）
 func get_wu_ming(idx: int) -> String:
 	# 使用保存的物品字典，按显示顺序查找
 	var index = 0
+	var qi = fan_ye.qi_shi()
 	for wu_ming in 物品信息.wu_pin:
 		if wu_pin_ing.has(wu_ming):
-			if index == idx:
+			if index == qi + idx:
 				return wu_ming
 			index += 1
 	return ""

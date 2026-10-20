@@ -39,6 +39,8 @@ func btn_BB() -> void:
 	if BB_on:
 		BB_n_xy()
 		S_upd()
+		# 每次打开重置到第一页
+		fan_ye.chong_zhi()
 		# 显示银币图标和数值
 		if S_lbl != null:
 			S_lbl.visible = true
@@ -77,7 +79,7 @@ func btn_BB() -> void:
 			BB.S.visible = true
 	get_tree().call_group("BB_3", "BB_4", BB_on)
 
-# 显示商店物品
+# 显示商店物品（由翻页系统分页显示，每页49格）
 func display_shop_items() -> void:
 	# 构建商店物品字典（数量始终为1）
 	wu_pin_ing = {}
@@ -87,12 +89,21 @@ func display_shop_items() -> void:
 	for ge in GZ:
 		for child in ge.get_children():
 			child.queue_free()
+	# 设置商品总数
+	fan_ye.she_zhi(shop_wu.size())
+	# 本页第一个商品的序号
+	var qi = fan_ye.qi_shi()
 	# 按顺序显示商店物品
 	var index = 0
 	for wu_ming in shop_wu:
-		if index >= GZ.size():
+		# 跳过本页之前的商品
+		if index < qi:
+			index += 1
+			continue
+		# 本页已满则停止显示
+		if index >= qi + fan_ye.mei_ye:
 			break
-		var ge = GZ[index]
+		var ge = GZ[index - qi]
 		if 物品信息.wu_pin_png.has(wu_ming):
 			var wu_pin_tu = TextureRect.new()
 			wu_pin_tu.texture = load(物品信息.wu_pin_png[wu_ming])
@@ -103,10 +114,15 @@ func display_shop_items() -> void:
 			ge.add_child(wu_pin_tu)
 		index += 1
 
-# 根据格子索引获取物品名称
+# 翻页后重新显示当前页商品
+func shua_xin_wu_pin() -> void:
+	display_shop_items()
+
+# 根据格子索引获取物品名称（按当前页偏移查找）
 func get_wu_ming(idx: int) -> String:
-	if idx >= 0 and idx < shop_wu.size():
-		return shop_wu[idx]
+	var i = fan_ye.qi_shi() + idx
+	if i >= 0 and i < shop_wu.size():
+		return shop_wu[i]
 	return ""
 
 # 获取售价字段名称（商店使用商店售价）

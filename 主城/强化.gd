@@ -66,6 +66,12 @@ var SR_lbl: Label = null
 var S_add_lbl: Label = null
 # 返还金条显示标签
 var FH_lbl: Label = null
+# 英雄等级显示标签
+var hero_lv_lbl: Label = null
+# 翻页系统脚本
+const 翻页系统_SCRIPT = preload("res://全局/翻页系统.gd")
+# 材料区翻页系统（每页14格）
+var fan_ye = null
 
 func _ready() -> void:
 	# 初始化窗口大小
@@ -88,6 +94,9 @@ func _ready() -> void:
 	C_S()
 	# 创建背景
 	Bg()
+	# 创建材料区翻页系统（每页14格，翻页后重新刷新材料显示）
+	fan_ye = 翻页系统_SCRIPT.new(14, QH_CL_upd)
+	fan_ye.chuang_jian(QH_n)
 	# 加载角色装备
 	load_helo_ZB()
 
@@ -138,14 +147,30 @@ func C_S() -> void:
 	C_SR_lbl()
 	# 创建消耗银币显示
 	C_S_add_lbl()
+	# 创建英雄等级显示
+	C_hero_lv_lbl()
 	# 创建返还金条显示
 	C_FH_lbl()
+
+# 创建英雄等级显示标签
+func C_hero_lv_lbl() -> void:
+	hero_lv_lbl = Label.new()
+	hero_lv_lbl.text = "英雄等级：0"
+	hero_lv_lbl.add_theme_font_size_override("font_size", 26)
+	# 与返还金条一致用金色显示
+	hero_lv_lbl.add_theme_color_override("font_color", Color("#FFCC00"))
+	var kai_ti = 提示弹幕.get_kai_ti_font()
+	if kai_ti != null:
+		hero_lv_lbl.add_theme_font_override("font", kai_ti)
+	hero_lv_lbl.z_index = 1
+	hero_lv_lbl.visible = false
+	QH_n.add_child(hero_lv_lbl)
 
 # 创建返还金条显示标签
 func C_FH_lbl() -> void:
 	FH_lbl = Label.new()
-	FH_lbl.text = "返还：0"
-	FH_lbl.add_theme_font_size_override("font_size", 32)
+	FH_lbl.text = "返还金条：0"
+	FH_lbl.add_theme_font_size_override("font_size", 26)
 	# 金条用金色显示
 	FH_lbl.add_theme_color_override("font_color", Color("#FFCC00"))
 	var kai_ti = 提示弹幕.get_kai_ti_font()
@@ -153,7 +178,6 @@ func C_FH_lbl() -> void:
 		FH_lbl.add_theme_font_override("font", kai_ti)
 	FH_lbl.z_index = 1
 	FH_lbl.visible = false
-	FH_lbl.position = Vector2(400, 90)
 	QH_n.add_child(FH_lbl)
 
 # 计算预测升级返还的金条数量（假设英雄现在升级）
@@ -177,7 +201,32 @@ func get_FH_jt() -> int:
 func FH_upd() -> void:
 	if FH_lbl == null:
 		return
-	FH_lbl.text = "返还：%d" % get_FH_jt()
+	FH_lbl.text = "返还金条：%d" % get_FH_jt()
+	# 更新两段文字的左右位置
+	dui_qi_btn_zuo_you()
+
+# 更新英雄等级显示
+func hero_lv_lbl_upd() -> void:
+	if hero_lv_lbl == null:
+		return
+	hero_lv_lbl.text = "英雄等级：%d" % get_hero_lv()
+	# 更新两段文字的左右位置
+	dui_qi_btn_zuo_you()
+
+# 将英雄等级、返还金条分别放在强化按钮左右，并与按钮垂直居中对齐
+func dui_qi_btn_zuo_you() -> void:
+	var jian_ge = 12.0
+	var zhong_y = QH_btn.position.y + QH_btn.size.y / 2.0
+	# 英雄等级：右边缘贴按钮左侧，且不超过面板左边缘
+	if hero_lv_lbl != null:
+		var s1 = hero_lv_lbl.get_minimum_size()
+		var x1 = max(QH_btn.position.x - jian_ge - s1.x, 394.0)
+		hero_lv_lbl.position = Vector2(x1, zhong_y - s1.y / 2.0)
+	# 返还金条：左边缘贴按钮右侧，且不超过面板右边缘
+	if FH_lbl != null:
+		var s2 = FH_lbl.get_minimum_size()
+		var x2 = min(QH_btn.position.x + QH_btn.size.x + jian_ge, 886.0 - s2.x)
+		FH_lbl.position = Vector2(x2, zhong_y - s2.y / 2.0)
 
 # 创建强化按钮
 func C_QH_btn() -> void:
@@ -185,6 +234,7 @@ func C_QH_btn() -> void:
 	QH_btn.texture = load("res://主城/图片/强化0.png")
 	QH_btn.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	QH_btn.size = Vector2(140, 48)
+	QH_btn.position = Vector2(570, 400)
 	QH_btn.visible = false
 	QH_btn.mouse_entered.connect(_on_QH_btn_mouse_entered)
 	QH_btn.mouse_exited.connect(_on_QH_btn_mouse_exited)
@@ -339,6 +389,9 @@ func QH_On1() -> void:
 		S_upd()
 		S_lbl.visible = true
 		S.visible = true
+		# 更新并显示英雄等级
+		hero_lv_lbl_upd()
+		hero_lv_lbl.visible = true
 		# 更新并显示返还金条
 		FH_upd()
 		FH_lbl.visible = true
@@ -346,6 +399,8 @@ func QH_On1() -> void:
 		load_helo_ZB()
 		# 重置放置区
 		fang_zhi_qu = []
+		# 重置材料页码到第一页
+		fan_ye.chong_zhi()
 		# 刷新装备显示
 		ZB_upd()
 		# 刷新材料显示
@@ -381,10 +436,11 @@ func QH_On1() -> void:
 		# 隐藏返还金条显示
 		if FH_lbl != null:
 			FH_lbl.visible = false
+		# 隐藏英雄等级显示
+		if hero_lv_lbl != null:
+			hero_lv_lbl.visible = false
 		# 重置选中的装备索引
 		ZB_idx = -1
-		# 关闭界面时，将放置区的材料返还到背包
-		fang_zhi_qu_back()
 		# 重置放置区
 		fang_zhi_qu = []
 		# 显示背包按钮
@@ -433,7 +489,7 @@ func ZB_upd() -> void:
 				wu_pin_tu.position = Vector2(offset, offset)
 				ge.add_child(wu_pin_tu)
 
-# 刷新材料显示（第6~7行，堆叠显示）
+# 刷新材料显示（第6~7行，由翻页系统分页显示，每页14个）
 func QH_CL_upd() -> void:
 	# 清理材料区域的格子
 	var start_idx = 5 * x
@@ -446,38 +502,62 @@ func QH_CL_upd() -> void:
 		if idx_1 < GZ.size():
 			for child in GZ[idx_1].get_children():
 				child.queue_free()
-	# 获取背包中的材料（带数量）
-	var CL = get_QH_CL()
-	# 按物品顺序显示，堆叠显示
-	var idx = 0
+	# 获取当前可摆放的材料（存档数量已扣除放置区中的数量）
+	var CL = get_QH_CL_ke_yong()
+	# 按显示顺序生成材料列表
+	var lie = []
 	for wu_ming in 物品信息.wu_pin:
-		if CL.has(wu_ming) and CL[wu_ming] > 0:
-			if idx >= 14:  # 最多显示14个格子
-				break
-			var gz_idx = start_idx + idx
-			var idx_1 = get_GZ_index(gz_idx)
-			if idx_1 >= GZ.size():
-				idx += 1
-				continue
-			var ge = GZ[idx_1]
-			# 创建物品图片
-			var wu_pin_tu = TextureRect.new()
-			wu_pin_tu.texture = load(物品信息.wu_pin_png[wu_ming])
-			wu_pin_tu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			wu_pin_tu.size = Vector2(GZ_size - 14, GZ_size - 14)
-			var offset = (GZ_size - wu_pin_tu.size.x) / 2.0
-			wu_pin_tu.position = Vector2(offset, offset)
-			ge.add_child(wu_pin_tu)
-			# 如果数量大于1，显示数量标签
-			var count = CL[wu_ming]
-			if count > 1:
-				var wu_n = Label.new()
-				wu_n.text = str(int(count))
-				wu_n.add_theme_color_override("font_color", Color.BLACK)
-				ge.add_child(wu_n)
-				var wu_n_size = wu_n.get_minimum_size()
-				wu_n.position = Vector2(GZ_size - wu_n_size.x - 6, GZ_size - wu_n_size.y - 2)
-			idx += 1
+		if CL.has(wu_ming):
+			lie.append(wu_ming)
+	# 设置材料总数（页码越界时翻页系统会自动回到最后一页）
+	fan_ye.she_zhi(lie.size())
+	# 当前页显示范围
+	var qi = fan_ye.qi_shi()
+	var zhi = min(qi + fan_ye.mei_ye, lie.size())
+	for idx in range(qi, zhi):
+		var wu_ming = lie[idx]
+		var gz_idx = start_idx + (idx - qi)
+		var idx_1 = get_GZ_index(gz_idx)
+		if idx_1 >= GZ.size():
+			continue
+		var ge = GZ[idx_1]
+		# 创建物品图片
+		var wu_pin_tu = TextureRect.new()
+		wu_pin_tu.texture = load(物品信息.wu_pin_png[wu_ming])
+		wu_pin_tu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		wu_pin_tu.size = Vector2(GZ_size - 14, GZ_size - 14)
+		var offset = (GZ_size - wu_pin_tu.size.x) / 2.0
+		wu_pin_tu.position = Vector2(offset, offset)
+		ge.add_child(wu_pin_tu)
+		# 如果数量大于1，显示数量标签
+		var count = CL[wu_ming]
+		if count > 1:
+			var wu_n = Label.new()
+			wu_n.text = str(int(count))
+			wu_n.add_theme_color_override("font_color", Color.BLACK)
+			ge.add_child(wu_n)
+			var wu_n_size = wu_n.get_minimum_size()
+			wu_n.position = Vector2(GZ_size - wu_n_size.x - 6, GZ_size - wu_n_size.y - 2)
+
+# 获取当前可摆放的材料名有序数组（已扣除放置区中已放入的数量）
+func get_QH_CL_lie() -> Array:
+	var lie = []
+	var CL = get_QH_CL_ke_yong()
+	for wu_ming in 物品信息.wu_pin:
+		if CL.has(wu_ming):
+			lie.append(wu_ming)
+	return lie
+
+# 获取当前可摆放的材料字典（存档数量 - 放置区已放入数量）
+# 说明：摆放不扣存档，这里只做显示/点击用的数量扣减
+func get_QH_CL_ke_yong() -> Dictionary:
+	var CL = get_QH_CL()
+	for CL_wu_ming in fang_zhi_qu:
+		if CL.has(CL_wu_ming):
+			CL[CL_wu_ming] = int(CL[CL_wu_ming]) - 1
+			if CL[CL_wu_ming] <= 0:
+				CL.erase(CL_wu_ming)
+	return CL
 
 # 获取背包中的材料字典（物品名:数量）
 func get_QH_CL() -> Dictionary:
@@ -717,16 +797,25 @@ func QH_zhi_xing() -> void:
 	# 随机判断是否成功
 	var sui_ji = randf_range(0.0, 1.0)
 	var lv_add = sui_ji <= SR
-	# 扣除材料（清空放置区）
+	# 扣除放置区材料（只有点击强化时才真正修改存档）
+	var BB_wu_pin = data.get("背包", {})
+	for CL_wu_ming in fang_zhi_qu:
+		if BB_wu_pin.has(CL_wu_ming):
+			BB_wu_pin[CL_wu_ming] = int(BB_wu_pin[CL_wu_ming]) - 1
+			if BB_wu_pin[CL_wu_ming] <= 0:
+				BB_wu_pin.erase(CL_wu_ming)
+	data["背包"] = BB_wu_pin
+	# 清空放置区
 	fang_zhi_qu = []
 	fang_zhi_qu_upd()
-	QH_CL_upd()
 	# 扣除/增加银币
 	S_n -= add
 	data["银币"] = S_n
 	# 先保存数据到文件，再更新显示
 	json.bao_cun(json.id, data)
+	# 刷新银币与材料显示（材料数量此时已写入存档）
 	S_upd()
+	QH_CL_upd()
 	# 如果成功
 	if lv_add:
 		QH_lv += 1
@@ -753,39 +842,15 @@ func QH_zhi_xing() -> void:
 		# 更新强化信息
 		QH_upd_1()
 
-# 将放置区的材料返还到背包
-func fang_zhi_qu_back() -> void:
-	if fang_zhi_qu.size() == 0:
-		return
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json == null:
-		return
-	var data = json.du_qu(json.id)
-	var BB_wu_pin = data.get("背包", {})
-	for wu_ming in fang_zhi_qu:
-		BB_wu_pin[wu_ming] = BB_wu_pin.get(wu_ming, 0) + 1
-	data["背包"] = BB_wu_pin
-	json.bao_cun(json.id, data)
-
-# 放置区点击处理
+# 放置区点击处理（取回材料，只是视觉变化，不修改存档）
 func fang_zhi_qu_click(idx: int) -> void:
 	# 计算在放置区中的索引
 	var start_idx = 2 * x
 	var fang_zhi_idx = idx - start_idx
 	if fang_zhi_idx < 0 or fang_zhi_idx >= fang_zhi_qu.size():
 		return
-	# 获取卸下的物品
-	var wu_ming = fang_zhi_qu[fang_zhi_idx]
 	# 从放置区移除
 	fang_zhi_qu.remove_at(fang_zhi_idx)
-	# 背包中该物品数量+1
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json != null:
-		var data = json.du_qu(json.id)
-		var BB_wu_pin = data.get("背包", {})
-		BB_wu_pin[wu_ming] = BB_wu_pin.get(wu_ming, 0) + 1
-		data["背包"] = BB_wu_pin
-		json.bao_cun(json.id, data)
 	# 刷新显示
 	QH_CL_upd()
 	fang_zhi_qu_upd()
@@ -795,35 +860,19 @@ func CL_qu_click(idx: int) -> void:
 	# 如果放置区已满（14个），无法添加
 	if fang_zhi_qu.size() >= 14:
 		return
-	# 获取材料区显示的物品
-	var CL = get_QH_CL()
 	var start_idx = 5 * x
-	var CL_idx_1 = idx - start_idx
-	# 按顺序找到对应的物品
-	var wu_ming = ""
-	var idx_count = 0
-	for item_name in 物品信息.wu_pin:
-		if CL.has(item_name) and CL[item_name] > 0:
-			if idx_count == CL_idx_1:
-				wu_ming = item_name
-				break
-			idx_count += 1
-	if wu_ming == "":
+	# 本页内的格子序号
+	var ben_ye_idx = idx - start_idx
+	if ben_ye_idx < 0 or ben_ye_idx >= fan_ye.mei_ye:
 		return
-	# 背包中该物品数量-1
-	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json == null:
+	# 换算成材料有序数组中的实际序号（加上当前页偏移）
+	var CL_idx_1 = fan_ye.qi_shi() + ben_ye_idx
+	# 按顺序找到对应的物品（列表已扣除放置区中已放入的数量）
+	var lie = get_QH_CL_lie()
+	if CL_idx_1 < 0 or CL_idx_1 >= lie.size():
 		return
-	var data = json.du_qu(json.id)
-	var BB_wu_pin = data.get("背包", {})
-	if BB_wu_pin.get(wu_ming, 0) <= 0:
-		return
-	BB_wu_pin[wu_ming] -= 1
-	if BB_wu_pin[wu_ming] <= 0:
-		BB_wu_pin.erase(wu_ming)
-	data["背包"] = BB_wu_pin
-	json.bao_cun(json.id, data)
-	# 添加到放置区
+	var wu_ming = lie[CL_idx_1]
+	# 摆放只是视觉变化，不修改存档；实际扣除在点击强化时进行
 	fang_zhi_qu.append(wu_ming)
 	# 刷新显示
 	QH_CL_upd()
