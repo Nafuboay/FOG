@@ -144,4 +144,11 @@ static func load_zi_yuan(guan_kia_id: int = 0) -> Dictionary:
 	zi_yuan["tile_fan_kai_zi"] = load("res://关卡/紫地/0.png")
 	zi_yuan["tile_wei_fan_kai_zi"] = load("res://关卡/紫地/9.png")
 	zi_yuan["tile_biao_ji_zi"] = load("res://关卡/紫地/10.png")
+	# 四种奇花贴图（关卡/草地/下的 百合/水仙/玫瑰/鸢尾 植株图）
+	zi_yuan["tile_hua"] = {
+		"百合": load("res://关卡/草地/百合植株.png"),
+		"水仙": load("res://关卡/草地/水仙植株.png"),
+		"玫瑰": load("res://关卡/草地/玫瑰植株.png"),
+		"鸢尾": load("res://关卡/草地/鸢尾植株.png"),
+	}
 	return zi_yuan

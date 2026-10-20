@@ -111,6 +111,10 @@ func flood_fill(x: int, y: int) -> void:
 									zhang_ai[tny][tnx].visible = false
 						break
 						break
+			elif GZ2.get("hua", false) == true:
+				# 花格：底层显示草地，显示花
+				GZs[ny][nx].texture = tile_fan_kai
+				guan_qia.qi_hua.hua_xian_shi(nx, ny)
 			elif GZ2["shu_zi"] == true:
 				# 数字格子
 				GZs[ny][nx].texture = tile_shu_zi[GZ2["number"] - 1]
@@ -251,6 +255,13 @@ func kai_ge_zi(x: int, y: int, cai: bool = false, zi_dong: bool = true) -> void:
 								guan_qia.zhang_ai[ny][nx].visible = false
 				return
 		return
+	# 奇花格：翻开后底层显示草地，花遮挡数字
+	if GZ1.get("hua", false) == true:
+		GZ1["fan_kai"] = true
+		GZ1["biao_ji"] = false
+		guan_qia.GZs[y][x].texture = guan_qia.tile_fan_kai
+		# 显示花（位置/纹理由奇花系统统一管理）
+		guan_qia.qi_hua.hua_xian_shi(x, y)
 	# 根据格子状态设置属性
 	if GZ1["guai_wu"] == true:
 		# 怪物格子

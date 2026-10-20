@@ -64,6 +64,10 @@ var NPC_jie_dian: Node2D = null
 var tile_zhang_ai: Texture2D
 # 树位置列表，存储主格(x,y)坐标
 var zhang_ai_xy = []
+# 奇花系统预加载（管理支线模式的花逻辑；与战斗系统同等地位）
+const 奇花系统_SCRIPT = preload("res://关卡/奇花系统.gd")
+# 奇花系统节点引用（由 _ready 创建并 add_child）
+var qi_hua = null
 # BOSS位置列表，存储主格(x,y)坐标
 var BOSS_xy = []
 # 战斗系统预加载
@@ -156,6 +160,9 @@ func _ready() -> void:
 	# 容器位置设为屏幕中心（使用视口大小而非物理窗口大小）
 	rong_qi.position = viewport_size / 2
 	add_child(rong_qi)
+	# 先创建奇花系统（load_zi_yuan 需要往里面塞贴图）
+	qi_hua = 奇花系统_SCRIPT.new()
+	rong_qi.add_child(qi_hua)
 	# 加载图片资源
 	load_zi_yuan()
 	# 实例化战斗系统
@@ -203,6 +210,8 @@ func load_zi_yuan() -> void:
 	tile_biao_ji = zi_yuan["tile_biao_ji"]
 	tile_biao_ji_zi = zi_yuan.get("tile_biao_ji_zi", tile_biao_ji)
 	tile_zhang_ai = zi_yuan["tile_zhang_ai"]
+	# 加载四种花贴图到奇花系统（关卡数据返回 tile_hua 字典）
+	qi_hua.load_tile_hua(zi_yuan.get("tile_hua", {}))
 
 # 数据读取
 func du_qu_guan_kia() -> void:
@@ -251,6 +260,8 @@ func C_GZ() -> void:
 	zhang_ai_xy.clear()
 	# 清空BOSS位置列表
 	BOSS_xy.clear()
+	# 清空花位置列表（花数据在奇花系统里）
+	qi_hua.hua_xy.clear()
 	# 遍历每一行
 	for y in range(GZ_y):
 		# 创建新行
@@ -270,6 +281,8 @@ func C_GZ() -> void:
 				"zhang_ai": false,
 				"BOSS": false,
 				"BX": false,
+				"hua": false,
+				"hua_id": "",
 				"lv": 1,
 				"shp": 1,
 				"hp": 1,
@@ -300,17 +313,22 @@ func C_GZ() -> void:
 func shu_zi_n() -> void:
 	for y in range(GZ_y):
 		for x in range(GZ_x):
-			# 跳过非空格子
+			# 跳过怪物/障碍/BOSS（不是可计数格子）
 			if GZ[y][x]["guai_wu"] == true:
 				continue
 			if GZ[y][x].get("zhang_ai", false) == true:
 				continue
 			if GZ[y][x]["BOSS"] == true:
 				continue
+			# 花格也算出 number（供花消失后复原数字/空白用），
+			var is_hua = GZ[y][x].get("hua", false) == true
 			# 统计周围8个格子的怪物数量
 			var n = fan_kai.guai_wu_n9(x, y)
 			# 记录周围怪物数量
 			GZ[y][x]["number"] = n
+			if is_hua:
+				# 花格：shu_zi/kong_bai 保持默认 false，不参与底层数字显示
+				continue
 			# 如果周围有怪物，标记为数字
 			if n > 0:
 				GZ[y][x]["shu_zi"] = true
@@ -367,6 +385,8 @@ func C_GZ1() -> void:
 		# 将当前行的精灵数组添加到二维数组
 		GZs.append(row)
 		zhang_ai.append(zhang_ai_row)
+	# 创建花朵节点二维数组（由奇花系统管理）
+	qi_hua.C_hua()
 
 # 生成障碍
 func zhang_ai_n(n: int) -> void:
@@ -607,19 +627,35 @@ func guai_wu_xian_shi(x: int, y: int, cai: bool = false) -> void:
 	GZ[y][x]["lv"] = guai_wu1.LV * shuang
 	# 从掉落物脚本生成怪物描述（1倍值 × 当前模式的判定次数倍率）
 	GZ[y][x]["miao_shu"] = 掉落物.diao_luo_miao_shu(self, guai_wu_id, false, GZ[y][x]["lv"])
-	# 魔法树加成
-	var add = 0
-	add = fan_kai.zhang_ai_n9(x, y)
-	GZ[y][x]["shp"] = guai_wu1.HP * shuang * xue + add
-	GZ[y][x]["hp"] = GZ[y][x]["shp"]
-	GZ[y][x]["ll"] = guai_wu1.LL * shuang + add
-	GZ[y][x]["fy"] = guai_wu1.FY * shuang + add
-	GZ[y][x]["ct"] = guai_wu1.CT * shuang + add
-	GZ[y][x]["add"] = add  # 存储魔法树加成值
-	# 属性变化值（所有增益与降低的总和，供信息面板拆分显示；初始仅有魔法树加成）
-	GZ[y][x]["ll_bian"] = add
-	GZ[y][x]["fy_bian"] = add
-	GZ[y][x]["ct_bian"] = add
+	# 基础属性（无树、无花加成；存base_stats以便花消失后重算）
+	var base_shp = guai_wu1.HP * shuang * xue
+	var base_ll = guai_wu1.LL * shuang
+	var base_fy = guai_wu1.FY * shuang
+	var base_ct = guai_wu1.CT * shuang
+	GZ[y][x]["shp_base"] = base_shp
+	GZ[y][x]["ll_base"] = base_ll
+	GZ[y][x]["fy_base"] = base_fy
+	GZ[y][x]["ct_base"] = base_ct
+	# 魔法树加成（全属性+1×周围树数）
+	var add = fan_kai.zhang_ai_n9(x, y)
+	# 花香加成（按花种类分别加 shp/ll/fy/ct；没花时返回全 0；由奇花系统管理）
+	var hua_add = qi_hua.hua_xiang_jia_cheng(x, y, false)
+	# 最终属性 = 基础 + 树加成 + 花加成
+	var shp_z = base_shp + add + hua_add.get("shp", 0)
+	var ll_z = base_ll + add + hua_add.get("ll", 0)
+	var fy_z = base_fy + add + hua_add.get("fy", 0)
+	var ct_z = base_ct + add + hua_add.get("ct", 0)
+	GZ[y][x]["shp"] = shp_z
+	GZ[y][x]["hp"] = shp_z
+	GZ[y][x]["ll"] = ll_z
+	GZ[y][x]["fy"] = fy_z
+	GZ[y][x]["ct"] = ct_z
+	GZ[y][x]["add"] = add  # 魔法树加成值（供信息面板/显示用）
+	GZ[y][x]["add_hua"] = hua_add  # 花香加成明细（shp/ll/fy/ct，采摘重算时用）
+	# 属性变化值 = 树加成 + 花加成（ll/fy/ct 各算各的）
+	GZ[y][x]["ll_bian"] = add + hua_add.get("ll", 0)
+	GZ[y][x]["fy_bian"] = add + hua_add.get("fy", 0)
+	GZ[y][x]["ct_bian"] = add + hua_add.get("ct", 0)
 	# 计算格子中心位置
 	var GZ_z = GZ_zhong(x, y)
 	# 缩放后偏移也要乘以缩放比例（排雷/踩雷使用各自模式参数）
@@ -658,30 +694,42 @@ func BOSS_xian_shi() -> void:
 		guai_wu1.set_meta("grid_y", y)
 		# 计算BOSS属性（生命 = 基础HP × 血量系数 × BOSS等级 × 血量倍数；三围 = 基础值 × BOSS等级倍率）
 		var boss_lv = guai_wu1.LV * BOSS_lv_bei
-		var boss_shp = int(round(guai_wu1.HP * BOSS_xue_bei * boss_lv)) * xue
-		var boss_ll = guai_wu1.LL * BOSS_lv_bei
-		var boss_fy = guai_wu1.FY * BOSS_lv_bei
-		var boss_ct = guai_wu1.CT * BOSS_lv_bei
-		var shp_1 = boss_shp # 记录基础生命值（用于热血技能动态计算）
+		var base_shp = int(round(guai_wu1.HP * BOSS_xue_bei * boss_lv)) * xue
+		var base_ll = guai_wu1.LL * BOSS_lv_bei
+		var base_fy = guai_wu1.FY * BOSS_lv_bei
+		var base_ct = guai_wu1.CT * BOSS_lv_bei
+		var shp_1 = base_shp # 存储基础生命值（用于热血技能动态计算）
 		if guai_wu_id == "野猪王·冕笑":
 			var shp_add = (guai_wu_xian - 1) * boss_lv
-			boss_shp += shp_add
+			base_shp += shp_add
+			shp_1 = base_shp
+		# 花香加成（BOSS 占 2x2，扫描周围 12 格；由奇花系统管理）
+		var hua_add = qi_hua.hua_xiang_jia_cheng(x, y, true)
+		var boss_shp = base_shp + hua_add.get("shp", 0)
+		var boss_ll = base_ll + hua_add.get("ll", 0)
+		var boss_fy = base_fy + hua_add.get("fy", 0)
+		var boss_ct = base_ct + hua_add.get("ct", 0)
 		# 在4个格子都写入相同的属性
 		for by in range(y, y + 2):
 			for bx in range(x, x + 2):
 				GZ[by][bx]["名字"] = guai_wu_id
 				GZ[by][bx]["miao_shu"] = 掉落物.diao_luo_miao_shu(self, guai_wu_id, true, boss_lv)
 				GZ[by][bx]["lv"] = boss_lv
-				GZ[by][bx]["shp_1"] = shp_1  # 存储基础生命值
+				GZ[by][bx]["shp_base"] = base_shp  # 无加成的基础生命值（含热血BOSS的 shp_add）
+				GZ[by][bx]["ll_base"] = base_ll
+				GZ[by][bx]["fy_base"] = base_fy
+				GZ[by][bx]["ct_base"] = base_ct
+				GZ[by][bx]["shp_1"] = shp_1  # 热血技能用的"无花加成基础生命值"
 				GZ[by][bx]["shp"] = boss_shp
 				GZ[by][bx]["hp"] = boss_shp
 				GZ[by][bx]["ll"] = boss_ll
 				GZ[by][bx]["fy"] = boss_fy
 				GZ[by][bx]["ct"] = boss_ct
-				# 属性变化值初始为0（BOSS无魔法树加成，重甲技能初始化会在下方累加）
-				GZ[by][bx]["ll_bian"] = 0
-				GZ[by][bx]["fy_bian"] = 0
-				GZ[by][bx]["ct_bian"] = 0
+				GZ[by][bx]["add_hua"] = hua_add  # 花香加成明细（采摘重算用）
+				# 属性变化值 = 花香加成（BOSS 无魔法树加成）
+				GZ[by][bx]["ll_bian"] = hua_add.get("ll", 0)
+				GZ[by][bx]["fy_bian"] = hua_add.get("fy", 0)
+				GZ[by][bx]["ct_bian"] = hua_add.get("ct", 0)
 				# BOSS技能初始化（主线与诛邪通用，逻辑在特殊技能.gd）
 				特殊技能_SCRIPT.BOSS_ji_neng_chu_shi(GZ[by][bx], guai_wu_id, boss_lv)
 		# 计算显示位置（格子中心）

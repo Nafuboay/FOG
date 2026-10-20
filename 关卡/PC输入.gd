@@ -166,6 +166,52 @@ func LMB_1(dian_x: int, dian_y: int) -> void:
 			# 满血时显示提示弹幕
 			提示弹幕.wen_ben("花精灵·沙华：“我可以为你疗伤。”", 0)
 		return
+	# 点击到已翻开的花格：执行采摘（英雄瞬移到花格）
+	if GZ1["fan_kai"] == true and GZ1.get("hua", false) == true:
+		# 英雄瞬移到花所在格
+		helo_move(dian_x, dian_y)
+		var hua_id = GZ1.get("hua_id", "")
+		# 1% 判定成功（randi() % 100 == 0）
+		var success = (randi() % 100) == 0
+		if success:
+			# 成功：至多 99 点非致命伤害（hp 至少剩 1）
+			var max_shang = guan_qia.helo_hp - 1
+			var shang = min(99, max_shang)
+			if shang > 0:
+				guan_qia.helo_hp -= shang
+			# 采摘得花进临时背包
+			if hua_id != "":
+				guan_qia.BB_ls[hua_id] = guan_qia.BB_ls.get(hua_id, 0) + 1
+			# 提示弹幕
+			提示弹幕.wen_ben("采摘到【%s】！受到%d点伤害。" % [hua_id, shang], 0)
+		else:
+			# 失败：恢复 1 生命（满血则不回）
+			if guan_qia.helo_hp < guan_qia.helo_shp:
+				guan_qia.helo_hp = min(guan_qia.helo_hp + 1, guan_qia.helo_shp)
+		# 无论成功失败，花消失
+		GZ1["hua"] = false
+		GZ1["hua_id"] = ""
+		guan_qia.qi_hua.hua_xiao_shi(dian_x, dian_y)
+		# 从 hua_xy 里移除
+		var removed_pos = Vector2(dian_x, dian_y)
+		guan_qia.qi_hua.hua_xy.erase(removed_pos)
+		# 本格复原：number>0 变成数字格，number==0 变成空白格并递归展开
+		var num = GZ1["number"]
+		if num > 0:
+			GZ1["shu_zi"] = true
+			GZ1["kong_bai"] = false
+			guan_qia.GZs[dian_y][dian_x].texture = guan_qia.tile_shu_zi[num - 1]
+		else:
+			GZ1["kong_bai"] = true
+			GZ1["shu_zi"] = false
+			guan_qia.GZs[dian_y][dian_x].texture = guan_qia.tile_fan_kai
+			# 空白格递归展开（同翻开系统的 flood_fill 逻辑）
+			guan_qia.fan_kai.flood_fill(dian_x, dian_y)
+		# 重算周围怪物的花香加成（由奇花系统管理）
+		guan_qia.qi_hua.hua_xiang_chong_suan_zhou_wei(dian_x, dian_y)
+		# 刷新信息面板（生命变化）
+		guan_qia.shu_wu_upd.emit()
+		return
 	# 如果点击的是已翻开的怪物格，触发战斗
 	if GZ1["fan_kai"] == true and (GZ1["guai_wu"] == true or GZ1["BOSS"] == true):
 		# 计算移动目标位置（移动到怪物附近的已翻开格）
@@ -242,6 +288,18 @@ func RMB(x: int, y: int) -> void:
 	# 点击到已翻开的障碍：显示障碍信息面板
 	elif GZ1["fan_kai"] == true and GZ1.get("zhang_ai", false) == true:
 		# 如果障碍面板已显示同一个障碍，则关闭
+		if guan_qia.look_guai_wu != null and guan_qia.guai_wu_x_ing == x and guan_qia.guai_wu_y_ing == y:
+			guan_qia.look_guai_wu.queue_free()
+			guan_qia.look_guai_wu = null
+			if guan_qia.kuai_2 != null:
+				guan_qia.kuai_2.queue_free()
+				guan_qia.kuai_2 = null
+			guan_qia.guai_wu_x_ing = -1
+			guan_qia.guai_wu_y_ing = -1
+		else:
+			guan_qia.XX.look(false, x, y)
+	# 点击到已翻开的花：显示奇花信息面板
+	elif GZ1["fan_kai"] == true and GZ1.get("hua", false) == true:
 		if guan_qia.look_guai_wu != null and guan_qia.guai_wu_x_ing == x and guan_qia.guai_wu_y_ing == y:
 			guan_qia.look_guai_wu.queue_free()
 			guan_qia.look_guai_wu = null

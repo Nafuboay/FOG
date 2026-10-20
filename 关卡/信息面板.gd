@@ -128,10 +128,18 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 	if GZ1.get("zhang_ai", false) == true:
 		var zhang_ai_name = GZ1.get("zhang_ai_ming", "魔法树")
 		var zhang_ai_lv = GZ1.get("zhang_ai_lv", 1)
-		var zhang_ai_text = "\n  【障碍】%s\n  【等级】%d\n  【位置】（%d，%d）\n  【魔化】怪物周围有魔法树，\n  全属性增加，可叠加" % [
+		var zhang_ai_text = "\n  【障碍】%s\n  【等级】%d\n  【位置】（%d，%d）\n  【魔化】加强周围怪物" % [
 			zhang_ai_name, zhang_ai_lv, x + 1, y + 1
 		]
 		C_label(zhang_ai_text, guan_qia.look_guai_wu)
+		return
+	# 点击到奇花：显示奇花信息面板
+	if GZ1.get("hua", false) == true:
+		var hua_name = GZ1.get("hua_id", "")
+		var hua_text = "\n  【奇花】%s\n  【等级】4\n  【位置】（%d，%d）\n  【香氛】加强周围怪物" % [
+			hua_name, x + 1, y + 1
+		]
+		C_label(hua_text, guan_qia.look_guai_wu)
 		return
 	# 点击到怪物：显示怪物信息
 	# 获取怪物属性
