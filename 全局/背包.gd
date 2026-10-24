@@ -97,10 +97,10 @@ func S_upd() -> void:
 	var S_n = int(data.get("银币", 0))
 	var text = ""
 	if S_n >= 1000000000000:
-		text = "富可敌国"
+		text = tr("富可敌国")
 	elif S_n >= 10000:
 		var is_yi = S_n >= 100000000
-		var unit = "亿" if is_yi else "万"
+		var unit = tr("亿") if is_yi else tr("万")
 		var wei_4 = 100000000 if is_yi else 10000
 		var d_1 = int(S_n / float(wei_4))
 		var f_1 = S_n % wei_4
@@ -276,24 +276,22 @@ func wu_pin_XX(wu_ming: String) -> void:
 	var shou_jia_zi_duan = get_shou_jia_zi_duan()
 	var shou_jia = XX.get(shou_jia_zi_duan, 0)
 	# 不可出售的物品不显示售价行（价格与出售相关内容一并去掉）
-	var text = ""
+	var text = "\n" + tr("【物品】") + tr(wu_ming)
+	text += "\n" + tr("【获取】") + tr(XX.get("获取", ""))
+	text += "\n" + tr("【用途】") + tr(XX.get("用途", ""))
 	if 物品信息.shi_fou_ke_chu_shou(wu_ming):
-		text = "\n  【物品】%s\n  【获取】%s\n  【用途】%s\n  【售价】%d银币" % [
-			wu_ming, XX.get("获取", ""), XX.get("用途", ""), shou_jia
-		]
-	else:
-		text = "\n  【物品】%s\n  【获取】%s\n  【用途】%s" % [
-			wu_ming, XX.get("获取", ""), XX.get("用途", "")
-		]
+		text += "\n" + tr("【售价】") + tr("%d银币") % shou_jia
 	# 创建文本标签
 	var label = Label.new()
-	label.text = text
-	label.position = Vector2(0,0)
+	label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY  # 中文按字断行（无空格），需先于text设置才生效
+	label.position = Vector2(16, 0)
+	label.size = Vector2(224, 512)
 	label.add_theme_color_override("font_color", Color.BLACK)
 	# 设置楷体字体
 	var font_file = 提示弹幕.get_kai_ti_font()
 	if font_file != null:
 		label.add_theme_font_override("font", font_file)
+	label.text = text  # 最后设置text，确保autowrap按size换行
 	wu_pin_kuai.add_child(label)
 	# 判断是否显示操作按钮（调用虚方法）
 	if yao_xian_shi_cao_zuo_btn(wu_ming):

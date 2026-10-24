@@ -79,11 +79,15 @@ func look_helo_upd() -> void:
 	else:
 		exp_str = "%s(%d%%)" % [ge_shi_zl(exp_0), exp_pct]
 	# 组装显示文本
-	var text = "\n  【英雄】%s\n  【战力】%s\n  【等级】%d\n  【经验】%s\n  【生命】%d/%d（%d%%）
-	  【力量】%s\n  【防御】%s\n  【穿透】%s\n  【位置】（%d，%d）" % [
-		helo_name, ge_shi_zl(helo_zl), lv, exp_str, guan_qia.helo_hp, guan_qia.helo_shp, hp_pct,
-		ll_str, fy_str, ct_str, guan_qia.helo_x, guan_qia.helo_y
-	]
+	var text = "\n" + tr("【英雄】") + tr(helo_name)
+	text += "\n" + tr("【战力】") + ge_shi_zl(helo_zl)
+	text += "\n" + tr("【等级】") + str(lv)
+	text += "\n" + tr("【经验】") + exp_str
+	text += "\n" + tr("【生命】") + tr("%d/%d（%d%%）") % [guan_qia.helo_hp, guan_qia.helo_shp, hp_pct]
+	text += "\n" + tr("【力量】") + ll_str
+	text += "\n" + tr("【防御】") + fy_str
+	text += "\n" + tr("【穿透】") + ct_str
+	text += "\n" + tr("【位置】") + tr("（%d，%d）") % [guan_qia.helo_x, guan_qia.helo_y]
 	# 创建标签
 	C_label(text, guan_qia.look_helo)
 
@@ -119,26 +123,28 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 		var npc_name = GZ1.get("NPC_id", "花精灵·沙华")
 		var npc_hp = GZ1.get("NPC_hp", 0)
 		var npc_hp_max = guan_qia.guan_kia_id + 1
-		var npc_text = "\n  【友方】%s\n  【位置】（%d，%d）\n  【治愈】%d/%d" % [
-			npc_name, x + 1, y + 1, npc_hp, npc_hp_max
-		]
+		var npc_text = "\n" + tr("【友方】") + tr(npc_name)
+		npc_text += "\n" + tr("【位置】") + tr("（%d，%d）") % [x + 1, y + 1]
+		npc_text += "\n" + tr("【治愈】") + tr("%d/%d") % [npc_hp, npc_hp_max]
 		C_label(npc_text, guan_qia.look_guai_wu)
 		return
 	# 点击到障碍：显示障碍信息
 	if GZ1.get("zhang_ai", false) == true:
 		var zhang_ai_name = GZ1.get("zhang_ai_ming", "魔法树")
 		var zhang_ai_lv = GZ1.get("zhang_ai_lv", 1)
-		var zhang_ai_text = "\n  【障碍】%s\n  【等级】%d\n  【位置】（%d，%d）\n  【魔化】加强周围怪物" % [
-			zhang_ai_name, zhang_ai_lv, x + 1, y + 1
-		]
+		var zhang_ai_text = "\n" + tr("【障碍】") + tr(zhang_ai_name)
+		zhang_ai_text += "\n" + tr("【等级】") + str(zhang_ai_lv)
+		zhang_ai_text += "\n" + tr("【位置】") + tr("（%d，%d）") % [x + 1, y + 1]
+		zhang_ai_text += "\n" + tr("【魔化】") + tr("加强周围怪物")
 		C_label(zhang_ai_text, guan_qia.look_guai_wu)
 		return
 	# 点击到奇花：显示奇花信息面板
 	if GZ1.get("hua", false) == true:
 		var hua_name = GZ1.get("hua_id", "")
-		var hua_text = "\n  【奇花】%s\n  【等级】4\n  【位置】（%d，%d）\n  【香氛】加强周围怪物" % [
-			hua_name, x + 1, y + 1
-		]
+		var hua_text = "\n" + tr("【奇花】") + tr(hua_name)
+		hua_text += "\n" + tr("【等级】") + "4"
+		hua_text += "\n" + tr("【位置】") + tr("（%d，%d）") % [x + 1, y + 1]
+		hua_text += "\n" + tr("【香氛】") + tr("加强周围怪物")
 		C_label(hua_text, guan_qia.look_guai_wu)
 		return
 	# 点击到怪物：显示怪物信息
@@ -189,11 +195,17 @@ func look(is_helo: bool, x: int = 0, y: int = 0, x1: int = -1, y1: int = -1) -> 
 	var guai_wu_miao_shu = GZ1.get("miao_shu", "")
 	var miao_shu_str = ""
 	if guai_wu_miao_shu != "":
-		miao_shu_str = "\n  %s" % [guai_wu_miao_shu]
+		miao_shu_str = "\n%s" % [tr(guai_wu_miao_shu)]
 	# 组装显示文本
-	var text = "\n  【怪物】%s\n  【战力】%s\n  【等级】%d\n  【生命】%d/%d（%d%%）\n  【力量】%s\n  【防御】%s\n  【穿透】%s\n  【位置】（%d，%d）%s" % [
-		guai_wu_name, ge_shi_zl(guai_wu_zl), lv, hp, shp, hp_pct, ll_str, fy_str, ct_str, x1 + 1, y1 + 1, miao_shu_str
-	]
+	var text = "\n" + tr("【怪物】") + tr(guai_wu_name)
+	text += "\n" + tr("【战力】") + ge_shi_zl(guai_wu_zl)
+	text += "\n" + tr("【等级】") + str(lv)
+	text += "\n" + tr("【生命】") + tr("%d/%d（%d%%）") % [hp, shp, hp_pct]
+	text += "\n" + tr("【力量】") + ll_str
+	text += "\n" + tr("【防御】") + fy_str
+	text += "\n" + tr("【穿透】") + ct_str
+	text += "\n" + tr("【位置】") + tr("（%d，%d）") % [x1 + 1, y1 + 1]
+	text += miao_shu_str
 	# 创建标签
 	C_label(text, guan_qia.look_guai_wu)
 
@@ -250,11 +262,16 @@ func C_wen_ben(left: bool, win_y: int, win_x: int = 0) -> Control:
 # 文字显示
 func C_label(text: String, parent: Control) -> void:
 	var label = Label.new()
-	label.text = text
-	label.position = Vector2(0,0)
+	label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY  # 中文按字断行（无空格），需先于text设置才生效
+	# 面板宽高（与C_kuai/C_wen_ben一致）；左边距16px提供统一缩进，文本内不再用空格缩进
+	var shu_wu_x = 256
+	var shu_wu_y = 512
+	label.position = Vector2(16, 0)
+	label.size = Vector2(shu_wu_x - 32, shu_wu_y - 32)
 	label.add_theme_color_override("font_color", Color.BLACK)
 	# 设置楷体字体
 	kai_ti(label)
+	label.text = text  # 最后设置text，确保autowrap按size换行
 	parent.add_child(label)
 
 # 设置Label使用楷体字体（加粗）

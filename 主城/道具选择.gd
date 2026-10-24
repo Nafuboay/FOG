@@ -97,7 +97,7 @@ func qie_huan(wu_ming: String) -> void:
 	if idx >= 0:
 		xuan_ze.remove_at(idx)
 	elif xuan_ze.size() >= ZUI_DUO:
-		提示弹幕.wen_ben("最多只能携带%d个道具！" % ZUI_DUO, 0)
+		提示弹幕.wen_ben(tr("最多只能携带%d个道具！") % ZUI_DUO, 0)
 		return
 	else:
 		xuan_ze.append(wu_ming)

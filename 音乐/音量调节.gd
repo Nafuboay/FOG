@@ -73,21 +73,21 @@ func C_P() -> void:
 	bg.position = Vector2(win_size.x / 2.0 - bg.size.x / 2.0, win_size.y / 2.0 - bg.size.y / 2.0)
 	P.add_child(bg)
 	var tit = Label.new()
-	tit.text = "音量调节"
+	tit.text = tr("音量调节")
 	tit.position = Vector2(576,286) # 标题位置
 	tit.add_theme_font_size_override("font_size",32) # 字体大小
 	tit.add_theme_color_override("font_color", Color("000000")) # 字体黑色
 	kai_ti(tit) # 字体楷体
 	P.add_child(tit)
 	dB_lbl = Label.new()
-	dB_lbl.text = "分贝：标准"
+	dB_lbl.text = tr("分贝：标准")
 	dB_lbl.position = Vector2(580,334) # 分贝文本位置
 	dB_lbl.add_theme_font_size_override("font_size",24) # 字体大小
 	dB_lbl.add_theme_color_override("font_color", Color("000000"))
 	kai_ti(dB_lbl)
 	P.add_child(dB_lbl)
 	pct_lbl = Label.new()
-	pct_lbl.text = "音量：100%"
+	pct_lbl.text = tr("音量：100%")
 	pct_lbl.position = Vector2(580,374) # 音量文本位置
 	pct_lbl.add_theme_font_size_override("font_size",24) # 字体大小
 	pct_lbl.add_theme_color_override("font_color", Color("000000"))
@@ -144,13 +144,13 @@ func upd() -> void:
 	var pct = get_pct(dB_ing)
 	# 更新分贝值显示
 	if dB_ing == 0:
-		dB_lbl.text = "分贝：标准"
+		dB_lbl.text = tr("分贝：标准")
 	elif dB_ing > 0:
-		dB_lbl.text = "分贝：+%d" % dB_ing
+		dB_lbl.text = tr("分贝：+%d") % dB_ing
 	else:
-		dB_lbl.text = "分贝：%d" % dB_ing
+		dB_lbl.text = tr("分贝：%d") % dB_ing
 	# 音量百分比
-	pct_lbl.text = "音量: %s" % get_pct_text(pct)
+	pct_lbl.text = tr("音量: %s") % get_pct_text(pct)
 	# 同步滑块位置
 	if dB_S != null and int(dB_S.value) != dB_ing:
 		dB_S.value = dB_ing

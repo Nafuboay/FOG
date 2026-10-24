@@ -214,7 +214,7 @@ func create_cao_zuo_buttons() -> void:
 	# 按钮旁显示消耗材料
 	var font_file = 提示弹幕.get_kai_ti_font()
 	var lbl = Label.new()
-	lbl.text = "金条×1"
+	lbl.text = tr("金条×1")
 	lbl.add_theme_color_override("font_color", Color.BLACK)
 	lbl.add_theme_font_size_override("font_size", 24)
 	if font_file != null:
@@ -224,7 +224,7 @@ func create_cao_zuo_buttons() -> void:
 
 # 获取出售按钮文本（重写基类）
 func get_cao_zuo_texts() -> Array:
-	return [" 一件", "  10%", " 全部"]
+	return [tr(" 一件"), "  10%", tr(" 全部")]
 
 # 获取出售按钮amount参数（重写基类：1=一件，0=10%，-1=全部）
 func get_cao_zuo_amounts() -> Array:
@@ -350,7 +350,7 @@ func chu_shou_batch(wu_ming: String, shu_liang: int, shou_jia: int, BB: Dictiona
 	xian_shi_wu_pin(BB)
 	S_upd()
 	# 显示弹幕提示
-	提示弹幕.wen_ben("出售%sx%d，获得%d银币！" % [wu_ming, actual_amount, total_earn], 0)
+	提示弹幕.wen_ben(tr("出售%sx%d，获得%d银币！") % [tr(wu_ming), actual_amount, total_earn], 0)
 	# 如果物品已售完，关闭信息面板
 	if not BB.has(wu_ming):
 		GZ_ing = -1

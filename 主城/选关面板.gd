@@ -234,13 +234,13 @@ func xian_shi() -> void:
 				# 诛邪模式：读取该关存档中的当前级别（get_zx_lv参数为1-based关卡ID）
 				if json != null:
 					zx_lv_dang_qian = json.get_zx_lv(i + 1)
-				btn[i].text = "诛邪·"+str(zx_lv_dang_qian)+"级"+"\n\n\n\n\n\n\n"
+				btn[i].text = tr("诛邪·%d级") % zx_lv_dang_qian + "\n\n\n\n\n\n\n"
 			elif current_mode == 2:
 				# 支线模式
-				btn[i].text = "支线·"+str(i+1)+"关"+"\n\n\n\n\n\n\n"
+				btn[i].text = tr("支线·%d关") % (i + 1) + "\n\n\n\n\n\n\n"
 			else:
 				# 主线模式
-				btn[i].text = "主线·"+str(i+1)+"关"+"\n\n\n\n\n\n\n"
+				btn[i].text = tr("主线·%d关") % (i + 1) + "\n\n\n\n\n\n\n"
 			# 检查关卡是否可进入
 			var ke_jin = true
 			var guan_num = i + 1  # 关卡编号（1~30）

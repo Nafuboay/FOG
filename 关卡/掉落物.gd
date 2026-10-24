@@ -123,11 +123,11 @@ static func diao_luo_miao_shu(guan_qia, guai_wu_ming: String, is_boss: bool, lv:
 	# 第一行：特殊技能（有才显示）；第二行：主掉落期望；第三行：彩虹掉率（固定0.01%）
 	var text = ""
 	if miao.has("特殊"):
-		text = miao["特殊"]
-		text += "\n  %s掉落期望%s" % [miao["物品"], ge_shi_diao_lv(miao["倍率"] * bei)]
+		text = TranslationServer.translate(miao["特殊"])
+		text += TranslationServer.translate("\n%s掉落期望%s") % [TranslationServer.translate(miao["物品"]), ge_shi_diao_lv(miao["倍率"] * bei)]
 	else:
-		text = "%s掉落期望%s" % [miao["物品"], ge_shi_diao_lv(miao["倍率"] * bei)]
-	text += "\n  %s掉率%s%%" % [DIAO_LUO_CAI_HONG, CAI_HONG_MIAO_SHU]
+		text = TranslationServer.translate("%s掉落期望%s") % [TranslationServer.translate(miao["物品"]), ge_shi_diao_lv(miao["倍率"] * bei)]
+	text += TranslationServer.translate("\n%s掉率%s%%") % [TranslationServer.translate(DIAO_LUO_CAI_HONG), CAI_HONG_MIAO_SHU]
 	return text
 
 # 格式化掉率数值文本（最多6位小数，去掉末尾多余的0）

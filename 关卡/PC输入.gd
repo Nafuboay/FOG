@@ -154,7 +154,7 @@ func LMB_1(dian_x: int, dian_y: int) -> void:
 			# 恢复人物血量
 			zhan_dou.hui_fu(0, 0, hp3, true)
 			# 显示治愈弹幕
-			提示弹幕.wen_ben("花精灵·沙华：“治愈术！”", 0)
+			提示弹幕.wen_ben("花精灵·沙华：\"治愈术！\"", 0)
 			# 刷新信息面板
 			guan_qia.XX.look_helo_upd()
 			# 更新NPC剩余可恢复量
@@ -164,7 +164,7 @@ func LMB_1(dian_x: int, dian_y: int) -> void:
 				guan_qia.NPC_xiao_shi(dian_x, dian_y)
 		else:
 			# 满血时显示提示弹幕
-			提示弹幕.wen_ben("花精灵·沙华：“我可以为你疗伤。”", 0)
+			提示弹幕.wen_ben("花精灵·沙华：\"我可以为你疗伤。\"", 0)
 		return
 	# 点击到已翻开的花格：执行采摘（英雄瞬移到花格）
 	if GZ1["fan_kai"] == true and GZ1.get("hua", false) == true:
@@ -185,7 +185,7 @@ func LMB_1(dian_x: int, dian_y: int) -> void:
 			if hua_id != "":
 				guan_qia.BB_ls[hua_id] = guan_qia.BB_ls.get(hua_id, 0) + 1
 			# 提示弹幕
-			提示弹幕.wen_ben("采摘到【%s】！受到%d点伤害。" % [hua_id, shang], 0)
+			提示弹幕.wen_ben(tr("采摘到【%s】！受到%d点伤害。") % [tr(hua_id), shang], 0)
 		else:
 			# 失败：恢复 1 生命（满血则不回）
 			if guan_qia.helo_hp < guan_qia.helo_shp:
@@ -508,9 +508,9 @@ func kai_qi_BX(x: int, y: int) -> void:
 			# 根据开启次数显示不同提示
 			var ti_shi = ""
 			if kao_ci == 0:
-				ti_shi = "免费开启获得【" + wu_ming + "】×" + str(n) + "！"
+				ti_shi = tr("免费开启获得【%s】×%d！") % [tr(wu_ming), n]
 			else:
-				ti_shi = "第" + str(kao_ci) + "次消耗钥匙获得【" + wu_ming + "】×" + str(n) + "！"
+				ti_shi = tr("第%d次消耗钥匙获得【%s】×%d！") % [kao_ci, tr(wu_ming), n]
 			提示弹幕.wen_ben(ti_shi, 0)
 	else:
 		提示弹幕.wen_ben("不够好运，没能获得宝物！", 0)

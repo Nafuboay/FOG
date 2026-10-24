@@ -33,6 +33,17 @@ var json_fan_hui: Button
 var json: Node
 # 当前选中的存档槽位
 var json_id: int = 0
+# 语言切换按钮
+var yu_yan_btn: TextureRect = null
+# 语言选择面板
+var yu_yan_panel: Control = null
+# 支持的语言列表 {code: 语言代码, ming: 显示名称}
+const YU_YAN_LIE_BIAO: Array = [
+	{"code": "zh_CN", "ming": "简体中文"},
+	{"code": "en", "ming": "英语"},
+	{"code": "zh_TW", "ming": "繁体中文"},
+	{"code": "ja", "ming": "日语"},
+]
 # 玄戈是否处于锁定状态（历史成就《不朽者》未完成时为true）
 var xuan_ge_suo: bool = false
 # 秤干戚是否处于锁定状态（历史成就《救世主》未完成时为true）
@@ -187,6 +198,110 @@ func _ready() -> void:
 		shan_chus[i].add_theme_stylebox_override("pressed", shan_chu_11)
 		# 程序化连接删除按钮的点击信号
 		shan_chus[i].pressed.connect(shan_chu_an_niu.bind(i))
+	# 创建语言切换按钮
+	chuang_jian_yu_yan_btn()
+
+# 创建语言切换按钮（右上角，TextureRect + Label 模式）
+func chuang_jian_yu_yan_btn() -> void:
+	# 获取窗口大小
+	var size = get_viewport_rect().size
+	var win_x = size.x
+	var win_y = size.y
+	# 按钮背景用模块图片，拉伸到 120x40
+	yu_yan_btn = TextureRect.new()
+	yu_yan_btn.texture = load("res://主界面/图片/模块0.png")
+	yu_yan_btn.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	yu_yan_btn.size = Vector2(120, 40)
+	yu_yan_btn.position = Vector2(1140, 10)
+	yu_yan_btn.z_index = 100
+	# 悬停提亮
+	yu_yan_btn.mouse_entered.connect(func(): yu_yan_btn.modulate = Color(1.3, 1.3, 1.3, 1))
+	yu_yan_btn.mouse_exited.connect(func(): yu_yan_btn.modulate = Color(1, 1, 1, 1))
+	# 点击打开语言选择面板
+	yu_yan_btn.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			yu_yan_panel.visible = not yu_yan_panel.visible
+	)
+	add_child(yu_yan_btn)
+	# 按钮上的文字
+	var label = Label.new()
+	label.text = tr("语言")
+	label.size = Vector2(120, 40)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_color", Color.BLACK)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	yu_yan_btn.add_child(label)
+	# 创建语言选择面板（初始隐藏）
+	yu_yan_panel = Control.new()
+	yu_yan_panel.visible = false
+	yu_yan_panel.z_index = 1000
+	# 全屏半透明遮罩，点击关闭
+	var mask = ColorRect.new()
+	mask.color = Color(0, 0, 0, 0.5)
+	mask.anchor_right = 1.0
+	mask.anchor_bottom = 1.0
+	mask.mouse_filter = Control.MOUSE_FILTER_STOP
+	mask.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			yu_yan_panel.visible = false
+	)
+	yu_yan_panel.add_child(mask)
+	# 面板主体（居中）
+	var panel = Panel.new()
+	panel.size = Vector2(300, 300)
+	panel.position = Vector2((win_x - 300) / 2.0, (win_y - 300) / 2.0)
+	# 面板背景用模块图片
+	var panel_style = StyleBoxTexture.new()
+	panel_style.texture = load("res://主界面/图片/模块0.png")
+	panel_style.texture_margin_left = 10
+	panel_style.texture_margin_top = 10
+	panel_style.texture_margin_right = 10
+	panel_style.texture_margin_bottom = 10
+	panel.add_theme_stylebox_override("panel", panel_style)
+	yu_yan_panel.add_child(panel)
+	# 标题
+	var title = Label.new()
+	title.text = tr("语言")
+	title.size = Vector2(300, 50)
+	title.position = Vector2(0, 10)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 28)
+	title.add_theme_color_override("font_color", Color.BLACK)
+	panel.add_child(title)
+	# 四个语言选项
+	for i in range(YU_YAN_LIE_BIAO.size()):
+		var item = TextureRect.new()
+		item.texture = load("res://主界面/图片/模块0.png")
+		item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		item.size = Vector2(240, 50)
+		item.position = Vector2(30, 70 + i * 55)
+		item.mouse_entered.connect(func(): item.modulate = Color(1.3, 1.3, 1.3, 1))
+		item.mouse_exited.connect(func(): item.modulate = Color(1, 1, 1, 1))
+		var code = YU_YAN_LIE_BIAO[i]["code"]
+		item.gui_input.connect(func(event, c = code):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+				_on_yu_yan_xuan_ze(c)
+		)
+		panel.add_child(item)
+		# 选项文字
+		var item_label = Label.new()
+		item_label.text = tr(YU_YAN_LIE_BIAO[i]["ming"])
+		item_label.size = Vector2(240, 50)
+		item_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		item_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		item_label.add_theme_color_override("font_color", Color.BLACK)
+		item_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		item.add_child(item_label)
+	add_child(yu_yan_panel)
+
+# 语言选项被点击：切换语言、保存到通用存档、刷新按钮文字
+func _on_yu_yan_xuan_ze(code: String) -> void:
+	json.set_yu_yan(code)
+	yu_yan_panel.visible = false
+	# 重新加载当前场景，让所有已渲染的 UI 文本按新语言重新走 tr() 渲染
+	# （Label 的 text 是一次性赋值，set_locale 后旧 Label 不会自动刷新，需重建场景）
+	get_tree().reload_current_scene()
 
 # 当鼠标移动到按钮上时，显示悬停图片并将画面调亮
 func _on_mouse_entered() -> void:
@@ -206,6 +321,9 @@ func _on_button_input(_viewport, event, _shape_idx):
 			an_niu.visible = false
 			# 显示存档返回按钮
 			json_fan_hui.visible = true
+			# 隐藏语言按钮（如果语言面板开着也一并关闭）
+			yu_yan_panel.visible = false
+			yu_yan_btn.visible = false
 			an_niu_upd()
 
 # 存档槽位悬停：应用该槽位对应的颜色
@@ -470,3 +588,5 @@ func on_json_fan_hui() -> void:
 		idle.visible = false
 	# 显示开始游戏按钮
 	an_niu.visible = true
+	# 恢复显示语言按钮
+	yu_yan_btn.visible = true

@@ -67,7 +67,7 @@ func guai_wu_die() -> void:
 	guan_qia.get_node("背包").xian_shi_wu_pin(guan_qia.BB_ls)
 	for wu_ming in diao_luo_ing:
 		var n = diao_luo_ing[wu_ming]
-		提示弹幕.wen_ben("获得【" + wu_ming + "】×" + str(n) + "！", 0)
+		提示弹幕.wen_ben(tr("获得【%s】×%d！") % [tr(wu_ming), n], 0)
 	# 移除怪物节点
 	if zhan_dou.guai_wu_ing != null and is_instance_valid(zhan_dou.guai_wu_ing):
 		zhan_dou.guai_wu_ing.queue_free()
@@ -117,7 +117,7 @@ func guai_wu_die() -> void:
 	guan_qia.guai_wu_xian = n_1 + int(n_4 / 4.0)
 	# 更新怪物数量标签（诛邪模式下可能不存在）
 	if guan_qia.guai_wu_lbl != null:
-		guan_qia.guai_wu_lbl.text = "怪物数量：" + str(guan_qia.guai_wu_xian) + "/" + str(guan_qia.guai_wu_zong)
+		guan_qia.guai_wu_lbl.text = tr("怪物数量：%d/%d") % [guan_qia.guai_wu_xian, guan_qia.guai_wu_zong]
 	# 怪物死亡类技能（野猪王热血：场上怪物越多生命越高）
 	zhan_dou.ji_neng.guai_wu_die_ji_neng()
 	# 检查胜利条件：人物存活且怪物数量为0

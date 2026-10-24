@@ -133,16 +133,16 @@ func C_tsk(T_id: int, F: bool) -> Control:
 		# 支线任务（31~60关对应支线1~30关）
 		var zx_n = T_id - 30
 		var zx_jt = ZX_JIN_TIAO[zx_n - 1]
-		lbl.text = "通过支线·%02d关   奖励：金条×%d" % [zx_n, zx_jt]
+		lbl.text = tr("通过支线·%02d关   奖励：金条×%d") % [zx_n, zx_jt]
 	elif T_id >= 30:
-		lbl.text = "通过主线·%02d关   奖励：金条×7" % T_id
+		lbl.text = tr("通过主线·%02d关   奖励：金条×7") % T_id
 	elif T_id > 23:
-		lbl.text = "通过主线·%02d关   奖励：金条×1" % T_id
+		lbl.text = tr("通过主线·%02d关   奖励：金条×1") % T_id
 	elif T_id == 23:
-		lbl.text = "通过主线·%02d关   奖励：333银币" % T_id
+		lbl.text = tr("通过主线·%02d关   奖励：333银币") % T_id
 	else:
 		# 1~22关：银币按等差数列递增（第n关=10×(n+1)）
-		lbl.text = "通过主线·%02d关   奖励：%d银币" % [T_id, 10 * (T_id + 1)]
+		lbl.text = tr("通过主线·%02d关   奖励：%d银币") % [T_id, 10 * (T_id + 1)]
 	lbl.size = Vector2(280,54) # 任务文本范围
 	lbl.position = Vector2(24,17) # 任务文本位置
 	var kai_ti = 提示弹幕.get_kai_ti_font()
@@ -179,7 +179,7 @@ func get_tsk_R(T_id: int) -> void:
 			var jiang_li = 10 * (T_id + 1)
 			S += jiang_li
 			data["银币"] = S
-			提示弹幕.wen_ben("获得%d银币！" % jiang_li, 0)
+			提示弹幕.wen_ben(tr("获得%d银币！") % jiang_li, 0)
 		elif T_id == 23:
 			# 第23关：333银币
 			var S = int(data.get("银币", 0))
@@ -199,7 +199,7 @@ func get_tsk_R(T_id: int) -> void:
 			var bag = data.get("背包", {})
 			bag["金条"] = int(bag.get("金条", 0)) + zx_jt
 			data["背包"] = bag
-			提示弹幕.wen_ben("获得金条×%d！" % zx_jt, 0)
+			提示弹幕.wen_ben(tr("获得金条×%d！") % zx_jt, 0)
 		else:
 			# 24~29关：金条×1
 			var bag = data.get("背包", {})
@@ -291,12 +291,12 @@ func C_ach(idx: int, state: int) -> Control:
 	if kai_ti != null:
 		lbl.add_theme_font_override("font", kai_ti)
 	if state == 1:
-		lbl.text = "\n已获得成就《%s》" % ach_name
+		lbl.text = tr("\n已获得成就《%s》") % tr(ach_name)
 		lbl.add_theme_color_override("font_color", Color("000000"))
 	else:
 		# 未完成或可领取状态：显示完成条件和奖励
 		var cond_text = config[5]  # 使用配置中的条件描述
-		lbl.text = "\n%s\n奖励：%s×%d" % [cond_text, jiang_li, jiang_li_n]
+		lbl.text = tr("\n%s\n奖励：%s×%d") % [tr(cond_text), tr(jiang_li), jiang_li_n]
 		if chk_ach(idx): # 可领取状态：绿色文本
 			lbl.add_theme_color_override("font_color", Color("00ff00"))
 		else: # 未完成状态：黑色文本
@@ -338,12 +338,12 @@ func get_ach_R(idx: int) -> void:
 		for i in range(4):
 			if hua_n[i] > 0:
 				bag[hua_ming[i]] = int(bag.get(hua_ming[i], 0)) + hua_n[i]
-				parts.append("%s×%d" % [hua_ming[i], hua_n[i]])
-		tip_text = "恭喜获得成就《%s》！\n获得%s！" % [ach_name, "、".join(parts)]
+				parts.append("%s×%d" % [tr(hua_ming[i]), hua_n[i]])
+		tip_text = tr("恭喜获得成就《%s》！\n获得%s！") % [tr(ach_name), "、".join(parts)]
 	else:
 		# 普通成就：直接发放指定物品
 		bag[jiang_li] = int(bag.get(jiang_li, 0)) + jiang_li_n
-		tip_text = "恭喜获得成就《%s》！\n奖励%s×%d！" % [ach_name, jiang_li, jiang_li_n]
+		tip_text = tr("恭喜获得成就《%s》！\n奖励%s×%d！") % [tr(ach_name), tr(jiang_li), jiang_li_n]
 	data["背包"] = bag
 	# 更新成就状态为已领取
 	ach_2[idx] = 1

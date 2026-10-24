@@ -155,7 +155,7 @@ func C_S() -> void:
 # 创建英雄等级显示标签
 func C_hero_lv_lbl() -> void:
 	hero_lv_lbl = Label.new()
-	hero_lv_lbl.text = "英雄等级：0"
+	hero_lv_lbl.text = tr("英雄等级：0")
 	hero_lv_lbl.add_theme_font_size_override("font_size", 26)
 	# 与返还金条一致用金色显示
 	hero_lv_lbl.add_theme_color_override("font_color", Color("#FFCC00"))
@@ -169,7 +169,7 @@ func C_hero_lv_lbl() -> void:
 # 创建返还金条显示标签
 func C_FH_lbl() -> void:
 	FH_lbl = Label.new()
-	FH_lbl.text = "返还金条：0"
+	FH_lbl.text = tr("返还金条：0")
 	FH_lbl.add_theme_font_size_override("font_size", 26)
 	# 金条用金色显示
 	FH_lbl.add_theme_color_override("font_color", Color("#FFCC00"))
@@ -201,7 +201,7 @@ func get_FH_jt() -> int:
 func FH_upd() -> void:
 	if FH_lbl == null:
 		return
-	FH_lbl.text = "返还金条：%d" % get_FH_jt()
+	FH_lbl.text = tr("返还金条：%d") % get_FH_jt()
 	# 更新两段文字的左右位置
 	dui_qi_btn_zuo_you()
 
@@ -209,7 +209,7 @@ func FH_upd() -> void:
 func hero_lv_lbl_upd() -> void:
 	if hero_lv_lbl == null:
 		return
-	hero_lv_lbl.text = "英雄等级：%d" % get_hero_lv()
+	hero_lv_lbl.text = tr("英雄等级：%d") % get_hero_lv()
 	# 更新两段文字的左右位置
 	dui_qi_btn_zuo_you()
 
@@ -257,7 +257,7 @@ func _on_QH_btn_clicked(event: InputEvent) -> void:
 # 创建成功率显示标签
 func C_SR_lbl() -> void:
 	SR_lbl = Label.new()
-	SR_lbl.text = "成功率: 0%"
+	SR_lbl.text = tr("成功率: 0%")
 	SR_lbl.add_theme_font_size_override("font_size", 32)
 	SR_lbl.add_theme_color_override("font_color", Color("eeeeee"))
 	var kai_ti = 提示弹幕.get_kai_ti_font()
@@ -270,7 +270,7 @@ func C_SR_lbl() -> void:
 # 创建消耗银币显示标签
 func C_S_add_lbl() -> void:
 	S_add_lbl = Label.new()
-	S_add_lbl.text = "消耗: 0银币"
+	S_add_lbl.text = tr("消耗: 0银币")
 	S_add_lbl.add_theme_font_size_override("font_size", 32)
 	var kai_ti = 提示弹幕.get_kai_ti_font()
 	if kai_ti != null:
@@ -291,10 +291,10 @@ func S_upd() -> void:
 	var S_n = int(data.get("银币", 0))
 	var text = ""
 	if S_n >= 1000000000000:
-		text = "富可敌国"
+		text = tr("富可敌国")
 	elif S_n >= 10000:
 		var is_yi = S_n >= 100000000
-		var unit = "亿" if is_yi else "万"
+		var unit = tr("亿") if is_yi else tr("万")
 		var wei_4 = 100000000 if is_yi else 10000
 		var d_1 = int(S_n / float(wei_4))
 		var f_1 = S_n % wei_4
@@ -715,9 +715,9 @@ func QH_upd_1() -> void:
 	var QH_lv = get_QH_lv()
 	# 如果已满级
 	if QH_lv >= get_QH_MAX():
-		SR_lbl.text = "强化已满级！"
+		SR_lbl.text = tr("强化已满级！")
 		SR_lbl.add_theme_color_override("font_color", Color("#FFFFFF"))
-		S_add_lbl.text = "无需消耗！"
+		S_add_lbl.text = tr("无需消耗！")
 		QH_btn.visible = false
 		return
 	# 获取当前等级对应的m值
@@ -738,7 +738,7 @@ func QH_upd_1() -> void:
 	# 自然常数e
 	var e = 2.718281828459045
 	# 更新成功率显示
-	SR_lbl.text = "成功率：%d%%" % int(SR * 100)
+	SR_lbl.text = tr("成功率：%d%%") % int(SR * 100)
 	# 根据成功率设置颜色
 	if SR <= 1.0 / e:
 		# 成功率过低
@@ -754,10 +754,10 @@ func QH_upd_1() -> void:
 		QH_btn.visible = true
 	# 区分消耗和返还
 	if add >= 0:
-		S_add_lbl.text = "消耗银币：%d" % add
+		S_add_lbl.text = tr("消耗银币：%d") % add
 		S_add_lbl.add_theme_color_override("font_color", Color("#eeeeee"))
 	else:
-		S_add_lbl.text = "返还银币：%d" % (-add)
+		S_add_lbl.text = tr("返还银币：%d") % (-add)
 		S_add_lbl.add_theme_color_override("font_color", Color("#00FFFF"))
 
 # 执行强化
@@ -826,7 +826,7 @@ func QH_zhi_xing() -> void:
 		# 保存存档
 		json.bao_cun(json.id, data)
 		# 显示结果
-		提示弹幕.wen_ben("【%s】强化+%d成功！" % [wu_ming, QH_lv], 0)
+		提示弹幕.wen_ben(tr("【%s】强化+%d成功！") % [tr(wu_ming), QH_lv], 0)
 		# 更新装备信息显示
 		wu_pin_XX_0()
 		var ZB_1 = [0, 2, 4, 6]
@@ -922,12 +922,12 @@ func wu_pin_XX(idx: int) -> void:
 			if QH_lv >= 1:
 				# 有强化等级时显示强化信息和属性
 				if QH_lv > get_QH_MAX():
-					QH_text = "开了！"
+					QH_text = tr("开了！")
 				else:
 					QH_text = "+%d" % QH_lv
 				# 按 生命/力量/防御/穿透 顺序拼接各属性加成（加成=每级数值×强化等级，可为负）
 				var jia_cheng = 装备信息.get_jia_cheng(wu_ming)
-				var key_names = {"shp": "生命", "ll": "力量", "fy": "防御", "ct": "穿透"}
+				var key_names = {"shp": tr("生命"), "ll": tr("力量"), "fy": tr("防御"), "ct": tr("穿透")}
 				var parts = []
 				for key in ["shp", "ll", "fy", "ct"]:
 					if jia_cheng.has(key):
@@ -938,21 +938,24 @@ func wu_pin_XX(idx: int) -> void:
 			else:
 				# 0级时显示默认文本
 				QH_text = XX.get("强化", "+0")
-				shu_xing_text = XX.get("属性", "无")
+				shu_xing_text = tr(XX.get("属性", "无"))
 			# 显示
-			var text = "\n  装备：%s\n  强化：%s\n  属性：%s\n  特性：%s\n  描述：%s" % [
-				wu_ming, QH_text, shu_xing_text, 
-				XX.get("特性", "无"), XX.get("描述", "")
-			]
+			var text = "\n" + tr("【装备】") + tr(wu_ming)
+			text += "\n" + tr("【强化】") + QH_text
+			text += "\n" + tr("【属性】") + shu_xing_text
+			text += "\n" + tr("【特性】") + tr(XX.get("特性", "无"))
+			text += "\n" + tr("【描述】") + tr(XX.get("描述", ""))
 			# 创建文本标签
 			var label = Label.new()
-			label.text = text
-			label.position = Vector2(0,0)
+			label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY  # 中文按字断行（无空格），需先于text设置才生效
+			label.position = Vector2(16, 0)
+			label.size = Vector2(224, 512)
 			label.add_theme_color_override("font_color", Color.BLACK)
 			# 设置楷体字体
 			var kai_ti = 提示弹幕.get_kai_ti_font()
 			if kai_ti != null:
 				label.add_theme_font_override("font", kai_ti)
+			label.text = text  # 最后设置text，确保autowrap按size换行
 			wu_pin_kuai.add_child(label)
 			return
 

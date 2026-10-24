@@ -620,7 +620,7 @@ func NPC_xiao_shi(x: int, y: int) -> void:
 	if NPC_jie_dian != null:
 		NPC_jie_dian.queue_free()
 		NPC_jie_dian = null
-	提示弹幕.wen_ben("花精灵·沙华：“我的力量耗尽了，祝你好运。”", 0.5)
+	提示弹幕.wen_ben("花精灵·沙华：\"我的力量耗尽了，祝你好运。\"", 0.5)
 
 # 怪物显示
 func guai_wu_xian_shi(x: int, y: int, cai: bool = false) -> void:

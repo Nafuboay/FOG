@@ -13,9 +13,34 @@ func _ready() -> void:
 	mi_wu_json = mu_lu()
 	# 确保存档文件夹存在
 	wen_jian_jia()
-	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音），所有档共用
+	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音，语言简体中文），所有档共用
 	if not FileAccess.file_exists(get_ty_lu_jing()):
-		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": []})
+		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN"})
+	# 手动加载翻译资源（project.godot 的 [locale] 配置在含中文路径"翻译/"时可能加载失败，代码手动加载更可靠）
+	_jia_zai_fan_yi()
+	# 启动时应用存档中的语言设置
+	_ying_yong_yu_yan(get_yu_yan())
+
+# 手动加载所有翻译资源到 TranslationServer（绕过 project.godot 的 [locale] 配置，避免路径含中文导致加载失败）
+func _jia_zai_fan_yi() -> void:
+	var lu_jing_lie_biao = [
+		"res://翻译/翻译.en.translation",
+		"res://翻译/翻译.zh_TW.translation",
+		"res://翻译/翻译.ja.translation",
+	]
+	for lu_jing in lu_jing_lie_biao:
+		var t = load(lu_jing)
+		if t != null:
+			TranslationServer.add_translation(t)
+
+# 应用语言设置到引擎
+# zh_CN 时用空 locale：引擎不查找任何翻译，tr() 直接返回 key 本身（即中文）
+# 这样避免引擎在 zh_CN 找不到翻译时按"同语言族"回退到已注册的 zh_TW 翻译（导致简体界面显示繁体）
+func _ying_yong_yu_yan(yu_yan: String) -> void:
+	if yu_yan == "zh_CN":
+		TranslationServer.set_locale("")
+	else:
+		TranslationServer.set_locale(yu_yan)
 
 # 获取存档根目录路径
 static func mu_lu() -> String:
@@ -182,7 +207,7 @@ func rst_qh(data: Dictionary, hero_lv: int) -> void:
 	data["强化"] = [0, 0, 0, 0]
 	# 升级提示弹幕（新等级已在 chk_lv 中写入 data）
 	var new_lv = int(data.get("等级", hero_lv))
-	提示弹幕.wen_ben("恭喜升到%d级！当前总强化值%d，返还金条×%d！" % [new_lv, total, jt], 0)
+	提示弹幕.wen_ben(tr("恭喜升到%d级！当前总强化值%d，返还金条×%d！") % [new_lv, total, jt], 0)
 
 # 获取指定关卡的诛邪等级
 func get_zx_lv(guan_kia_id: int) -> int:
@@ -318,3 +343,17 @@ func has_ach_ty(ach_idx: int) -> bool:
 	if ach_idx >= 0 and ach_idx < his_ach.size():
 		return int(his_ach[ach_idx]) == 1
 	return false
+
+# 获取当前语言设置（从通用存档读取，默认简体中文 zh_CN）
+func get_yu_yan() -> String:
+	var data = du_qu_ty()
+	return str(data.get("语言", "zh_CN"))
+
+# 保存语言设置到通用存档并立即切换生效
+# yu_yan 语言代码，如 "zh_CN"、"en"、"zh_TW"、"ja"
+func set_yu_yan(yu_yan: String) -> void:
+	var data = du_qu_ty()
+	data["语言"] = yu_yan
+	bao_cun_ty(data)
+	# 立即切换引擎语言（zh_CN 走空 locale 避免回退到繁体）
+	_ying_yong_yu_yan(yu_yan)

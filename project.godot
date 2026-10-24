@@ -29,6 +29,10 @@ window/size/viewport_height=720
 window/stretch/mode="viewport"
 window/size/fullscreen=false
 
+[internationalization]
+
+locale/fallback=""
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

@@ -10,6 +10,7 @@ var time_1: float = 0.0
 var time_t: float = 0.5
 
 # 显示文本内容（delay为延迟出现时间，单位秒）
+# 内部自动对文本进行国际化翻译，调用方传入中文原文即可
 static func wen_ben(s: String, delay: float = 0.0) -> void:
 	if instance != null:
 		instance.dan_mu(s, delay)
@@ -21,6 +22,7 @@ func _ready() -> void:
 
 # 实际创建和显示提示弹幕（extra_delay为用户指定的延迟出现时间）
 func dan_mu(s: String, extra_delay: float = 0.0) -> void:
+	s = tr(s)
 	visible = true
 	# 计算需要延迟的时间
 	var now = Time.get_ticks_msec() / 1000.0  # 转换为秒

@@ -139,7 +139,7 @@ func yao_xian_shi_cao_zuo_btn(_wu_ming: String) -> bool:
 
 # 获取购买按钮文本（重写基类）
 func get_cao_zuo_texts() -> Array:
-	return [" 一件", " 十件", " 10%"]
+	return [tr(" 一件"), tr(" 十件"), " 10%"]
 
 # 获取购买按钮amount参数（重写基类：1=一件，10=十件，-1=10%银币）
 func get_cao_zuo_amounts() -> Array:
@@ -172,7 +172,7 @@ func cao_zuo_3(event: InputEvent, amount: int) -> void:
 			# 计算实际可购买数量
 			var can_buy = int(S_1 / shou_jia)
 			if can_buy > 0:
-				提示弹幕.wen_ben("银币不足！只能购买%d件！" % can_buy, 0)
+				提示弹幕.wen_ben(tr("银币不足！只能购买%d件！") % can_buy, 0)
 			else:
 				提示弹幕.wen_ben("银币不足！", 0)
 			return
@@ -210,12 +210,12 @@ func buy_item_batch(wu_ming: String, shou_jia: int, amount: int, BB_1: Dictionar
 		json.bao_cun(json.id, data)
 		S_upd()
 		if new_lv <= lv:
-			提示弹幕.wen_ben("购买并使用【%s】x%d，获得%d经验！" % [wu_ming, amount, int(total_exp)], 0)
+			提示弹幕.wen_ben(tr("购买并使用【%s】x%d，获得%d经验！") % [tr(wu_ming), amount, int(total_exp)], 0)
 	else:
 		json.bao_cun(json.id, data)
 		S_upd()
 		# 显示购买成功弹幕
-		提示弹幕.wen_ben("购买%sx%d，花费%d银币！" % [wu_ming, amount, total_cost], 0)
+		提示弹幕.wen_ben(tr("购买%sx%d，花费%d银币！") % [tr(wu_ming), amount, total_cost], 0)
 
 # 获取经验星对应的经验值
 func get_exp(wu_ming: String) -> int:

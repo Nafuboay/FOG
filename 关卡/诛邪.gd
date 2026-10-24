@@ -53,13 +53,13 @@ func _ready() -> void:
 	# 调用基类公共初始化主体（创建容器/各系统模块/网格/人物，与主线共用，不再复制）
 	_guan_qia_chu_shi()
 	# 诛邪模式特殊初始化：显示提示
-	提示弹幕.wen_ben("诛邪·%d级" % [zx_lv], 0)
+	提示弹幕.wen_ben(tr("诛邪·%d级") % zx_lv, 0)
 	# 刷新所有格子贴图为已翻开（消除迷雾）
 	shu_xing_tie_tu()
 	# 诛邪模式：地图默认缩放为317%档位
 	var zx_suo_fang = pow(2.0, 5.0 / 3.0)
 	rong_qi.scale = Vector2(zx_suo_fang, zx_suo_fang)
-	suo_fang_lal.text = "画面比例：%d%%" % round(zx_suo_fang * 100)
+	suo_fang_lal.text = tr("画面比例：%d%%") % round(zx_suo_fang * 100)
 	# 诛邪模式：按等级比例调整人物和怪物大小
 	_zhu_xie_scale()
 

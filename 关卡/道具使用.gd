@@ -199,7 +199,7 @@ func use_tan_ce_qi(wu_ming: String) -> void:
 	guan_qia.guan_ui.dao_ju_upd()
 	# 显示提示弹幕（显示探测器配置的名义边长）
 	var shi_ji_fan_wei = fan_wei * 2 + 1
-	提示弹幕.wen_ben("使用【" + wu_ming + "】探明了" + str(shi_ji_fan_wei) + "×" + str(shi_ji_fan_wei) + "及周边区域！", 0)
+	提示弹幕.wen_ben(tr("使用【%s】探明了%d×%d及周边区域！") % [tr(wu_ming), shi_ji_fan_wei, shi_ji_fan_wei], 0)
 
 # 使用朱雀圣像（仅非战斗时可用）：恢复生命，按恢复量概率破损
 # 破损时消耗1个朱雀圣像并增加1个「破损朱雀圣像」；未破损时圣像保留（可继续点击使用）
@@ -252,6 +252,6 @@ func use_zhu_que_sheng_xiang() -> void:
 	guan_qia.guan_ui.dao_ju_upd()
 	# 提示弹幕
 	if po_sun:
-		提示弹幕.wen_ben("使用【朱雀圣像】恢复%d生命，朱雀圣像破损了！" % hui_fu, 0)
+		提示弹幕.wen_ben(tr("使用【朱雀圣像】恢复%d生命，朱雀圣像破损了！") % hui_fu, 0)
 	else:
-		提示弹幕.wen_ben("使用【朱雀圣像】恢复%d生命！" % hui_fu, 0)
+		提示弹幕.wen_ben(tr("使用【朱雀圣像】恢复%d生命！") % hui_fu, 0)

@@ -83,7 +83,7 @@ func C_guai_wu_lbl() -> void:
 	guan_qia.guai_wu_lbl = Label.new()
 	guan_qia.guai_wu_lbl.size = Vector2(166, 32)
 	# 设置文本内容
-	guan_qia.guai_wu_lbl.text = "怪物数量：" + str(guan_qia.guai_wu_xian) + "/" + str(guan_qia.guai_wu_zong)
+	guan_qia.guai_wu_lbl.text = tr("怪物数量：%d/%d") % [guan_qia.guai_wu_xian, guan_qia.guai_wu_zong]
 	# 设置文字颜色为纯黑色
 	guan_qia.guai_wu_lbl.add_theme_color_override("font_color", Color.BLACK)
 	# 文本层级
@@ -115,11 +115,11 @@ func C_guan_kia_lbl() -> void:
 		cur_mode = get_node("/root/数据管理").mode
 	var zx_lv = guan_qia.get("zx_lv")
 	if cur_mode == 1 and zx_lv != null:
-		guan_qia.guan_kia_lbl.text = "诛邪·" + str(int(zx_lv)) + "级"
+		guan_qia.guan_kia_lbl.text = tr("诛邪·%d级") % int(zx_lv)
 	elif cur_mode == 2:
-		guan_qia.guan_kia_lbl.text = "支线·" + str(guan_qia.guan_kia_id + 1) + "关"
+		guan_qia.guan_kia_lbl.text = tr("支线·%d关") % (guan_qia.guan_kia_id + 1)
 	else:
-		guan_qia.guan_kia_lbl.text = "主线·" + str(guan_qia.guan_kia_id + 1) + "关"
+		guan_qia.guan_kia_lbl.text = tr("主线·%d关") % (guan_qia.guan_kia_id + 1)
 	# 设置文字颜色为纯黑色
 	guan_qia.guan_kia_lbl.add_theme_color_override("font_color", Color.BLACK)
 	# 文本层级
@@ -145,7 +145,7 @@ func C_rong_qi() -> void:
 	# 显示文本
 	guan_qia.suo_fang_lal = Label.new()
 	guan_qia.suo_fang_lal.size = Vector2(166, 32)
-	guan_qia.suo_fang_lal.text = "画面比例：100%"
+	guan_qia.suo_fang_lal.text = tr("画面比例：100%")
 	# 设置文字颜色为纯黑色
 	guan_qia.suo_fang_lal.add_theme_color_override("font_color", Color.BLACK)
 	guan_qia.suo_fang_lal.z_index = 1000
@@ -389,7 +389,7 @@ func suo_fang_upd(fang_da: bool) -> void:
 	# 调整位置，使原来屏幕中心的点保持在屏幕中心
 	guan_qia.rong_qi.position = viewport_center - world_center_before * suo_fang_xin
 	# 显示缩放百分比（四舍五入）
-	guan_qia.suo_fang_lal.text = "画面比例：%d%%" % round(suo_fang_xin * 100)
+	guan_qia.suo_fang_lal.text = tr("画面比例：%d%%") % round(suo_fang_xin * 100)
 	# 通知所有监听缩放变化的节点
 	for node in get_tree().get_nodes_in_group("suo_fang_group"):
 		if node.has_method("on_suo_fang_changed"):
@@ -476,7 +476,7 @@ func C_zhi_xian_sheng_li() -> void:
 	data["银币"] = S
 	json.bao_cun(guan_qia.json_id, data)
 	if new_lv <= old_lv:
-		提示弹幕.wen_ben("获得" + str(exp_add) + "经验。", 0)
+		提示弹幕.wen_ben(tr("获得%d经验。") % exp_add, 0)
 	# 支线最后一关不显示下一关按钮
 	var end = 关卡数据.guan_kia_n()
 	var xian_shi_an_niu = guan_qia.guan_kia_id < end - 1
@@ -521,7 +521,7 @@ func C_sheng_li() -> void:
 	data["银币"] = S
 	json.bao_cun(guan_qia.json_id, data)
 	if new_lv <= old_lv:
-		提示弹幕.wen_ben("获得" + str(exp_add) + "经验。", 0)
+		提示弹幕.wen_ben(tr("获得%d经验。") % exp_add, 0)
 	# 判断是否是最后一关，最后一关不显示下一关按钮
 	var end = 关卡数据.guan_kia_n()
 	var xian_shi_an_niu = guan_qia.guan_kia_id < end - 1
