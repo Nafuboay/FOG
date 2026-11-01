@@ -390,9 +390,9 @@ func dian_ji(dang_wei: int) -> void:
 		# 检查进度字段
 		if not data.has("进度"):
 			data["进度"] = 1
-		# 检查任务字段
-		if not data.has("任务"):
-			data["任务"] = 1
+		# 检查任务字段（已领取任务序号清单，字段不存在或旧格式整数时建空数组）
+		if not data.has("任务") or not data["任务"] is Array:
+			data["任务"] = []
 		# 检查强化字段（按第1~4件装备位的等级数组；旧字典格式存档直接重置）
 		if not data.has("强化") or not data["强化"] is Array:
 			data["强化"] = [0, 0, 0, 0]
@@ -516,7 +516,7 @@ func C_json(helo_name: String) -> void:
 		"经验": 0,
 		"银币": 0,
 		"进度": 1,
-		"任务": 1,
+		"任务": [],
 		"强化": [0, 0, 0, 0],
 		"成就": []
 	}

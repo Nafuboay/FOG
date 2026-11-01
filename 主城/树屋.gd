@@ -10,6 +10,7 @@ var ach_btn: TextureRect # 成就标签图片
 var tsk: Control # 任务容器
 var ach: Control # 成就容器
 var tsk_1: Array = [] # 任务项列表
+var tsk_lq: Array = [] # 当前存档已领取的任务序号清单
 var ach_1: Array = [] # 成就项列表
 var ach_lq: Array = [] # 当前存档已领取的成就序号清单
 var fan_ye_tsk = null # 任务翻页系统
@@ -96,39 +97,58 @@ func open() -> void: # 显示界面
 	fan_ye_ach.chong_zhi()
 	upd_tsk()
 
-func get_tsk() -> int: # 获取当前任务进度
+# 从存档读取已领取任务序号清单（旧格式整数/数字数组/字段缺失一律视为空清单）
+func get_tsk_lq() -> Array:
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json_1 == null:
-		return 1
+		return []
 	var data = json_1.du_qu(json_1.id)
-	return int(data.get("任务",1))
+	var lq = data.get("任务", [])
+	var jg: Array = []
+	if lq is Array:
+		for x in lq:
+			if x is String and not x.is_empty() and not jg.has(x):
+				jg.append(x)
+	return jg
 
-# 刷新任务列表（从当前任务开始，每页8行）
+# 任务是否已领取（T_id=任务号1~60）
+func tsk_yi_ling(T_id: int) -> bool:
+	return tsk_lq.has("%04d" % T_id)
+
+# 任务是否可领取：进度大于任务号（已达成）且未领取
+func tsk_ke_ling(T_id: int) -> bool:
+	return not tsk_yi_ling(T_id) and get_stg() > T_id
+
+# 刷新任务列表（只显示未领取的任务，按序号升序，每页8行）
 func upd_tsk() -> void:
 	# 清空现有任务
 	for i in tsk_1:
 		i.queue_free()
 	tsk_1.clear()
-	# 获取存档进度
+	# 读取已领取清单与存档进度
+	tsk_lq = get_tsk_lq()
 	var stg = get_stg()
-	# 获取当前任务进度
-	var tsk_ing = get_tsk()
-	# 任务总数 = 当前任务及其后所有任务（保持"从当前任务开始往后排"的行为）
-	var zong_shu = max(0, 61 - tsk_ing)
-	fan_ye_tsk.she_zhi(zong_shu)
+	# 组装列表：已领取的任务不显示，其余按序号升序
+	var lie_biao: Array = []
+	for T_id in range(1, 61):
+		if not tsk_lq.has("%04d" % T_id):
+			lie_biao.append(T_id)
+	# 按动态总数设置分页（全部领完时总数为0，翻页按钮自动置灰）
+	fan_ye_tsk.she_zhi(lie_biao.size())
 	# 本页第一个任务的偏移与行数
 	var qi = fan_ye_tsk.qi_shi()
-	var hang_shu = min(8, zong_shu - qi)
+	var hang_shu = max(0, min(8, lie_biao.size() - qi))
 	for j in range(hang_shu):
-		var T_id = tsk_ing + qi + j
-		var F = stg > T_id
+		var T_id = lie_biao[qi + j]
+		# 进度大于任务号即表示该关已通关，可领取
+		var ke_ling = stg > T_id
 		# 创建任务项
-		var tsk_2 = C_tsk(T_id,F,j)
+		var tsk_2 = C_tsk(T_id, ke_ling, j)
 		tsk.add_child(tsk_2)
 		tsk_1.append(tsk_2)
 
-# 创建单个任务项（T_id=任务号，F=是否已通关，hang=本页行号）
-func C_tsk(T_id: int, F: bool, hang: int) -> Control:
+# 创建单个任务项（T_id=任务号，ke_ling=是否可领取，hang=本页行号）
+func C_tsk(T_id: int, ke_ling: bool, hang: int) -> Control:
 	var tsk_3 = Control.new()
 	tsk_3.size = Vector2(280, 54)
 	tsk_3.position = Vector2(0,hang*59)
@@ -136,10 +156,6 @@ func C_tsk(T_id: int, F: bool, hang: int) -> Control:
 	var tsk_bg = TextureRect.new()
 	tsk_bg.texture = load("res://关卡/信息/签名框1.png")
 	tsk_3.add_child(tsk_bg)
-	# 获取当前任务进度
-	var tsk_ing = get_tsk()
-	# 判断是否可领取
-	var F_1 = F and T_id == tsk_ing
 	# 创建任务文本
 	var lbl = Label.new()
 	lbl.name = "任务文本"
@@ -163,13 +179,13 @@ func C_tsk(T_id: int, F: bool, hang: int) -> Control:
 	var kai_ti = 提示弹幕.get_kai_ti_font()
 	if kai_ti != null:
 		lbl.add_theme_font_override("font", kai_ti)
-	if F_1:
+	if ke_ling:
 		lbl.add_theme_color_override("font_color", Color("00ff00"))
 	else:
 		lbl.add_theme_color_override("font_color", Color("000000"))
 	tsk_3.add_child(lbl)
 	# 如果可领取，添加点击领取功能
-	if F_1:
+	if ke_ling:
 		tsk_3.gui_input.connect(func(event):
 			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 				get_tsk_R(T_id)
@@ -178,10 +194,9 @@ func C_tsk(T_id: int, F: bool, hang: int) -> Control:
 
 # 领取任务奖励
 func get_tsk_R(T_id: int) -> void:
-	# 获取当前任务进度
-	var tsk_ing = get_tsk()
-	# 只能领取当前任务
-	if T_id != tsk_ing:
+	# 只允许领取「已达成且未领取」的任务，重复点击不会二次发奖
+	tsk_lq = get_tsk_lq()
+	if not tsk_ke_ling(T_id):
 		return
 	# 给予奖励
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
@@ -221,8 +236,9 @@ func get_tsk_R(T_id: int) -> void:
 			bag["金条"] = int(bag.get("金条", 0)) + 1
 			data["背包"] = bag
 			提示弹幕.wen_ben(tr("获得%s×%d！") % [tr("金条"), 1], 0)
-		# 更新任务进度
-		data["任务"] = tsk_ing + 1
+		# 记录已领取任务序号（4位字符串，保留前导零）
+		tsk_lq.append("%04d" % T_id)
+		data["任务"] = tsk_lq
 		json_1.bao_cun(json_1.id, data)
 	# 刷新任务列表
 	upd_tsk()
