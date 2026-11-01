@@ -7,7 +7,7 @@ const DA_XIAO_SHANG_XIAN: int = 1024 * 1024
 var lu_jing: String = ""
 
 func _ready() -> void:
-	# 日志文件存放在存档目录（编辑器=项目目录，桌面端=exe同目录）
+	# 日志文件存放在存档目录（%APPDATA%\FOG\迷雾存档，与存档同一目录便于排查）
 	lu_jing = 游戏存档.mu_lu() + "/日志.txt"
 
 # 打印并记录一条日志（替代print，控制台输出保持原样）

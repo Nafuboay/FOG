@@ -1,0 +1,8 @@
+简体中文,英语,日语
+
+迷雾,Fog,迷霧
+道具,Prop,道具
+浮空岛,Floating Island,浮遊島
+主线,Main,メイン
+支线,Side,サブ
+诛邪,ZX,退魔

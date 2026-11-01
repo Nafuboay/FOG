@@ -262,7 +262,8 @@ func C_wen_ben(left: bool, win_y: int, win_x: int = 0) -> Control:
 # 文字显示
 func C_label(text: String, parent: Control) -> void:
 	var label = Label.new()
-	label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY  # 中文按字断行（无空格），需先于text设置才生效
+	# AUTOWRAP_WORD_SMART：英文按词断行不拆词；中文靠排版工具.pai_ban_wen_ben 在字间插 ZWSP 提供断点
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	# 面板宽高（与C_kuai/C_wen_ben一致）；左边距16px提供统一缩进，文本内不再用空格缩进
 	var shu_wu_x = 256
 	var shu_wu_y = 512
@@ -271,7 +272,8 @@ func C_label(text: String, parent: Control) -> void:
 	label.add_theme_color_override("font_color", Color.BLACK)
 	# 设置楷体字体
 	kai_ti(label)
-	label.text = text  # 最后设置text，确保autowrap按size换行
+	# 排版预处理：插 ZWSP/WJ 实现 CJK 禁则断行，最后设置 text 确保 autowrap 按 size 换行
+	label.text = 排版工具.pai_ban_wen_ben(text)
 	parent.add_child(label)
 
 # 设置Label使用楷体字体（加粗）

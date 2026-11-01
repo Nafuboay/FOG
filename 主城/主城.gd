@@ -433,24 +433,21 @@ func jin_ru_guan_kia(guan_kia_id: int) -> void:
 	if cur_mode == 1:
 		# 第2关禁用（魔法树关）
 		if guan_num == 2:
-			提示弹幕.wen_ben("此关不支持诛邪模式！", 1)
+			提示弹幕.wen_ben("本关未开放！", 1)
 			return
 		# 诛邪模式：主线n关通过，诛邪最多能打到n-1关
 		if guan_num >= stg:
-			提示弹幕.wen_ben("请先通过主线该关！", 1)
+			提示弹幕.wen_ben("本关未开放！", 1)
 			return
 	elif cur_mode == 2:
 		# 支线模式：主线30关全通（进度≥31）后开放「支线·1关」，之后按进度逐关开放（支线·n关需进度≥30+n）
 		if 30 + guan_num > stg:
-			if stg <= 30:
-				提示弹幕.wen_ben("请先通关主线模式！", 1)
-			else:
-				提示弹幕.wen_ben("请先通过前一关！", 1)
+			提示弹幕.wen_ben("本关未开放！", 1)
 			return
 	else:
 		# 主线模式：检查是否已解锁
 		if guan_num > stg:
-			提示弹幕.wen_ben("请先通过前一关！", 1)
+			提示弹幕.wen_ben("本关未开放！", 1)
 			return
 	# 检查并创建存档文件夹
 	json.wen_jian_jia()

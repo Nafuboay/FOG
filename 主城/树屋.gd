@@ -352,6 +352,8 @@ func get_ach_R(idx: int) -> void:
 	json_1.bao_cun(json_1.id, data)
 	# 同步记录到通用存档历史成就
 	json_1.add_ach_ty(idx, ach_data.size())
+	# 同步上报 Steam 成就（Steam 不可用时静默跳过）
+	Steam管理.jie_suo(idx)
 	# 显示获得提示
 	提示弹幕.wen_ben(tip_text, 0)
 	# 刷新成就列表

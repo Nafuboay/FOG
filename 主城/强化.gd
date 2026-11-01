@@ -947,7 +947,8 @@ func wu_pin_XX(idx: int) -> void:
 			text += "\n" + tr("【描述】") + tr(XX.get("描述", ""))
 			# 创建文本标签
 			var label = Label.new()
-			label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY  # 中文按字断行（无空格），需先于text设置才生效
+			# AUTOWRAP_WORD_SMART：英文按词断行不拆词；中文靠排版工具.pai_ban_wen_ben 在字间插 ZWSP 提供断点
+			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			label.position = Vector2(16, 0)
 			label.size = Vector2(224, 512)
 			label.add_theme_color_override("font_color", Color.BLACK)
@@ -955,7 +956,8 @@ func wu_pin_XX(idx: int) -> void:
 			var kai_ti = 提示弹幕.get_kai_ti_font()
 			if kai_ti != null:
 				label.add_theme_font_override("font", kai_ti)
-			label.text = text  # 最后设置text，确保autowrap按size换行
+			# 排版预处理：插 ZWSP/WJ 实现 CJK 禁则断行，最后设置 text 确保 autowrap 按 size 换行
+			label.text = 排版工具.pai_ban_wen_ben(text)
 			wu_pin_kuai.add_child(label)
 			return
 

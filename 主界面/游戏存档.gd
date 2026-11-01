@@ -5,11 +5,11 @@ const cao_wei: int = 15
 const MAX_LV: int = 4
 # 当前使用的存档槽位编号(0~14)
 var id: int = 0
-# 存档文件夹路径（与exe文件同目录）
+# 存档文件夹路径（系统用户数据目录下，Windows 为 %APPDATA%\Godot\app_userdata\FOG\迷雾存档）
 var mi_wu_json: String = ""
 
 func _ready() -> void:
-	# 获取exe文件所在目录作为存档根目录
+	# 获取系统用户数据目录下的存档根目录
 	mi_wu_json = mu_lu()
 	# 确保存档文件夹存在
 	wen_jian_jia()
@@ -43,19 +43,9 @@ func _ying_yong_yu_yan(yu_yan: String) -> void:
 		TranslationServer.set_locale(yu_yan)
 
 # 获取存档根目录路径
+# 统一使用系统用户数据目录（Windows 为 %APPDATA%\FOG）
 static func mu_lu() -> String:
-	var gen_mu_lu: String
-	if OS.has_feature("editor"):
-		# 在编辑器中运行，使用项目目录
-		gen_mu_lu = ProjectSettings.globalize_path("res://")
-	elif OS.has_feature("mobile"):
-		# 移动端，使用应用私有数据目录
-		gen_mu_lu = OS.get_user_data_dir()
-	else:
-		# 桌面端，使用exe所在目录
-		var exe_lu_jing = OS.get_executable_path()
-		gen_mu_lu = exe_lu_jing.get_base_dir()
-	return gen_mu_lu + "/迷雾存档"
+	return OS.get_user_data_dir() + "/迷雾存档"
 
 # 检查并创建存档文件夹
 func wen_jian_jia() -> bool:

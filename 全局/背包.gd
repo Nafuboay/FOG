@@ -277,13 +277,14 @@ func wu_pin_XX(wu_ming: String) -> void:
 	var shou_jia = XX.get(shou_jia_zi_duan, 0)
 	# 不可出售的物品不显示售价行（价格与出售相关内容一并去掉）
 	var text = "\n" + tr("【物品】") + tr(wu_ming)
-	text += "\n" + tr("【获取】") + tr(XX.get("获取", ""))
+	text += "\n" + tr("【来源】") + tr(XX.get("来源", ""))
 	text += "\n" + tr("【用途】") + tr(XX.get("用途", ""))
 	if 物品信息.shi_fou_ke_chu_shou(wu_ming):
 		text += "\n" + tr("【售价】") + tr("%d银币") % shou_jia
 	# 创建文本标签
 	var label = Label.new()
-	label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY  # 中文按字断行（无空格），需先于text设置才生效
+	# AUTOWRAP_WORD_SMART：英文按词断行不拆词；中文靠排版工具.pai_ban_wen_ben 在字间插 ZWSP 提供断点
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.position = Vector2(16, 0)
 	label.size = Vector2(224, 512)
 	label.add_theme_color_override("font_color", Color.BLACK)
@@ -291,7 +292,8 @@ func wu_pin_XX(wu_ming: String) -> void:
 	var font_file = 提示弹幕.get_kai_ti_font()
 	if font_file != null:
 		label.add_theme_font_override("font", font_file)
-	label.text = text  # 最后设置text，确保autowrap按size换行
+	# 排版预处理：插 ZWSP/WJ 实现 CJK 禁则断行，最后设置 text 确保 autowrap 按 size 换行
+	label.text = 排版工具.pai_ban_wen_ben(text)
 	wu_pin_kuai.add_child(label)
 	# 判断是否显示操作按钮（调用虚方法）
 	if yao_xian_shi_cao_zuo_btn(wu_ming):

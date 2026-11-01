@@ -10,8 +10,10 @@ config_version=5
 
 [application]
 
-config/name="FOG"
+config/name="迷雾"
 run/main_scene="res://主界面/主界面.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="FOG"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://全局/图片/图标.png"
 config/unique_name="com.mist.game"
@@ -21,6 +23,8 @@ config/unique_name="com.mist.game"
 Danmaku="*res://全局/提示弹幕.gd"
 "数据管理"="*res://全局/数据管理.gd"
 "日志"="*res://全局/日志.gd"
+"Steam管理"="*res://全局/Steam管理.gd"
+"排版工具"="*res://全局/排版工具.gd"
 
 [display]
 

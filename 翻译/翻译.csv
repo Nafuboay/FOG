@@ -1,84 +1,58 @@
 keys,zh_CN,en,zh_TW,ja
-【生命】,,[HP],,
-游戏开始,,Game Start,遊戲開始,ゲーム開始
-返回,,Back,返回,戻る
-确定,,Confirm,確定,決定
-取消,,Cancel,取消,キャンセル
-删除,,Delete,刪除,削除
+
 语言,,Language,語言,言語
 简体中文,,Simplified Chinese,簡體中文,簡体字中国語
 英语,,English,英語,英語
 繁体中文,,Traditional Chinese,繁體中文,繁体字中国語
 日语,,Japanese,日語,日本語
-迷雾来袭，请做好战斗准备！,,The mist approaches. Prepare for battle!,迷霧來襲，請做好戰鬥準備！,霧が迫っています。戦闘の準備を！
-已激活浮空岛传送阵，请选择传送关卡。,,Floating isle portal activated. Choose a destination.,已激活浮空島傳送陣，請選擇傳送關卡。,浮遊島の転送陣が起動しました。転送先を選んでください。
-此关不支持诛邪模式！,,This stage does not support Evil-Slaying mode!,此關不支持誅邪模式！,このステージは誅邪モードに対応していません！
-请先通过主线该关！,,Clear the main story stage first!,請先通過主線該關！,先に本編の該当ステージをクリアしてください！
-请先通关主线模式！,,Clear main story mode first!,請先通關主線模式！,先に本編モードをクリアしてください！
-请先通过前一关！,,Clear the previous stage first!,請先通過前一關！,先に前のステージをクリアしてください！
-有BUG，快去找虹！,,There's a BUG. Go find Rainbow!,有BUG，快去找虹！,バグです。虹を探しに行って！
-出BUG了，快去找虹！,,A BUG showed up. Go find Rainbow!,出BUG了，快去找虹！,バグが出ました。虹を探しに行って！
-富可敌国,,Wealth Rivaling Nations,富可敵國,国に匹敵する富
-亿,,00M,億,億
-万,,"0,000",萬,万
- 一件,, One, 一件, 1つ
- 全部,, All, 全部, 全部
-银币不足！,,Not enough silver!,銀幣不足！,銀貨が足りません！
-不够好运，强化失败！,,Bad luck. Enhancement failed!,不夠好運，強化失敗！,運が悪く、強化失敗！
-获得333银币！,,Gained 333 silver!,獲得333銀幣！,銀貨333枚を獲得！
-获得金条×7！,,Gained Gold Bar ×7!,獲得金條×7！,金塊×7を獲得！
-获得金条×1！,,Gained Gold Bar ×1!,獲得金條×1！,金塊×1を獲得！
-"花精灵·沙华：""治愈术！""",,"Flower Sprite · Shahua: ""Healing spell!""",花精靈·沙華：「治癒術！」,花の精霊・沙華：「治癒術！」
-"花精灵·沙华：""我可以为你疗伤。""",,"Flower Sprite · Shahua: ""I can heal you.""",花精靈·沙華：「我可以為你療傷。」,花の精霊・沙華：「傷を癒してあげる。」
-需要钥匙才能继续开启宝箱！,,A key is required to open the chest!,需要鑰匙才能繼續開啟寶箱！,宝箱を開けるには鍵が必要です！
-你遇上BUG了，快去通知作者！,,You've hit a BUG. Notify the author!,你遇上BUG了，快去通知作者！,バグに遭遇しました。作者に知らせて！
-不够好运，没能获得宝物！,,Bad luck. No treasure obtained!,不夠好運，沒能獲得寶物！,運が悪く、宝物を得られませんでした！
-周围已经没有未探明的区域！,,No unexplored area nearby!,周圍已經沒有未探明的區域！,周囲に未探索のエリアはありません！
-战斗中无法使用【朱雀圣像】！,,Cannot use [Vermilion Bird Statue] in battle!,戰鬥中無法使用【朱雀聖像】！,戦闘中は【朱雀の聖像】を使えません！
-生命已满！,,HP is full!,生命已滿！,HPが満タンです！
-又出BUG了，快去通知虹！,,Another BUG. Go tell Rainbow!,又出BUG了，快去通知虹！,またバグです。虹に知らせて！
-"花精灵·沙华：""我的力量耗尽了，祝你好运。""",,"Flower Sprite · Shahua: ""My power is drained. Good luck.""",花精靈·沙華：「我的力量耗盡了，祝你好運。」,花の精霊・沙華：「力が尽きました。幸運を。」
-金条不足，供奉失败！,,Not enough gold bars. Offering failed!,金條不足，供奉失敗！,金塊が足りず、奉納失敗！
-供奉成功，【破损朱雀圣像】修复为【朱雀圣像】！,,Offering succeeded! [Broken Vermilion Bird Statue] restored to [Vermilion Bird Statue]!,供奉成功，【破損朱雀聖像】修復為【朱雀聖像】！,奉納成功！【破損した朱雀の聖像】が【朱雀の聖像】に修復されました！
-完成成就《不朽者》解锁英雄【玄戈】！,,"Complete achievement ""Immortal"" to unlock hero [Xuange]!",完成成就《不朽者》解鎖英雄【玄戈】！,実績《不朽者》を達成し、英雄【玄戈】を解放！
-完成成就《救世主》解锁英雄【秤干戚】！,,"Complete achievement ""Savior"" to unlock hero [Scale Ganqi]!",完成成就《救世主》解鎖英雄【秤干戚】！,実績《救世主》を達成し、英雄【秤干戚】を解放！
-银币不足！只能购买%d件！,,Not enough silver! Can only buy %d!,銀幣不足！只能購買%d件！,銀貨が足りません！%d個しか買えません！
-购买并使用【%s】x%d，获得%d经验！,,"Bought and used [%s] x%d, gained %d EXP!",購買並使用【%s】x%d，獲得%d經驗！,【%s】x%dを購入・使用し、経験値%dを獲得！
-购买%sx%d，花费%d银币！,,"Bought %s x%d, spent %d silver!",購買%sx%d，花費%d銀幣！,%s x%dを購入し、銀貨%d枚を消費！
-出售%sx%d，获得%d银币！,,"Sold %s x%d, gained %d silver!",出售%sx%d，獲得%d銀幣！,%s x%dを売却し、銀貨%d枚を獲得！
-【%s】强化+%d成功！,,[%s] enhanced to +%d!,【%s】強化+%d成功！,【%s】を+%dに強化成功！
-获得%d银币！,,Gained %d silver!,獲得%d銀幣！,銀貨%d枚を獲得！
-获得金条×%d！,,Gained Gold Bar ×%d!,獲得金條×%d！,金塊×%dを獲得！
-诛邪·%d级,,Evil-Slaying · Lv.%d,誅邪·%d級,誅邪・レベル%d
-使用【朱雀圣像】恢复%d生命，朱雀圣像破损了！,,"Used [Vermilion Bird Statue], restored %d HP. The statue broke!",使用【朱雀聖像】恢復%d生命，朱雀聖像破損了！,【朱雀の聖像】を使いHP%dを回復。聖像は壊れました！
-使用【朱雀圣像】恢复%d生命！,,Used [Vermilion Bird Statue] and restored %d HP!,使用【朱雀聖像】恢復%d生命！,【朱雀の聖像】を使いHP%dを回復！
-采摘到【%s】！受到%d点伤害。,,Picked [%s]! Took %d damage.,採摘到【%s】！受到%d點傷害。,【%s】を摘みました！%dダメージを受けた。
-恭喜升到%d级！当前总强化值%d，返还金条×%d！,,Leveled up to %d! Total enhancement %d. Gold Bar ×%d returned!,恭喜升到%d級！當前總強化值%d，返還金條×%d！,レベル%dにアップ！総強化値%d、金塊×%dを返還！
-最多只能携带%d个道具！,,Can only carry %d items at most!,最多只能攜帶%d個道具！,アイテムは最大%d個まで持てます！
-英雄等级：0,,Hero Lv.: 0,英雄等級：0,英雄レベル：0
-返还金条：0,,Returned Gold Bar: 0,返還金條：0,返還金塊：0
-返还金条：%d,,Returned Gold Bar: %d,返還金條：%d,返還金塊：%d
-英雄等级：%d,,Hero Lv.: %d,英雄等級：%d,英雄レベル：%d
-成功率: 0%,,Success Rate: 0%,成功率: 0%,成功率: 0%
-消耗: 0银币,,Cost: 0 Silver,消耗: 0銀幣,消費: 銀貨0枚
-强化已满级！,,Enhancement maxed out!,強化已滿級！,強化は最大レベルです！
-无需消耗！,,No cost needed!,無需消耗！,消費不要！
-成功率：%d%%,,Success Rate: %d%%,成功率：%d%%,成功率：%d%%
-消耗银币：%d,,Silver Cost: %d,消耗銀幣：%d,消費銀貨：%d
-返还银币：%d,,Silver Returned: %d,返還銀幣：%d,返還銀貨：%d
-通过支线·%02d关   奖励：金条×%d,,Clear Side Story %02d   Reward: Gold Bar ×%d,通過支線·%02d關   獎勵：金條×%d,外伝%02dをクリア   報酬：金塊×%d
-通过主线·%02d关   奖励：金条×7,,Clear Main Story %02d   Reward: Gold Bar ×7,通過主線·%02d關   獎勵：金條×7,本編%02dをクリア   報酬：金塊×7
-通过主线·%02d关   奖励：金条×1,,Clear Main Story %02d   Reward: Gold Bar ×1,通過主線·%02d關   獎勵：金條×1,本編%02dをクリア   報酬：金塊×1
-通过主线·%02d关   奖励：333银币,,Clear Main Story %02d   Reward: 333 Silver,通過主線·%02d關   獎勵：333銀幣,本編%02dをクリア   報酬：銀貨333枚
-通过主线·%02d关   奖励：%d银币,,Clear Main Story %02d   Reward: %d Silver,通過主線·%02d關   獎勵：%d銀幣,本編%02dをクリア   報酬：銀貨%d枚
-\n已获得成就《%s》,,\nAchievement unlocked: 《%s》,\n已獲得成就《%s》,\n実績《%s》を獲得
-\n%s\n奖励：%s×%d,,\n%s\nReward: %s×%d,\n%s\n獎勵：%s×%d,\n%s\n報酬：%s×%d
-支线·%d关,,Side Story %d,支線·%d關,外伝%d
-主线·%d关,,Main Story %d,主線·%d關,本編%d
-怪物数量：%d/%d,,Monsters: %d/%d,怪物數量：%d/%d,モンスター数：%d/%d
-画面比例：100%,,Zoom: 100%,畫面比例：100%,表示倍率：100%
-画面比例：%d%%,,Zoom: %d%%,畫面比例：%d%%,表示倍率：%d%%
-金条×1,,Gold Bar ×1,金條×1,金塊×1
+
+【英雄】,,[Hero],【英雄】,【英雄】
+【友方】,,[Ally],【友方】,【味方】
+【怪物】,,[Monster],【怪物】,【怪物】
+【障碍】,,[Obstacle],【障礙】,【障害】
+【奇花】,,[Flower],【奇花】,【奇花】
+【战力】,,[CP],【戰力】,【戦力】
+【等级】,,[LV],【等級】,【レベル】
+【经验】,,[EXP],【經驗】,【経験】
+【生命】,,[HP],【生命】,【HP】
+【力量】,,[STR],【力量】,【筋力】
+【防御】,,[DEF],【防禦】,【防御力】
+【穿透】,,[PEN],【穿透】,【貫通】
+【位置】,,[Pos],【位置】,【位置】
+【治愈】,,[Heal],【治癒】,【治癒】
+【魔化】,,[Corrupt],【魔化】,【魔化】
+【香氛】,,[Fragrance],【香氛】,【香り】
+
+【荆棘】受击造成固定反伤,,[Thorns] Deals fixed counter damage when hit,【荊棘】受擊造成固定反傷,【荊棘】被弾時に固定ダメージを反射
+【向阳】战斗时回血,,[Sunward] Heals during battle,【向陽】戰鬥時回血,【向陽】戦闘中に回復
+【热血】场上怪物越多生命越高,,"[Hot Blood] The more monsters on the field, the higher the current and max HP",【熱血】場上怪物越多生命越高,【熱血】場のモンスターが多いほど現在HPと最大HPが上昇
+【硬化】受击防御增加,,[Harden] Defense rises when hit,【硬化】受擊防禦增加,【硬化】被弾時に防御上昇
+【流血】攻击造成流血，可叠加,,"[Bleed] Attacks cause bleed, stackable",【流血】攻擊造成流血，可疊加,【流血】攻撃で出血付与、重複可
+【重甲】增加防御，受击减少,,"[Heavy Armor] Grants bonus Defense, which decreases when hit",【重甲】增加防禦，受擊減少,【重甲】防御が上昇し、被弾すると上昇分が減少
+
+【物品】,,[Item],【物品】,【アイテム】
+【来源】,,[Source],【來源】,【入手】
+【用途】,,[Use],【用途】,【用途】
+【售价】,,[Price],【售價】,【価格】
+【装备】,,[Equipment],【裝備】,【装備】
+【强化】,,[Enhance],【強化】,【強化】
+【属性】,,[Stats],【屬性】,【属性】
+【特性】,,[Trait],【特性】,【特性】
+【描述】,,[Description],【描述】,【説明】
+
+繁荣,,Prosperity,繁榮,繁栄
+紫锋,,Violet Bracer,紫鋒,紫の籠手
+紫雾,,Violet Fog,紫霧,紫の霧
+贯虹,,Piercing Rainbow,貫虹,貫虹
+耀焰,,Radiant Flame,耀焰,輝く炎
+战意,,Battle Will,戰意,戦意
+圣辉,,Holy Radiance,聖輝,聖なる輝き
+黎明,,Dawn,黎明,夜明け
+秤心,,Balanced Heart,秤心,秤の心
+鸿泰,,Feather & Mountain,鴻泰,鴻毛と泰山
+坚韧,,Tenacity,堅韌,堅牢
+蝴蝶,,Butterfly,蝴蝶,蝶
+
 1级经验星,,Lv.1 EXP Star,1級經驗星,レベル1経験星
 2级经验星,,Lv.2 EXP Star,2級經驗星,レベル2経験星
 3级经验星,,Lv.3 EXP Star,3級經驗星,レベル3経験星
@@ -93,11 +67,11 @@ keys,zh_CN,en,zh_TW,ja
 水仙,,Narcissus,水仙,水仙
 玫瑰,,Rose,玫瑰,薔薇
 鸢尾,,Iris,鳶尾,アイリス
-邪藤蔓,,Corrupted Vine,邪藤蔓,邪な蔓
+邪藤蔓,,Evil Vine,邪藤蔓,邪な蔓
 野猪王牙,,Boar King Fang,野豬王牙,野猪王の牙
-魔王核,,Demon King Core,魔王核,魔王核
+魔王核,,Magic King Core,魔王核,魔王核
 狼王尾,,Wolf King Tail,狼王尾,狼王の尾
-绿象牙,,Emerald Tusk,綠象牙,緑の象牙
+绿象牙,,Emerald Ivory,綠象牙,緑の象牙
 蟹钳,,Crab Claw,蟹鉗,蟹のハサミ
 藤蔓,,Vine,藤蔓,蔓
 野猪皮,,Boar Hide,野豬皮,野猪の皮
@@ -106,33 +80,106 @@ keys,zh_CN,en,zh_TW,ja
 象牙,,Ivory,象牙,象牙
 破损稻草人,,Broken Scarecrow,破損稻草人,壊れたカカシ
 钥匙,,Key,鑰匙,鍵
-1级恢复符,,Lv.1 Recovery Charm,1級恢復符,レベル1回復符
-2级恢复符,,Lv.2 Recovery Charm,2級恢復符,レベル2回復符
-3级恢复符,,Lv.3 Recovery Charm,3級恢復符,レベル3回復符
-4级恢复符,,Lv.4 Recovery Charm,4級恢復符,レベル4回復符
-5级恢复符,,Lv.5 Recovery Charm,5級恢復符,レベル5回復符
-6级恢复符,,Lv.6 Recovery Charm,6級恢復符,レベル6回復符
-1级玄武盾符,,Lv.1 Xuanwu Shield Charm,1級玄武盾符,レベル1玄武盾符
-2级玄武盾符,,Lv.2 Xuanwu Shield Charm,2級玄武盾符,レベル2玄武盾符
-3级玄武盾符,,Lv.3 Xuanwu Shield Charm,3級玄武盾符,レベル3玄武盾符
-4级玄武盾符,,Lv.4 Xuanwu Shield Charm,4級玄武盾符,レベル4玄武盾符
-5级玄武盾符,,Lv.5 Xuanwu Shield Charm,5級玄武盾符,レベル5玄武盾符
-6级玄武盾符,,Lv.6 Xuanwu Shield Charm,6級玄武盾符,レベル6玄武盾符
+1级恢复符,,Lv.1 Heal Talisman,1級恢復符,レベル1回復符
+2级恢复符,,Lv.2 Heal Talisman,2級恢復符,レベル2回復符
+3级恢复符,,Lv.3 Heal Talisman,3級恢復符,レベル3回復符
+4级恢复符,,Lv.4 Heal Talisman,4級恢復符,レベル4回復符
+5级恢复符,,Lv.5 Heal Talisman,5級恢復符,レベル5回復符
+6级恢复符,,Lv.6 Heal Talisman,6級恢復符,レベル6回復符
+1级玄武盾符,,Lv.1 DEF Talisman,1級玄武盾符,レベル1玄武盾符
+2级玄武盾符,,Lv.2 DEF Talisman,2級玄武盾符,レベル2玄武盾符
+3级玄武盾符,,Lv.3 DEF Talisman,3級玄武盾符,レベル3玄武盾符
+4级玄武盾符,,Lv.4 DEF Talisman,4級玄武盾符,レベル4玄武盾符
+5级玄武盾符,,Lv.5 DEF Talisman,5級玄武盾符,レベル5玄武盾符
+6级玄武盾符,,Lv.6 DEF Talisman,6級玄武盾符,レベル6玄武盾符
 优秀探测器,,Fine Detector,優秀探測器,優秀な探知機
 精良探测器,,Excellent Detector,精良探測器,精良な探知機
 史诗探测器,,Epic Detector,史詩探測器,史诗的な探知機
 神话探测器,,Mythic Detector,神話探測器,神話の探知機
-怪物\n是彩虹眷顾着你吗？,,Monsters\nIs the rainbow blessing you?,怪物\n是彩虹眷顧著你嗎？,モンスター\n虹に祝福されているのか？
+
+红巨蟹,,Red Giant Crab,紅巨蟹,赤い大蟹
+褐巨蟹,,Brown Giant Crab,褐巨蟹,褐色の大蟹
+青巨蟹,,Teal Giant Crab,青巨蟹,青緑の大蟹
+紫巨蟹,,Purple Giant Crab,紫巨蟹,紫の大蟹
+蓝巨蟹,,Blue Giant Crab,藍巨蟹,蒼の大蟹
+邪嘴唇花,,Evil Lip Flower,邪嘴唇花,邪な唇花
+橙食人花,,Orange Chomper,橙食人花,橙の食人花
+紫食人花,,Purple Chomper,紫食人花,紫の食人花
+白鬣野猪,,White-maned Boar,白鬣野豬,白鬣の野猪
+白鬣赤猪,,White-maned Red Boar,白鬣赤豬,白鬣の赤猪
+茶鬣野猪,,Brown-maned Boar,茶鬣野豬,茶鬣の野猪
+绿鬣野猪,,Green-maned Boar,綠鬣野豬,緑鬣の野猪
+黄斑野猪,,Yellow-spotted Boar,黃斑野豬,黄斑の野猪
+紫蠃,,Purple Ying,紫蠃,紫の蠃
+紫蠃贤者,,Purple Ying Sage,紫蠃賢者,紫の蠃賢者
+蓝蠃勇者,,Blue Ying Warrior,藍蠃勇者,蒼の蠃勇者
+紫蠃勇者,,Purple Ying Warrior,紫蠃勇者,紫の蠃勇者
+褐蠃长老,,Brown Ying Elder,褐蠃長老,褐の蠃長老
+黯灰狼,,Dark Grey Wolf,黯灰狼,暗灰の狼
+靛苍狼,,Indigo Wolf,靛蒼狼,藍蒼の狼
+粉褐狼,,Pink-brown Wolf,粉褐狼,粉褐の狼
+冰河狼,,Glacier Wolf,冰河狼,氷河の狼
+猛犸,,Mammoth,猛獁,マンモス
+
+邪花王·荆冠,,Jingguan,邪花王·荊冠,邪花王·荊冠
+葵花王·槐昂,,Kuiang,葵花王·槐昂,葵花王·槐昂
+野猪王·冕笑,,Mianxiao,野豬王·冕笑,野猪王·冕笑
+蠃虫王·犄眦,,Jizi,蠃蟲王·犄眦,蠃蟲王·犄眦
+双狼王·睚狈,,Yabei,雙狼王·睚狽,双狼王·睚狈
+猛犸王·犽翡,,Yafei,猛獁王·犽翡,マンモス王·犽翡
+
+不朽者,,Undying,不朽者,不朽者
+拥有【破损稻草人】,,Cheat death by obtaining the [Broken Scarecrow],擁有【破損稻草人】,【壊れたカカシ】を所持
+救世主,,Savior,救世主,救世主
+击败犽翡及其爪牙,,Defeat Yafei and his minions,擊敗犽翡及其爪牙,犽翡とその眷属を倒す
+饮虹使,,Rainbow Drinker,飲虹使,虹を飲む者
+拥有【彩虹】,,Obtain the [Rainbow],擁有【彩虹】,【虹】を所持
+采花贼,,Flower Thief,採花賊,花泥棒
+拥有四种奇花,,Collect 4 different types of rare flowers,擁有四種奇花,4種の奇花を所持
+
+完成成就【不朽者】解锁英雄【玄戈】！,,"Complete achievement ""Immortal"" to unlock hero [Xuange]!",完成成就【不朽者】解鎖英雄【玄戈】！,実績【不朽者】を達成し、英雄【玄戈】を解放！
+完成成就【救世主】解锁英雄【秤干戚】！,,"Complete achievement ""Savior"" to unlock hero [Scale Ganqi]!",完成成就【救世主】解鎖英雄【秤干戚】！,実績【救世主】を達成し、英雄【秤干戚】を解放！
+恭喜获得成就【%s】！\n获得%s！,,Achievement unlocked:【%s】!\nObtained %s!,恭喜獲得成就【%s】！\n獲得%s！,実績【%s】を獲得！\n%sを入手！
+恭喜获得成就【%s】！\n奖励%s×%d！,,Achievement unlocked: 《%s》!\nReward: %s ×%d!,恭喜獲得成就《%s》！\n獎勵%s×%d！,実績《%s》を獲得！\n報酬：%s×%d！
+免费开启获得【%s】×%d！,,Free open: obtained [%s] ×%d!,免費開啟獲得【%s】×%d！,無料で開けて【%s】×%dを獲得！
+\n已获得成就【%s】,,\nAchievement unlocked: 《%s》,\n已獲得成就《%s》,\n実績《%s》を獲得
+\n%s\n奖励：%s×%d,,\n%s\nReward: %s×%d,\n%s\n獎勵：%s×%d,\n%s\n報酬：%s×%d
+
+道具栏,,Prop Slots,道具欄,アイテムスロット
+主线·%d关,,Main %d,主線·%d關,メイン%d
+支线·%d关,,Side %d,支線·%d關,サブ%d
+诛邪·%d级,,ZX Lv.%d,誅邪·%d級,退魔・レベル%d
+通过支线·%02d关   奖励：金条×%d,,Clear Side Story %02d   Reward: Gold Bar ×%d,通過支線·%02d關   獎勵：金條×%d,外伝%02dをクリア   報酬：金塊×%d
+通过主线·%02d关   奖励：金条×7,,Clear Main Story %02d   Reward: Gold Bar ×7,通過主線·%02d關   獎勵：金條×7,本編%02dをクリア   報酬：金塊×7
+通过主线·%02d关   奖励：金条×1,,Clear Main Story %02d   Reward: Gold Bar ×1,通過主線·%02d關   獎勵：金條×1,本編%02dをクリア   報酬：金塊×1
+通过主线·%02d关   奖励：333银币,,Clear Main Story %02d   Reward: 333 Silver,通過主線·%02d關   獎勵：333銀幣,本編%02dをクリア   報酬：銀貨333枚
+通过主线·%02d关   奖励：%d银币,,Clear Main Story %02d   Reward: %d Silver,通過主線·%02d關   獎勵：%d銀幣,本編%02dをクリア   報酬：銀貨%d枚
+
+迷雾来袭，请做好战斗准备！,,The Fog approaches. Prepare for battle!,迷霧來襲，請做好戰鬥準備！,迷霧が迫っています。戦闘の準備をしてください！
+已激活浮空岛传送阵，请选择传送关卡。,,Floating Island portal activated. Choose a destination.,已激活浮空島傳送陣，請選擇傳送關卡。,浮遊島の転送陣が起動しました。転送先を選んでください。
+本关未开放！,,This stage is not available yet!,本關未開放！,このステージはまだ開放されていません！
+
+最多只能携带%d个道具！,,You can carry at most %d Prop!,最多只能攜帶%d個道具！,アイテムは最大%d個まで持てます！
+
+%d银币,,%d Silver,%d銀幣,銀貨%d枚
+富可敌国,,∞,富可敵國,∞
+一件,, One, 一件, 1つ
+十件,, Ten, 十件, 10個
+全部,, All, 全部, 全部
+0阶材料,,Tier 0 Material,0階材料,0階素材
+1阶材料,,Tier 1 Material,1階材料,1階素材
+2阶材料,,Tier 2 Material,2階材料,2階素材
+3阶材料,,Tier 3 Material,3階材料,3階素材
 4阶材料,,Tier 4 Material,4階材料,4階素材
 商店,,Shop,商店,ショップ
+银币,,Silver,銀幣,銀貨
+获得%d经验。,,Gained %d EXP.,獲得%d經驗。,経験値%dを獲得。
 获得1000经验,,Gain 1000 EXP,獲得1000經驗,経験値1000を獲得
 获得1万经验,,"Gain 10,000 EXP",獲得1萬經驗,経験値1万を獲得
 获得10万经验,,"Gain 100,000 EXP",獲得10萬經驗,経験値10万を獲得
 获得100万经验,,"Gain 1,000,000 EXP",獲得100萬經驗,経験値100万を獲得
 获得1000万经验,,"Gain 10,000,000 EXP",獲得1000萬經驗,経験値1000万を獲得
 获得1亿经验,,"Gain 100,000,000 EXP",獲得1億經驗,経験値1億を獲得
-战败\n见证你的死亡并否定。\n它破损了，会是最后一个吗？,,Defeat\nWitnesses your death and denies it.\nIt's broken — will it be the last?,戰敗\n見證你的死亡並否定。\n它破損了，會是最後一個嗎？,敗北\nあなたの死を見届け、否定する。\n壊れてしまった。これが最後の一つか？
-0阶材料,,Tier 0 Material,0階材料,0階素材
 自动恢复1生命,,Auto-recover 1 HP,自動恢復1生命,HPを1自動回復
 自动恢复3生命,,Auto-recover 3 HP,自動恢復3生命,HPを3自動回復
 自动恢复7生命,,Auto-recover 7 HP,自動恢復7生命,HPを7自動回復
@@ -149,35 +196,86 @@ keys,zh_CN,en,zh_TW,ja
 探明5×5区域,,Reveal 5×5 area,探明5×5區域,5×5エリアを探明
 探明9×9区域,,Reveal 9×9 area,探明9×9區域,9×9エリアを探明
 探明全图,,Reveal entire map,探明全圖,全マップを探明
+奇花,,Wonder Flower,奇花,奇花
+花精灵·沙华,,Flower Sprite · Shahua,花精靈·沙華,花の精霊・沙華
+爱丽丝,,Alice,愛麗絲,アリス
+玄戈,,Xuange,玄戈,玄戈
+秤干戚,,Scale Ganqi,秤干戚,秤の干戚
+魔法树,,Magic Tree,魔法樹,魔法の樹
+未知,,Unknown,未知,不明
+获得333银币！,,Gained 333 silver!,獲得333銀幣！,銀貨333枚を獲得！
+获得金条×7！,,Gained Gold Bar ×7!,獲得金條×7！,金塊×7を獲得！
+获得金条×1！,,Gained Gold Bar ×1!,獲得金條×1！,金塊×1を獲得！
+音量调节,,Volume,音量調節,音量調節
+分贝：标准,,dB: Standard,分貝：標準,dB：標準
+音量：100%,,Volume: 100%,音量：100%,音量：100%
+分贝：+%d,,dB: +%d,分貝：+%d,dB: +%d
+分贝：%d,,dB: %d,分貝：%d,dB: %d
+音量: %s,,Volume: %s,音量: %s,音量: %s
+生命,,HP,生命,HP
+力量,,Strength,力量,力
+防御,,Defense,防禦,防御
+穿透,,Pierce,穿透,貫通
+
+
+亿,,00M,億,億
+万,,"0,000",萬,万
+银币不足！,,Not enough silver!,銀幣不足！,銀貨が足りません！
+不够好运，强化失败！,,Bad luck. Enhancement failed!,不夠好運，強化失敗！,運が悪く、強化失敗！
+"花精灵·沙华：""治愈术！""",,"Flower Sprite · Shahua: ""Healing spell!""",花精靈·沙華：「治癒術！」,花の精霊・沙華：「治癒術！」
+"花精灵·沙华：""我可以为你疗伤。""",,"Flower Sprite · Shahua: ""I can heal you.""",花精靈·沙華：「我可以為你療傷。」,花の精霊・沙華：「傷を癒してあげる。」
+需要钥匙才能继续开启宝箱！,,A key is required to open the chest!,需要鑰匙才能繼續開啟寶箱！,宝箱を開けるには鍵が必要です！
+你遇上BUG了，快去通知作者！,,You've hit a BUG. Notify the author!,你遇上BUG了，快去通知作者！,バグに遭遇しました。作者に知らせて！
+不够好运，没能获得宝物！,,Bad luck. No treasure obtained!,不夠好運，沒能獲得寶物！,運が悪く、宝物を得られませんでした！
+周围已经没有未探明的区域！,,No unexplored area nearby!,周圍已經沒有未探明的區域！,周囲に未探索のエリアはありません！
+战斗中无法使用【朱雀圣像】！,,Cannot use [Vermilion Bird Statue] in battle!,戰鬥中無法使用【朱雀聖像】！,戦闘中は【朱雀の聖像】を使えません！
+生命已满！,,HP is full!,生命已滿！,HPが満タンです！
+又出BUG了，快去通知虹！,,Another BUG. Go tell Rainbow!,又出BUG了，快去通知虹！,またバグです。虹に知らせて！
+"花精灵·沙华：""我的力量耗尽了，祝你好运。""",,"Flower Sprite · Shahua: ""My power is drained. Good luck.""",花精靈·沙華：「我的力量耗盡了，祝你好運。」,花の精霊・沙華：「力が尽きました。幸運を。」
+金条不足，供奉失败！,,Not enough gold bars. Offering failed!,金條不足，供奉失敗！,金塊が足りず、奉納失敗！
+供奉成功，【破损朱雀圣像】修复为【朱雀圣像】！,,Offering succeeded! [Broken Vermilion Bird Statue] restored to [Vermilion Bird Statue]!,供奉成功，【破損朱雀聖像】修復為【朱雀聖像】！,奉納成功！【破損した朱雀の聖像】が【朱雀の聖像】に修復されました！
+银币不足！只能购买%d件！,,Not enough silver! Can only buy %d!,銀幣不足！只能購買%d件！,銀貨が足りません！%d個しか買えません！
+购买并使用【%s】x%d，获得%d经验！,,"Bought and used [%s] x%d, gained %d EXP!",購買並使用【%s】x%d，獲得%d經驗！,【%s】x%dを購入・使用し、経験値%dを獲得！
+购买%sx%d，花费%d银币！,,"Bought %s x%d, spent %d silver!",購買%sx%d，花費%d銀幣！,%s x%dを購入し、銀貨%d枚を消費！
+出售%sx%d，获得%d银币！,,"Sold %s x%d, gained %d silver!",出售%sx%d，獲得%d銀幣！,%s x%dを売却し、銀貨%d枚を獲得！
+【%s】强化+%d成功！,,[%s] enhanced to +%d!,【%s】強化+%d成功！,【%s】を+%dに強化成功！
+获得%d银币！,,Gained %d silver!,獲得%d銀幣！,銀貨%d枚を獲得！
+获得金条×%d！,,Gained Gold Bar ×%d!,獲得金條×%d！,金塊×%dを獲得！
+使用【朱雀圣像】恢复%d生命，朱雀圣像破损了！,,"Used [Vermilion Bird Statue], restored %d HP. The statue broke!",使用【朱雀聖像】恢復%d生命，朱雀聖像破損了！,【朱雀の聖像】を使いHP%dを回復。聖像は壊れました！
+使用【朱雀圣像】恢复%d生命！,,Used [Vermilion Bird Statue] and restored %d HP!,使用【朱雀聖像】恢復%d生命！,【朱雀の聖像】を使いHP%dを回復！
+采摘到【%s】！受到%d点伤害。,,Picked [%s]! Took %d damage.,採摘到【%s】！受到%d點傷害。,【%s】を摘みました！%dダメージを受けた。
+恭喜升到%d级！当前总强化值%d，返还金条×%d！,,Leveled up to %d! Total enhancement %d. Gold Bar ×%d returned!,恭喜升到%d級！當前總強化值%d，返還金條×%d！,レベル%dにアップ！総強化値%d、金塊×%dを返還！
+英雄等级：0,,Hero Lv.: 0,英雄等級：0,英雄レベル：0
+返还金条：0,,Returned Gold Bar: 0,返還金條：0,返還金塊：0
+返还金条：%d,,Returned Gold Bar: %d,返還金條：%d,返還金塊：%d
+英雄等级：%d,,Hero Lv.: %d,英雄等級：%d,英雄レベル：%d
+成功率: 0%,,Success Rate: 0%,成功率: 0%,成功率: 0%
+消耗: 0银币,,Cost: 0 Silver,消耗: 0銀幣,消費: 銀貨0枚
+强化已满级！,,Enhancement maxed out!,強化已滿級！,強化は最大レベルです！
+无需消耗！,,No cost needed!,無需消耗！,消費不要！
+成功率：%d%%,,Success Rate: %d%%,成功率：%d%%,成功率：%d%%
+消耗银币：%d,,Silver Cost: %d,消耗銀幣：%d,消費銀貨：%d
+返还银币：%d,,Silver Returned: %d,返還銀幣：%d,返還銀貨：%d
+怪物数量：%d/%d,,Monsters: %d/%d,怪物數量：%d/%d,モンスター数：%d/%d
+画面比例：100%,,Zoom: 100%,畫面比例：100%,表示倍率：100%
+画面比例：%d%%,,Zoom: %d%%,畫面比例：%d%%,表示倍率：%d%%
+金条×1,,Gold Bar ×1,金條×1,金塊×1
+怪物\n是彩虹眷顾着你吗？,,Monsters\nIs the rainbow blessing you?,怪物\n是彩虹眷顧著你嗎？,モンスター\n虹に祝福されているのか？
+战败\n见证你的死亡并否定。\n它破损了，会是最后一个吗？,,Defeat\nWitnesses your death and denies it.\nIt's broken — will it be the last?,戰敗\n見證你的死亡並否定。\n它破損了，會是最後一個嗎？,敗北\nあなたの死を見届け、否定する。\n壊れてしまった。これが最後の一つか？
 商店\n神话缔造，所视皆明！,,Shop\nMythic craft reveals all!,商店\n神話締造，所視皆明！,ショップ\n神話の造り、すべてを見通す！
 商店 任务 成就\n最近金价涨了没？,,Shop / Quests / Achievements\nHas the gold price risen lately?,商店 任務 成就\n最近金價漲了沒？,ショップ/任務/実績\n最近、金の相場は上がった？
-3阶材料,,Tier 3 Material,3階材料,3階素材
-2阶材料,,Tier 2 Material,2階材料,2階素材
-1阶材料,,Tier 1 Material,1階材料,1階素材
 打开BOSS宝箱,,Open BOSS chest,打開BOSS寶箱,BOSS宝箱を開ける
 成就 供奉\n这好像不是纯金的。,,Achievement / Offering\nThis doesn't look like pure gold.,成就 供奉\n這好像不是純金的。,実績/奉納\nこれは純金ではなさそうだ。
 非战斗时恢复,,Recovers when out of combat,非戰鬥時恢復,非戦闘時に回復
 朱雀圣像\n这需要修复。,,Vermilion Bird Statue\nNeeds repair.,朱雀聖像\n這需要修復。,朱雀の聖像\n修復が必要。
 供奉,,Offering,供奉,奉納
 采摘,,Pick,採摘,採取
-繁荣,,Prosperity,繁榮,繁栄
-紫锋,,Violet Edge,紫鋒,紫の刃
-紫雾,,Violet Mist,紫霧,紫の霧
-贯虹,,Piercing Rainbow,貫虹,虹を貫く
-耀焰,,Radiant Flame,耀焰,輝く炎
-战意,,Battle Will,戰意,戦意
-圣辉,,Holy Radiance,聖輝,聖なる輝き
-黎明,,Dawn,黎明,夜明け
-秤心,,Balanced Heart,秤心,秤の心
-鸿泰,,Grand Peace,鴻泰,大いなる安泰
-坚韧,,Tenacity,堅韌,堅靱
-蝴蝶,,Butterfly,蝴蝶,蝶
-生命+0,,HP +0,生命+0,HP+0
 受击概率回满血。,,Chance to fully heal when hit.,受擊概率回滿血。,被弾時に確率で全回復。
 滋养万物，生生不息。,,"Nourishes all, life unending.",滋養萬物，生生不息。,万物を育み、生命は尽きない。
+紫腕凝锋芒，纤手翻飞，一击疾如电逝。,,"Violet wrists gather keen light, slender hands flutter — one strike, swift as lightning.",紫腕凝鋒芒，纖手翻飛，一擊疾如電逝。,紫の腕に鋭き光、繊手ひるがえり、一撃は電光のごとく。
+生命+0,,HP +0,生命+0,HP+0
 力量+0,,Strength +0,力量+0,力+0
 无,,None,無,なし
-紫腕凝锋芒，纤手翻飞，一击疾如电逝。,,"Violet wrists gather keen light, slender hands flutter — one strike, swift as lightning.",紫腕凝鋒芒，纖手翻飛，一擊疾如電逝。,紫の腕に鋭き光、繊手ひるがえり、一撃は電光のごとく。
 防御+0,,Defense +0,防禦+0,防御+0
 战斗结束回满血。,,Fully heals after battle.,戰鬥結束回滿血。,戦闘終了時に全回復。
 柔甲如烟似雾，暗藏杀机于幽幻。,,"Soft armor like smoke and mist, hiding deadly intent in the phantom.",柔甲如煙似霧，暗藏殺機於幽幻。,柔らかな甲は煙のごとく霧のごとく、幽幻に殺意を潜める。
@@ -199,106 +297,14 @@ keys,zh_CN,en,zh_TW,ja
 防御-0\n        穿透+0,,Defense -0\n        Pierce +0,防禦-0\n        穿透+0,防御-0\n        貫通+0
 重击降低敌方防御,,Heavy strikes lower enemy Defense,重擊降低敵方防禦,重撃で敵の防御を低下
 苍蝇轻巧蝴蝶狂，怒螳斮斧谁能当！,,"Flies are nimble, butterflies wild; who can withstand the mantis's raging axe?",蒼蠅輕巧蝴蝶狂，怒螳斮斧誰能當！,蠅は軽やかに、蝶は狂おしく、怒れる蟷螂の斧を誰が受け止めよう！
-红巨蟹,,Red Giant Crab,紅巨蟹,赤い大蟹
-褐巨蟹,,Brown Giant Crab,褐巨蟹,褐色の大蟹
-青巨蟹,,Teal Giant Crab,青巨蟹,青緑の大蟹
-紫巨蟹,,Purple Giant Crab,紫巨蟹,紫の大蟹
-蓝巨蟹,,Blue Giant Crab,藍巨蟹,蒼の大蟹
-邪嘴唇花,,Evil Lip Flower,邪嘴唇花,邪な唇花
-橙食人花,,Orange Man-eater,橙食人花,橙の食人花
-紫食人花,,Purple Man-eater,紫食人花,紫の食人花
-邪花王·荆冠,,Evil Flower King · Thorncrown,邪花王·荊冠,邪花王・荊冠
-葵花王·槐昂,,Sunflower King · Huai'ang,葵花王·槐昂,葵花王・槐昂
-白鬣野猪,,White-maned Boar,白鬣野豬,白鬣の野猪
-白鬣赤猪,,White-maned Red Boar,白鬣赤豬,白鬣の赤猪
-茶鬣野猪,,Brown-maned Boar,茶鬣野豬,茶鬣の野猪
-绿鬣野猪,,Green-maned Boar,綠鬣野豬,緑鬣の野猪
-黄斑野猪,,Yellow-spotted Boar,黃斑野豬,黄斑の野猪
-野猪王·冕笑,,Boar King · Mianxiao,野豬王·冕笑,野猪王・冕笑
-紫蠃,,Purple Worm,紫蠃,紫の蠃
-紫蠃贤者,,Purple Worm Sage,紫蠃賢者,紫の蠃賢者
-蓝蠃勇者,,Blue Worm Brave,藍蠃勇者,蒼の蠃勇者
-紫蠃勇者,,Purple Worm Brave,紫蠃勇者,紫の蠃勇者
-褐蠃长老,,Brown Worm Elder,褐蠃長老,褐の蠃長老
-蠃虫王·犄眦,,Worm King · Horned Glare,蠃蟲王·犄睚,蠃蟲王・犄眦
-黯灰狼,,Dark Grey Wolf,黯灰狼,暗灰の狼
-靛苍狼,,Indigo Wolf,靛蒼狼,藍蒼の狼
-粉褐狼,,Pink-brown Wolf,粉褐狼,粉褐の狼
-冰河狼,,Glacier Wolf,冰河狼,氷河の狼
-双狼王·睚狈,,Twin Wolf Kings · Yazi,雙狼王·睚狽,双狼王・睚狽
-猛犸,,Mammoth,猛獁,マンモス
-猛犸王·犽翡,,Mammoth King · Yafei,猛獁王·犽翡,マンモス王・犽翡
-不朽者,,Immortal,不朽者,不朽者
-救世主,,Savior,救世主,救世主
-饮虹使,,Rainbow Drinker,飲虹使,虹を飲む者
-采花贼,,Flower Thief,採花賊,花を摘む賊
-拥有【破损稻草人】,,Own [Broken Scarecrow],擁有【破損稻草人】,【壊れたカカシ】を所持
-击败犽翡及其爪牙,,Defeat Yafei and his minions,擊敗犽翡及其爪牙,犽翡とその眷属を倒す
-拥有【彩虹】,,Own [Rainbow],擁有【彩虹】,【虹】を所持
-拥有四种奇花,,Own all four wonder flowers,擁有四種奇花,4種の奇花を所持
-奇花,,Wonder Flower,奇花,奇花
-花精灵·沙华,,Flower Sprite · Shahua,花精靈·沙華,花の精霊・沙華
-爱丽丝,,Alice,愛麗絲,アリス
-玄戈,,Xuange,玄戈,玄戈
-秤干戚,,Scale Ganqi,秤干戚,秤の干戚
-魔法树,,Magic Tree,魔法樹,魔法の樹
-未知,,Unknown,未知,不明
-开了！,,Opened!,開了！,開いた！
-生命,,HP,生命,HP
-力量,,Strength,力量,力
-防御,,Defense,防禦,防御
-穿透,,Pierce,穿透,貫通
-音量调节,,Volume,音量調節,音量調節
-分贝：标准,,dB: Standard,分貝：標準,dB：標準
-音量：100%,,Volume: 100%,音量：100%,音量：100%
-分贝：+%d,,dB: +%d,分貝：+%d,dB: +%d
-分贝：%d,,dB: %d,分貝：%d,dB: %d
-音量: %s,,Volume: %s,音量: %s,音量: %s
-【荆棘】受击造成固定反伤,,[Thorns] Deals fixed counter damage when hit,【荊棘】受擊造成固定反傷,【荊棘】被弾時に固定ダメージを反射
-【向阳】战斗时回血,,[Sunward] Heals during battle,【向陽】戰鬥時回血,【向陽】戦闘中に回復
-【热血】场上怪物越多生命越高,,[Hot Blood] More monsters on field means more HP,【熱血】場上怪物越多生命越高,【熱血】場のモンスターが多いほどHP上昇
-【硬化】受击防御增加,,[Harden] Defense rises when hit,【硬化】受擊防禦增加,【硬化】被弾時に防御上昇
-【流血】攻击造成流血，可叠加,,"[Bleed] Attacks cause bleed, stacks",【流血】攻擊造成流血，可疊加,【流血】攻撃で出血付与、重複可
-【重甲】增加防御，受击减少,,"[Heavy Armor] Adds Defense, reduced when hit",【重甲】增加防禦，受擊減少,【重甲】防御上昇、被弾で減少
 \n%s掉落期望%s,,\n%s drop expectation %s,\n%s掉落期望%s,\n%sのドロップ期待%s
 %s掉落期望%s,,%s drop expectation %s,%s掉落期望%s,%sのドロップ期待%s
 \n%s掉率%s%%,,\n%s drop rate %s%%,\n%s掉率%s%%,\n%sのドロップ率%s%%
 "花精灵·沙华：""英雄，快去击退那些被邪力污染的怪物吧！""",,"Flower Sprite · Shahua: ""Hero, go drive away the monsters corrupted by evil power!""",花精靈·沙華：「英雄，快去擊退那些被邪力污染的怪物吧！」,花の精霊・沙華：「英雄よ、邪な力に汚染されたモンスターたちを退治して！」
-"花精灵·沙华：""迷雾就是那些魔法树带来的，看起来被邪力影响很深！""",,"Flower Sprite · Shahua: ""The mist is brought by those magic trees — they seem deeply tainted by evil power!""",花精靈·沙華：「迷霧就是那些魔法樹帶來的，看起來被邪力影響很深！」,花の精霊・沙華：「霧はあの魔法の樹がもたらしたもの。邪な力の影響が深いようだ！」
+"花精灵·沙华：""迷雾就是那些魔法树带来的，看起来被邪力影响很深！""",,"Flower Sprite · Shahua: ""The Fog is brought by those magic trees — they seem deeply tainted by evil power!""",花精靈·沙華：「迷霧就是那些魔法樹帶來的，看起來被邪力影響很深！」,花の精霊・沙華：「霧はあの魔法の樹がもたらしたもの。邪な力の影響が深いようだ！」
 "花精灵·沙华：""荆冠是早期被邪力影响的怪物，非常强大！""",,"Flower Sprite · Shahua: ""Thorncrown was among the first monsters tainted by evil power — he's extremely strong!""",花精靈·沙華：「荊冠是早期被邪力影響的怪物，非常強大！」,花の精霊・沙華：「荊冠は最初期に邪な力に蝕まれたモンスター。とても強いわ！」
 "花精灵·沙华：""犽翡是邪力最初的载体，击败他或许一切就结束了！""",,"Flower Sprite · Shahua: ""Yafei was the first vessel of the evil power — defeating him might end it all!""",花精靈·沙華：「犽翡是邪力最初的載體，擊敗他或許一切就結束了！」,花の精霊・沙華：「犽翡は邪な力の最初の宿り主。彼を倒せば、すべてが終わるかも！」
-【物品】,,[Item],【物品】,【アイテム】
-【获取】,,[Source],【獲取】,【入手】
-【用途】,,[Use],【用途】,【用途】
-【售价】,,[Price],【售價】,【価格】
-【英雄】,,[Hero],【英雄】,【英雄】
-【战力】,,[Power],【戰力】,【戦力】
-【等级】,,[Lv.],【等級】,【レベル】
-【经验】,,[EXP],【經驗】,【経験】
-【位置】,,[Pos],【位置】,【位置】
-【友方】,,[Ally],【友方】,【味方】
-【治愈】,,[Heal],【治癒】,【治癒】
-【障碍】,,[Obstacle],【障礙】,【障害】
-【魔化】,,[Corrupt],【魔化】,【魔化】
-【奇花】,,[Wonder Flower],【奇花】,【奇花】
-【香氛】,,[Fragrance],【香氛】,【香り】
-【怪物】,,[Monster],【怪物】,【モンスター】
-【装备】,,[Equipment],【裝備】,【装備】
-【强化】,,[Enhance],【強化】,【強化】
-【属性】,,[Stats],【屬性】,【属性】
-【特性】,,[Trait],【特性】,【特性】
-【描述】,,[Description],【描述】,【説明】
 加强周围怪物,,Strengthens nearby monsters,加強周圍怪物,周囲のモンスターを強化
-银币,,Silver,銀幣,銀貨
-%d/%d（%d%%）,,%d/%d (%d%%),%d/%d（%d%%）,%d/%d（%d%%）
-（%d，%d）,,"(%d, %d)",（%d，%d）,（%d，%d）
-%d银币,,%d Silver,%d銀幣,銀貨%d枚
-%d/%d,,%d/%d,%d/%d,%d/%d
- 十件,, Ten, 十件, 10個
-获得%d经验。,,Gained %d EXP.,獲得%d經驗。,経験値%dを獲得。
-恭喜获得成就《%s》！\n获得%s！,,Achievement unlocked: 《%s》!\nObtained %s!,恭喜獲得成就《%s》！\n獲得%s！,実績《%s》を獲得！\n%sを入手！
-恭喜获得成就《%s》！\n奖励%s×%d！,,Achievement unlocked: 《%s》!\nReward: %s ×%d!,恭喜獲得成就《%s》！\n獎勵%s×%d！,実績《%s》を獲得！\n報酬：%s×%d！
-免费开启获得【%s】×%d！,,Free open: obtained [%s] ×%d!,免費開啟獲得【%s】×%d！,無料で開けて【%s】×%dを獲得！
 第%d次消耗钥匙获得【%s】×%d！,,Open #%d (key used): obtained [%s] ×%d!,第%d次消耗鑰匙獲得【%s】×%d！,%d回目：鍵を消費し【%s】×%dを獲得！
 获得【%s】×%d！,,Obtained [%s] ×%d!,獲得【%s】×%d！,【%s】×%dを獲得！
 使用【%s】探明了%d×%d及周边区域！,,Used [%s]: revealed %d×%d and surrounding area!,使用【%s】探明了%d×%d及周邊區域！,【%s】を使い%d×%dと周辺エリアを探明！
