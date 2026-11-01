@@ -1,4 +1,6 @@
 extends Control # 树屋-任务/成就界面
+# 翻页系统脚本（任务8行/页、成就6行/页，复用全局上一页/下一页按钮）
+const 翻页系统_SCRIPT = preload("res://全局/翻页系统.gd")
 var is_tsk: bool = true    # 是否选中任务标签
 var is_ach: bool = false   # 是否选中成就标签
 var shu_wu: Control # 界面容器
@@ -9,12 +11,15 @@ var tsk: Control # 任务容器
 var ach: Control # 成就容器
 var tsk_1: Array = [] # 任务项列表
 var ach_1: Array = [] # 成就项列表
-var ach_2: Array = [0, 0, 0, 0] # 当前存档的成就状态
-var ach_data: Array = [ # 成就配置数据: [成就名称,条件类型,条件值,奖励物品名,奖励数量,条件描述]
-	["不朽者", 0, "破损稻草人", "朱雀圣像", 1, "拥有【破损稻草人】"],
-	["救世主", 1, 31, "金条", 10, "击败犽翡及其爪牙"],
-	["饮虹使", 0, "彩虹", "彩虹", 10, "拥有【彩虹】"],
-	["采花贼", 2, "", "奇花", 99, "拥有四种奇花"]
+var ach_lq: Array = [] # 当前存档已领取的成就序号清单
+var fan_ye_tsk = null # 任务翻页系统
+var fan_ye_ach = null # 成就翻页系统
+var ach_data: Array = [ # 成就配置数据: [序号,成就名称,图标名,条件类型,条件值,奖励物品名,奖励数量,条件描述]
+	["0001", "救世主Ⅰ", "救世主", 1, 31, "金条", 10, "击败犽翡及其爪牙"],
+	["0002", "救世主Ⅱ", "救世主", 1, 61, "金条", 10, "再次击败犽翡及其爪牙"],
+	["1000", "不朽者", "不朽者", 0, "破损稻草人", "朱雀圣像", 1, "拥有【破损稻草人】"],
+	["1001", "饮虹使", "饮虹使", 0, "彩虹", "彩虹", 10, "拥有【彩虹】"],
+	["1004", "采花贼", "采花贼", 2, "", "奇花", 99, "拥有四种奇花"]
 ]
 # 支线任务金条奖励表（支线1~30关，对应总任务31~60）
 # 1~6关各3根；7~23关各4根；24~28关各32根；29关12根；30关100根
@@ -55,6 +60,11 @@ func _ready() -> void: # 初始化函数
 	ach.position = Vector2(20,14)
 	ach.visible = false
 	shu_wu.add_child(ach)
+	# 创建任务/成就翻页系统（按钮放面板正下方，相对容器 y=530 即屏幕 y≈634，不挡标签按钮）
+	fan_ye_tsk = 翻页系统_SCRIPT.new(8, upd_tsk)
+	fan_ye_tsk.chuang_jian(tsk, Vector2(2, 530))
+	fan_ye_ach = 翻页系统_SCRIPT.new(6, upd_ach)
+	fan_ye_ach.chuang_jian(ach, Vector2(2, 530))
 
 func tsk_LMB(event: InputEvent) -> void: # 任务标签按钮点击处理
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -81,6 +91,9 @@ func ach_LMB(event: InputEvent) -> void: # 成就标签按钮点击处理
 
 func open() -> void: # 显示界面
 	visible = true
+	# 每次打开都回到第一页
+	fan_ye_tsk.chong_zhi()
+	fan_ye_ach.chong_zhi()
 	upd_tsk()
 
 func get_tsk() -> int: # 获取当前任务进度
@@ -90,7 +103,7 @@ func get_tsk() -> int: # 获取当前任务进度
 	var data = json_1.du_qu(json_1.id)
 	return int(data.get("任务",1))
 
-# 刷新任务列表
+# 刷新任务列表（从当前任务开始，每页8行）
 func upd_tsk() -> void:
 	# 清空现有任务
 	for i in tsk_1:
@@ -100,23 +113,25 @@ func upd_tsk() -> void:
 	var stg = get_stg()
 	# 获取当前任务进度
 	var tsk_ing = get_tsk()
-	# 创建任务项（主线1~30关 + 支线31~60关，共60个；最多显示8个）
-	var tsk_8 = 0
-	for T_id in range(tsk_ing, 61):
-		if tsk_8 >= 8:
-			break
+	# 任务总数 = 当前任务及其后所有任务（保持"从当前任务开始往后排"的行为）
+	var zong_shu = max(0, 61 - tsk_ing)
+	fan_ye_tsk.she_zhi(zong_shu)
+	# 本页第一个任务的偏移与行数
+	var qi = fan_ye_tsk.qi_shi()
+	var hang_shu = min(8, zong_shu - qi)
+	for j in range(hang_shu):
+		var T_id = tsk_ing + qi + j
 		var F = stg > T_id
 		# 创建任务项
-		var tsk_2 = C_tsk(T_id,F)
+		var tsk_2 = C_tsk(T_id,F,j)
 		tsk.add_child(tsk_2)
 		tsk_1.append(tsk_2)
-		tsk_8 += 1
 
-# 创建单个任务项
-func C_tsk(T_id: int, F: bool) -> Control:
+# 创建单个任务项（T_id=任务号，F=是否已通关，hang=本页行号）
+func C_tsk(T_id: int, F: bool, hang: int) -> Control:
 	var tsk_3 = Control.new()
 	tsk_3.size = Vector2(280, 54)
-	tsk_3.position = Vector2(0,tsk_1.size()*59)
+	tsk_3.position = Vector2(0,hang*59)
 	# 创建任务背景（签名框）
 	var tsk_bg = TextureRect.new()
 	tsk_bg.texture = load("res://关卡/信息/签名框1.png")
@@ -133,16 +148,16 @@ func C_tsk(T_id: int, F: bool) -> Control:
 		# 支线任务（31~60关对应支线1~30关）
 		var zx_n = T_id - 30
 		var zx_jt = ZX_JIN_TIAO[zx_n - 1]
-		lbl.text = tr("通过支线·%02d关   奖励：金条×%d") % [zx_n, zx_jt]
+		lbl.text = tr("通过%s·%02d关   奖励：%s×%d") % [tr("支线"), zx_n, tr("金条"), zx_jt]
 	elif T_id >= 30:
-		lbl.text = tr("通过主线·%02d关   奖励：金条×7") % T_id
+		lbl.text = tr("通过%s·%02d关   奖励：%s×%d") % [tr("主线"), T_id, tr("金条"), 7]
 	elif T_id > 23:
-		lbl.text = tr("通过主线·%02d关   奖励：金条×1") % T_id
+		lbl.text = tr("通过%s·%02d关   奖励：%s×%d") % [tr("主线"), T_id, tr("金条"), 1]
 	elif T_id == 23:
-		lbl.text = tr("通过主线·%02d关   奖励：333银币") % T_id
+		lbl.text = tr("通过%s·%02d关   奖励：%d银币") % [tr("主线"), T_id, 333]
 	else:
 		# 1~22关：银币按等差数列递增（第n关=10×(n+1)）
-		lbl.text = tr("通过主线·%02d关   奖励：%d银币") % [T_id, 10 * (T_id + 1)]
+		lbl.text = tr("通过%s·%02d关   奖励：%d银币") % [tr("主线"), T_id, 10 * (T_id + 1)]
 	lbl.size = Vector2(280,54) # 任务文本范围
 	lbl.position = Vector2(24,17) # 任务文本位置
 	var kai_ti = 提示弹幕.get_kai_ti_font()
@@ -185,13 +200,13 @@ func get_tsk_R(T_id: int) -> void:
 			var S = int(data.get("银币", 0))
 			S += 333
 			data["银币"] = S
-			提示弹幕.wen_ben("获得333银币！", 0)
+			提示弹幕.wen_ben(tr("获得%d银币！") % 333, 0)
 		elif T_id == 30:
 			# 主线第30关：金条×7
 			var bag = data.get("背包", {})
 			bag["金条"] = int(bag.get("金条", 0)) + 7
 			data["背包"] = bag
-			提示弹幕.wen_ben("获得金条×7！", 0)
+			提示弹幕.wen_ben(tr("获得%s×%d！") % [tr("金条"), 7], 0)
 		elif T_id > 30:
 			# 支线任务（31~60关）：按支线金条奖励表发放
 			var zx_n = T_id - 30
@@ -199,13 +214,13 @@ func get_tsk_R(T_id: int) -> void:
 			var bag = data.get("背包", {})
 			bag["金条"] = int(bag.get("金条", 0)) + zx_jt
 			data["背包"] = bag
-			提示弹幕.wen_ben(tr("获得金条×%d！") % zx_jt, 0)
+			提示弹幕.wen_ben(tr("获得%s×%d！") % [tr("金条"), zx_jt], 0)
 		else:
 			# 24~29关：金条×1
 			var bag = data.get("背包", {})
 			bag["金条"] = int(bag.get("金条", 0)) + 1
 			data["背包"] = bag
-			提示弹幕.wen_ben("获得金条×1！", 0)
+			提示弹幕.wen_ben(tr("获得%s×%d！") % [tr("金条"), 1], 0)
 		# 更新任务进度
 		data["任务"] = tsk_ing + 1
 		json_1.bao_cun(json_1.id, data)
@@ -220,17 +235,10 @@ func get_stg() -> int:
 	var data = json_1.du_qu(json_1.id)
 	return int(data.get("进度", 1))
 
-# 获取存档中的成就状态
+# 从存档读取已领取成就序号清单（旧格式/字段缺失一律视为空清单）
 func get_ach() -> void:
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
-	if json_1 == null:
-		ach_2 = [0, 0, 0, 0]
-		return
-	var data = json_1.du_qu(json_1.id)
-	ach_2 = data.get("成就", [0, 0, 0, 0])
-	# 兼容旧存档：成就数组长度不足时补0
-	while ach_2.size() < ach_data.size():
-		ach_2.append(0)
+	ach_lq = [] if json_1 == null else json_1.get_ach_lq()
 
 # 检查背包是否有指定物品
 func has_item(item_name: String) -> bool:
@@ -241,16 +249,13 @@ func has_item(item_name: String) -> bool:
 	var bag = data.get("背包", {})
 	return bag.has(item_name) and int(bag.get(item_name, 0)) > 0
 
-# 检查指定成就是否完成（未领取状态下检测条件）
+# 检查指定成就的达成条件（不看领取状态）
 func chk_ach(idx: int) -> bool:
 	if idx < 0 or idx >= ach_data.size():
 		return false
-	# 如果已领取，直接返回false
-	if ach_2[idx] == 1:
-		return false
 	var config = ach_data[idx]
-	var type_1 = config[1]
-	var value = config[2]
+	var type_1 = config[3]
+	var value = config[4]
 	if type_1 == 0:
 		# 条件类型0：背包物品检测
 		return has_item(value)
@@ -262,25 +267,34 @@ func chk_ach(idx: int) -> bool:
 		return has_item("百合") and has_item("水仙") and has_item("玫瑰") and has_item("鸢尾")
 	return false
 
-# 创建单个成就项
-func C_ach(idx: int, state: int) -> Control:
+# 获取成就状态：0=已完成未领取，1=已领取，2=未完成
+func ach_zhuang_tai(idx: int) -> int:
+	if ach_lq.has(str(ach_data[idx][0])):
+		return 1
+	if chk_ach(idx):
+		return 0
+	return 2
+
+# 创建单个成就项（idx=成就下标，hang=本页行号，state=成就状态）
+func C_ach(idx: int, hang: int, state: int) -> Control:
 	var ach_3 = Control.new()
 	ach_3.size = Vector2(280, 64)
-	ach_3.position = Vector2(0,ach_1.size()*110+32)
+	ach_3.position = Vector2(0, 6 + hang*66)
 	# 获取成就配置数据
 	var config = ach_data[idx]
-	var ach_name = config[0]
-	var jiang_li = config[3]      # 奖励物品名
-	var jiang_li_n = config[4]    # 奖励数量
+	var ach_name = config[1]
+	var tu_biao = config[2]       # 图标名（救世主Ⅰ/Ⅱ共用"救世主"图标）
+	var jiang_li = config[5]      # 奖励物品名
+	var jiang_li_n = config[6]    # 奖励数量
 	# 创建成就背景（使用签名框背景）
 	var ach_bg = TextureRect.new()
 	ach_bg.texture = load("res://关卡/信息/签名框1.png")
 	ach_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	ach_bg.size = Vector2(280, 64)
 	ach_3.add_child(ach_bg)
-	# 创建成就图标
+	# 创建成就图标（已领取用1图，其余用0图）
 	var ach_icon = TextureRect.new()
-	ach_icon.texture = load("res://主城/图片/" + ach_name + str(state) + ".png")
+	ach_icon.texture = load("res://主城/图片/" + tu_biao + ("1" if state == 1 else "0") + ".png")
 	ach_3.add_child(ach_icon)
 	# 创建成就文本标签
 	var lbl = Label.new()
@@ -291,18 +305,18 @@ func C_ach(idx: int, state: int) -> Control:
 	if kai_ti != null:
 		lbl.add_theme_font_override("font", kai_ti)
 	if state == 1:
-		lbl.text = tr("\n已获得成就《%s》") % tr(ach_name)
+		lbl.text = tr("\n已获得成就【%s】") % tr(ach_name)
 		lbl.add_theme_color_override("font_color", Color("000000"))
 	else:
 		# 未完成或可领取状态：显示完成条件和奖励
-		var cond_text = config[5]  # 使用配置中的条件描述
+		var cond_text = config[7]  # 使用配置中的条件描述
 		lbl.text = tr("\n%s\n奖励：%s×%d") % [tr(cond_text), tr(jiang_li), jiang_li_n]
-		if chk_ach(idx): # 可领取状态：绿色文本
+		if state == 0: # 可领取状态：绿色文本
 			lbl.add_theme_color_override("font_color", Color("00ff00"))
 		else: # 未完成状态：黑色文本
 			lbl.add_theme_color_override("font_color", Color("000000"))
 	ach_3.add_child(lbl)
-	if state == 0 and chk_ach(idx): # 如果可领取，添加点击领取功能
+	if state == 0: # 如果可领取，添加点击领取功能
 		ach_3.gui_input.connect(func(event):
 			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 				get_ach_R(idx)
@@ -314,12 +328,13 @@ func get_ach_R(idx: int) -> void:
 	if idx < 0 or idx >= ach_data.size():
 		return
 	# 检查是否可领取
-	if ach_2[idx] == 1 or not chk_ach(idx):
+	if ach_zhuang_tai(idx) != 0:
 		return
 	var config = ach_data[idx]
-	var ach_name = config[0]
-	var jiang_li = config[3]      # 奖励物品名
-	var jiang_li_n = config[4]    # 奖励数量
+	var xu_hao = str(config[0])   # 成就序号（4位字符串，保留前导零）
+	var ach_name = config[1]
+	var jiang_li = config[5]      # 奖励物品名
+	var jiang_li_n = config[6]    # 奖励数量
 	# 获取存档数据
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json_1 == null:
@@ -339,40 +354,49 @@ func get_ach_R(idx: int) -> void:
 			if hua_n[i] > 0:
 				bag[hua_ming[i]] = int(bag.get(hua_ming[i], 0)) + hua_n[i]
 				parts.append("%s×%d" % [tr(hua_ming[i]), hua_n[i]])
-		tip_text = tr("恭喜获得成就《%s》！\n获得%s！") % [tr(ach_name), "、".join(parts)]
+		tip_text = tr("恭喜获得成就【%s】！\n获得%s！") % [tr(ach_name), "、".join(parts)]
 	else:
 		# 普通成就：直接发放指定物品
 		bag[jiang_li] = int(bag.get(jiang_li, 0)) + jiang_li_n
-		tip_text = tr("恭喜获得成就《%s》！\n奖励%s×%d！") % [tr(ach_name), tr(jiang_li), jiang_li_n]
+		tip_text = tr("恭喜获得成就【%s】！\n奖励%s×%d！") % [tr(ach_name), tr(jiang_li), jiang_li_n]
 	data["背包"] = bag
-	# 更新成就状态为已领取
-	ach_2[idx] = 1
-	data["成就"] = ach_2
-	# 保存存档
+	# 保存存档（成就字段只记录已领取的序号清单）
+	ach_lq.append(xu_hao)
+	data["成就"] = ach_lq
 	json_1.bao_cun(json_1.id, data)
 	# 同步记录到通用存档历史成就
-	json_1.add_ach_ty(idx, ach_data.size())
+	json_1.add_ach_ty(xu_hao)
 	# 同步上报 Steam 成就（Steam 不可用时静默跳过）
-	Steam管理.jie_suo(idx)
+	Steam管理.jie_suo(xu_hao)
 	# 显示获得提示
 	提示弹幕.wen_ben(tip_text, 0)
 	# 刷新成就列表
 	upd_ach()
 
-# 刷新成就列表
+# 刷新成就列表（状态实时推导 + 两级排序 + 每页6行）
 func upd_ach() -> void:
 	# 清空现有成就项
 	for i in ach_1:
 		i.queue_free()
 	ach_1.clear()
-	# 获取最新成就状态
+	# 获取最新已领取清单
 	get_ach()
-	# 创建成就项
+	# 排序依据：[状态, 序号数值, 成就下标]
+	# 状态分组：已完成未领取(0) → 已完成已领取(1) → 未完成(2)，组内按序号升序
+	var lie_biao: Array = []
 	for i in range(ach_data.size()):
-		var state = ach_2[i]
-		if state == 0 and chk_ach(i): # 检测是否完成
-			# 条件满足但未领取，状态仍为0但可点击
-			pass
-		var ach_3 = C_ach(i, state)
+		lie_biao.append([ach_zhuang_tai(i), int(ach_data[i][0]), i])
+	lie_biao.sort_custom(func(a, b):
+		if a[0] != b[0]:
+			return a[0] < b[0]
+		return a[1] < b[1]
+	)
+	# 设置总数并按页创建
+	fan_ye_ach.she_zhi(lie_biao.size())
+	var qi = fan_ye_ach.qi_shi()
+	var hang_shu = min(6, lie_biao.size() - qi)
+	for j in range(hang_shu):
+		var xiang = lie_biao[qi + j]
+		var ach_3 = C_ach(xiang[2], j, xiang[0])
 		ach.add_child(ach_3)
 		ach_1.append(ach_3)

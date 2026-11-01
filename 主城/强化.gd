@@ -292,25 +292,9 @@ func S_upd() -> void:
 	var text = ""
 	if S_n >= 1000000000000:
 		text = tr("富可敌国")
-	elif S_n >= 10000:
-		var is_yi = S_n >= 100000000
-		var unit = tr("亿") if is_yi else tr("万")
-		var wei_4 = 100000000 if is_yi else 10000
-		var d_1 = int(S_n / float(wei_4))
-		var f_1 = S_n % wei_4
-		var f_2 = ""
-		if d_1 < 10:
-			var f_3 = int(f_1 * 1000 / float(wei_4))
-			f_2 = ".%03d" % f_3
-		elif d_1 < 100:
-			var f_3 = int(f_1 * 100 / float(wei_4))
-			f_2 = ".%02d" % f_3
-		elif d_1 < 1000:
-			var f_3 = int(f_1 * 10 / float(wei_4))
-			f_2 = ".%01d" % f_3
-		text = "%d%s%s" % [d_1, f_2, unit]
 	else:
-		text = str(S_n)
+		# 按当前语言选择单位与除数缩写（中文万/亿，英文K/M/G）
+		text = 排版工具.shu_zi_suo_xie(S_n)
 	S_lbl.text = text
 
 # 创建背景

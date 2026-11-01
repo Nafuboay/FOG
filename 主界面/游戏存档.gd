@@ -307,31 +307,44 @@ func bao_cun_ty(data: Dictionary) -> bool:
 	wen_jian.close()
 	return true
 
-# 记录成就到通用存档历史（某存档领取成就后调用，永久保留）
-# ach_idx 成就索引，ach_count 当前版本成就总数量
-func add_ach_ty(ach_idx: int, ach_count: int) -> void:
-	var data = du_qu_ty()
-	# 读取现有历史成就列表，不存在时创建空数组
-	var his_ach = data.get("历史成就", [])
-	# 长度不足当前版本时扩展，已有值保留，新位置补0
-	if his_ach.size() < ach_count:
-		var old_size = his_ach.size()
-		his_ach.resize(ach_count)
-		for i in range(old_size, ach_count):
-			his_ach[i] = 0
-	# 标记指定成就为已完成
-	if ach_idx >= 0 and ach_idx < his_ach.size():
-		his_ach[ach_idx] = 1
-		data["历史成就"] = his_ach
-		bao_cun_ty(data)
+# 读取当前存档的已领取成就序号清单（4位字符串序号，保留前导零）
+# 字段不存在或旧格式（下标0/1数组）一律视为空清单，不做迁移
+func get_ach_lq() -> Array:
+	var data = du_qu(id)
+	var lq = data.get("成就", [])
+	var jg: Array = []
+	if lq is Array:
+		for x in lq:
+			if x is String and not x.is_empty() and not jg.has(x):
+				jg.append(x)
+	return jg
 
-# 检查某成就是否已在通用存档历史中被完成过
-# ach_idx 成就索引
-func has_ach_ty(ach_idx: int) -> bool:
+# 记录成就到通用存档历史（某存档领取成就后调用，永久保留）
+# xu_hao 成就序号（4位字符串，如"0001"）
+func add_ach_ty(xu_hao: String) -> void:
+	var data = du_qu_ty()
+	# 读取现有历史成就序号清单（旧格式/非字符串项一律忽略，视为空）
+	var his_ach = data.get("历史成就", [])
+	var jg: Array = []
+	if his_ach is Array:
+		for x in his_ach:
+			if x is String and not x.is_empty() and not jg.has(x):
+				jg.append(x)
+	# 追加本次领取的序号
+	if not jg.has(xu_hao):
+		jg.append(xu_hao)
+	data["历史成就"] = jg
+	bao_cun_ty(data)
+
+# 检查某成就是否已在通用存档历史中被领取过
+# xu_hao 成就序号（4位字符串，如"1000"）
+func has_ach_ty(xu_hao: String) -> bool:
 	var data = du_qu_ty()
 	var his_ach = data.get("历史成就", [])
-	if ach_idx >= 0 and ach_idx < his_ach.size():
-		return int(his_ach[ach_idx]) == 1
+	if his_ach is Array:
+		for x in his_ach:
+			if x is String and x == xu_hao:
+				return true
 	return false
 
 # 获取当前语言设置（从通用存档读取，默认简体中文 zh_CN）

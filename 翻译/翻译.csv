@@ -130,30 +130,29 @@ keys,zh_CN,en,zh_TW,ja
 
 不朽者,,Undying,不朽者,不朽者
 拥有【破损稻草人】,,Cheat death by obtaining the [Broken Scarecrow],擁有【破損稻草人】,【壊れたカカシ】を所持
-救世主,,Savior,救世主,救世主
+救世主Ⅰ,,Savior Ⅰ,救世主Ⅰ,救世主Ⅰ
+救世主Ⅱ,,Savior Ⅱ,救世主Ⅱ,救世主Ⅱ
 击败犽翡及其爪牙,,Defeat Yafei and his minions,擊敗犽翡及其爪牙,犽翡とその眷属を倒す
+再次击败犽翡及其爪牙,,Defeat Yafei and his minions again,再次擊敗犽翡及其爪牙,犽翡とその眷属を再び倒す
 饮虹使,,Rainbow Drinker,飲虹使,虹を飲む者
 拥有【彩虹】,,Obtain the [Rainbow],擁有【彩虹】,【虹】を所持
 采花贼,,Flower Thief,採花賊,花泥棒
 拥有四种奇花,,Collect 4 different types of rare flowers,擁有四種奇花,4種の奇花を所持
 
-完成成就【不朽者】解锁英雄【玄戈】！,,"Complete achievement ""Immortal"" to unlock hero [Xuange]!",完成成就【不朽者】解鎖英雄【玄戈】！,実績【不朽者】を達成し、英雄【玄戈】を解放！
-完成成就【救世主】解锁英雄【秤干戚】！,,"Complete achievement ""Savior"" to unlock hero [Scale Ganqi]!",完成成就【救世主】解鎖英雄【秤干戚】！,実績【救世主】を達成し、英雄【秤干戚】を解放！
-恭喜获得成就【%s】！\n获得%s！,,Achievement unlocked:【%s】!\nObtained %s!,恭喜獲得成就【%s】！\n獲得%s！,実績【%s】を獲得！\n%sを入手！
-恭喜获得成就【%s】！\n奖励%s×%d！,,Achievement unlocked: 《%s》!\nReward: %s ×%d!,恭喜獲得成就《%s》！\n獎勵%s×%d！,実績《%s》を獲得！\n報酬：%s×%d！
+完成成就【不朽者】解锁英雄【玄戈】！,,"Complete achievement [Immortal] to unlock hero [Xuange]!",完成成就【不朽者】解鎖英雄【玄戈】！,実績【不朽者】を達成し、英雄【玄戈】を解放！
+完成成就【救世主Ⅰ】解锁英雄【秤干戚】！,,"Complete achievement [Savior Ⅰ] to unlock hero [Scale Ganqi]!",完成成就【救世主Ⅰ】解鎖英雄【秤干戚】！,実績【救世主Ⅰ】を達成し、英雄【秤干戚】を解放！
+恭喜获得成就【%s】！\n获得%s！,,Achievement unlocked: [%s]!\nObtained %s!,恭喜獲得成就【%s】！\n獲得%s！,実績【%s】を獲得！\n%sを入手！
+恭喜获得成就【%s】！\n奖励%s×%d！,,Achievement unlocked: [%s]!\nReward: %s ×%d!,恭喜獲得成就【%s】！\n獎勵%s×%d！,実績【%s】を獲得！\n報酬：%s×%d！
 免费开启获得【%s】×%d！,,Free open: obtained [%s] ×%d!,免費開啟獲得【%s】×%d！,無料で開けて【%s】×%dを獲得！
-\n已获得成就【%s】,,\nAchievement unlocked: 《%s》,\n已獲得成就《%s》,\n実績《%s》を獲得
+\n已获得成就【%s】,,\nAchievement unlocked: [%s],\n已獲得成就【%s】,\n実績【%s】を獲得
 \n%s\n奖励：%s×%d,,\n%s\nReward: %s×%d,\n%s\n獎勵：%s×%d,\n%s\n報酬：%s×%d
 
 道具栏,,Prop Slots,道具欄,アイテムスロット
-主线·%d关,,Main %d,主線·%d關,メイン%d
-支线·%d关,,Side %d,支線·%d關,サブ%d
+主线,,Main,主線,メイン
+支线,,Side,支線,サブ
 诛邪·%d级,,ZX Lv.%d,誅邪·%d級,退魔・レベル%d
-通过支线·%02d关   奖励：金条×%d,,Clear Side Story %02d   Reward: Gold Bar ×%d,通過支線·%02d關   獎勵：金條×%d,外伝%02dをクリア   報酬：金塊×%d
-通过主线·%02d关   奖励：金条×7,,Clear Main Story %02d   Reward: Gold Bar ×7,通過主線·%02d關   獎勵：金條×7,本編%02dをクリア   報酬：金塊×7
-通过主线·%02d关   奖励：金条×1,,Clear Main Story %02d   Reward: Gold Bar ×1,通過主線·%02d關   獎勵：金條×1,本編%02dをクリア   報酬：金塊×1
-通过主线·%02d关   奖励：333银币,,Clear Main Story %02d   Reward: 333 Silver,通過主線·%02d關   獎勵：333銀幣,本編%02dをクリア   報酬：銀貨333枚
-通过主线·%02d关   奖励：%d银币,,Clear Main Story %02d   Reward: %d Silver,通過主線·%02d關   獎勵：%d銀幣,本編%02dをクリア   報酬：銀貨%d枚
+通过%s·%02d关   奖励：%s×%d,,Clear %s %02d   Reward: %s ×%d,通過%s·%02d關   獎勵：%s×%d,%s%02dをクリア   報酬：%s×%d
+通过%s·%02d关   奖励：%d银币,,Clear %s %02d   Reward: %d Silver,通過%s·%02d關   獎勵：%d銀幣,%s%02dをクリア   報酬：銀貨%d枚
 
 迷雾来袭，请做好战斗准备！,,The Fog approaches. Prepare for battle!,迷霧來襲，請做好戰鬥準備！,迷霧が迫っています。戦闘の準備をしてください！
 已激活浮空岛传送阵，请选择传送关卡。,,Floating Island portal activated. Choose a destination.,已激活浮空島傳送陣，請選擇傳送關卡。,浮遊島の転送陣が起動しました。転送先を選んでください。
@@ -162,6 +161,7 @@ keys,zh_CN,en,zh_TW,ja
 最多只能携带%d个道具！,,You can carry at most %d Prop!,最多只能攜帶%d個道具！,アイテムは最大%d個まで持てます！
 
 %d银币,,%d Silver,%d銀幣,銀貨%d枚
+银币,,Silver,銀幣,銀貨
 富可敌国,,∞,富可敵國,∞
 一件,, One, 一件, 1つ
 十件,, Ten, 十件, 10個
@@ -172,7 +172,7 @@ keys,zh_CN,en,zh_TW,ja
 3阶材料,,Tier 3 Material,3階材料,3階素材
 4阶材料,,Tier 4 Material,4階材料,4階素材
 商店,,Shop,商店,ショップ
-银币,,Silver,銀幣,銀貨
+
 获得%d经验。,,Gained %d EXP.,獲得%d經驗。,経験値%dを獲得。
 获得1000经验,,Gain 1000 EXP,獲得1000經驗,経験値1000を獲得
 获得1万经验,,"Gain 10,000 EXP",獲得1萬經驗,経験値1万を獲得
@@ -203,9 +203,7 @@ keys,zh_CN,en,zh_TW,ja
 秤干戚,,Scale Ganqi,秤干戚,秤の干戚
 魔法树,,Magic Tree,魔法樹,魔法の樹
 未知,,Unknown,未知,不明
-获得333银币！,,Gained 333 silver!,獲得333銀幣！,銀貨333枚を獲得！
-获得金条×7！,,Gained Gold Bar ×7!,獲得金條×7！,金塊×7を獲得！
-获得金条×1！,,Gained Gold Bar ×1!,獲得金條×1！,金塊×1を獲得！
+获得%s×%d！,,Gained %s ×%d!,獲得%s×%d！,%s×%dを獲得！
 音量调节,,Volume,音量調節,音量調節
 分贝：标准,,dB: Standard,分貝：標準,dB：標準
 音量：100%,,Volume: 100%,音量：100%,音量：100%
@@ -218,8 +216,6 @@ keys,zh_CN,en,zh_TW,ja
 穿透,,Pierce,穿透,貫通
 
 
-亿,,00M,億,億
-万,,"0,000",萬,万
 银币不足！,,Not enough silver!,銀幣不足！,銀貨が足りません！
 不够好运，强化失败！,,Bad luck. Enhancement failed!,不夠好運，強化失敗！,運が悪く、強化失敗！
 "花精灵·沙华：""治愈术！""",,"Flower Sprite · Shahua: ""Healing spell!""",花精靈·沙華：「治癒術！」,花の精霊・沙華：「治癒術！」
@@ -240,7 +236,6 @@ keys,zh_CN,en,zh_TW,ja
 出售%sx%d，获得%d银币！,,"Sold %s x%d, gained %d silver!",出售%sx%d，獲得%d銀幣！,%s x%dを売却し、銀貨%d枚を獲得！
 【%s】强化+%d成功！,,[%s] enhanced to +%d!,【%s】強化+%d成功！,【%s】を+%dに強化成功！
 获得%d银币！,,Gained %d silver!,獲得%d銀幣！,銀貨%d枚を獲得！
-获得金条×%d！,,Gained Gold Bar ×%d!,獲得金條×%d！,金塊×%dを獲得！
 使用【朱雀圣像】恢复%d生命，朱雀圣像破损了！,,"Used [Vermilion Bird Statue], restored %d HP. The statue broke!",使用【朱雀聖像】恢復%d生命，朱雀聖像破損了！,【朱雀の聖像】を使いHP%dを回復。聖像は壊れました！
 使用【朱雀圣像】恢复%d生命！,,Used [Vermilion Bird Statue] and restored %d HP!,使用【朱雀聖像】恢復%d生命！,【朱雀の聖像】を使いHP%dを回復！
 采摘到【%s】！受到%d点伤害。,,Picked [%s]! Took %d damage.,採摘到【%s】！受到%d點傷害。,【%s】を摘みました！%dダメージを受けた。

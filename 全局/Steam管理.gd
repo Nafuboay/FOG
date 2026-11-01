@@ -4,9 +4,15 @@ extends Node
 
 # Steam AppID
 const APP_ID: int = 5484320
-# 成就索引 → Steam 后台 API 名映射（必须与 Steamworks 后台 Stats & Achievements 中创建的 API 名完全一致）
-# 0=不朽者 1=救世主 2=饮虹使 3=采花贼（顺序与 树屋.gd ach_data 一致，后续新增成就在末尾追加即可）
-const ACH_API: Array = ["ACH_BU_XIU_ZHE", "ACH_Hero", "ACH_YIN_HONG_SHI", "ACH_CAI_HUA_ZEI"]
+# 成就序号 → Steam 后台 API 名映射（必须与 Steamworks 后台 Stats & Achievements 中创建的 API 名完全一致）
+# 序号为4位字符串（保留前导零），与 树屋.gd ach_data 的序号一致；新增成就只需按序号追加键值
+const ACH_API: Dictionary = {
+	"1000": "ACH_BU_XIU_ZHE",   # 不朽者
+	"0001": "ACH_Hero",          # 救世主Ⅰ
+	"0002": "ACH_Hero_II",       # 救世主Ⅱ
+	"1001": "ACH_YIN_HONG_SHI",  # 饮虹使
+	"1004": "ACH_CAI_HUA_ZEI",   # 采花贼
+}
 
 # Steam 是否可用（仅初始化成功为 true，编辑器直跑/无 Steam 客户端/离线时为 false）
 var ke_yong: bool = false
@@ -37,19 +43,19 @@ func _on_user_stats_received(_game_id: int, _result: int, _steam_id: int) -> voi
 	yi_tong_bu = true
 	# 游戏存档非 autoload，临时实例化仅用于读取通用存档（du_qu_ty 内部会自动初始化路径）
 	var cun_dang = 游戏存档.new()
-	for i in range(ACH_API.size()):
-		if cun_dang.has_ach_ty(i):
-			var zhuang_tai: Dictionary = Steam.getAchievement(ACH_API[i])
+	for xu_hao in ACH_API:
+		if cun_dang.has_ach_ty(xu_hao):
+			var zhuang_tai: Dictionary = Steam.getAchievement(ACH_API[xu_hao])
 			if not zhuang_tai.get("achieved", false):
-				jie_suo(i)
+				jie_suo(xu_hao)
 	cun_dang.free()
 
-# 解锁成就并立即上传；ach_idx 为游戏内成就索引（对应 ACH_API 映射），Steam 不可用时静默跳过
-func jie_suo(ach_idx: int) -> void:
+# 解锁成就并立即上传；xu_hao 为游戏内成就序号（对应 ACH_API 映射），Steam 不可用时静默跳过
+func jie_suo(xu_hao: String) -> void:
 	if not ke_yong:
 		return
-	if ach_idx < 0 or ach_idx >= ACH_API.size():
+	if not ACH_API.has(xu_hao):
 		return
-	var api_ming: String = ACH_API[ach_idx]
+	var api_ming: String = ACH_API[xu_hao]
 	Steam.setAchievement(api_ming)
 	Steam.storeStats()

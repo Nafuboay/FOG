@@ -90,3 +90,41 @@ func pai_ban_wen_ben(wen_ben: String) -> String:
 		if _KAI_KOU.has(c):
 			jie_guo += char(_WJ)
 	return jie_guo
+
+# 数字缩写单位表（按语言区分，单位与除数成对使用）：[阈值, 除数, 单位]
+# 中文：万/亿；繁体：萬/億；日文：万/億；英文：K/M/G（按实际位数选单位与除数）
+const SHU_ZI_DAN_WEI: Dictionary = {
+	"zh_CN": [[100000000, 100000000.0, "亿"], [10000, 10000.0, "万"]],
+	"zh_TW": [[100000000, 100000000.0, "億"], [10000, 10000.0, "萬"]],
+	"ja": [[100000000, 100000000.0, "億"], [10000, 10000.0, "万"]],
+	"en": [[1000000000, 1000000000.0, "G"], [1000000, 1000000.0, "M"], [1000, 1000.0, "K"]],
+}
+
+# 获取当前语言代码（简体中文使用空 locale，这里统一识别为 zh_CN）
+func dang_qian_yu_yan() -> String:
+	var yu_yan = TranslationServer.get_locale()
+	return yu_yan if not yu_yan.is_empty() else "zh_CN"
+
+# 按当前语言的单位与除数缩写数字（低于该语言最小阈值时原样返回）
+# 小数位规则沿用原万/亿格式：整数部分1位带3位小数、2位带2位、3位带1位、4位及以上不带；去尾法
+# 小数部分为0时不显示（如1亿、100M），避免出现1.000亿这类尾随零
+func shu_zi_suo_xie(shu: int) -> String:
+	var yu_yan = dang_qian_yu_yan()
+	var dan_wei_biao = SHU_ZI_DAN_WEI.get(yu_yan, SHU_ZI_DAN_WEI["zh_CN"])
+	for x in dan_wei_biao:
+		var yu_zhi = int(x[0])
+		if shu < yu_zhi:
+			continue
+		var chu = float(x[1])
+		var zheng = int(shu / chu)
+		var yu = shu % yu_zhi
+		var xiao = ""
+		if yu > 0:
+			if zheng < 10:
+				xiao = ".%03d" % int(yu * 1000 / chu)
+			elif zheng < 100:
+				xiao = ".%02d" % int(yu * 100 / chu)
+			elif zheng < 1000:
+				xiao = ".%01d" % int(yu * 10 / chu)
+		return "%d%s%s" % [zheng, xiao, x[2]]
+	return str(shu)
