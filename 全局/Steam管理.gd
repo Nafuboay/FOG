@@ -9,9 +9,19 @@ const APP_ID: int = 5484320
 const ACH_API: Dictionary = {
 	"1000": "ACH_BU_XIU_ZHE",   # 不朽者
 	"0001": "ACH_Hero",          # 救世主Ⅰ
-	"0002": "ACH_Hero_II",       # 救世主Ⅱ
+	"0002": "ACH_Hero_2",       # 救世主Ⅱ
 	"1001": "ACH_YIN_HONG_SHI",  # 饮虹使
 	"1004": "ACH_CAI_HUA_ZEI",   # 采花贼
+	"0107": "ACH_A7",            # A7富豪
+	"0108": "ACH_A8",            # A8富豪
+	"0109": "ACH_A9",            # A9富豪
+	"0110": "ACH_A10",           # A10富豪
+	"0111": "ACH_A11",           # A11富豪
+	"0112": "ACH_A12",           # A12富豪
+	"0113": "ACH_A13",           # A13富豪
+	"0114": "ACH_A14",           # A14富豪
+	"0115": "ACH_A15",           # A15富豪
+	"0116": "ACH_A16",           # A16富豪
 }
 
 # Steam 是否可用（仅初始化成功为 true，编辑器直跑/无 Steam 客户端/离线时为 false）

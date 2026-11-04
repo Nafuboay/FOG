@@ -20,7 +20,17 @@ var ach_data: Array = [ # 成就配置数据: [序号,成就名称,图标名,条
 	["0002", "救世主Ⅱ", "救世主", 1, 61, "金条", 10, "再次击败犽翡及其爪牙"],
 	["1000", "不朽者", "不朽者", 0, "破损稻草人", "朱雀圣像", 1, "拥有【破损稻草人】"],
 	["1001", "饮虹使", "饮虹使", 0, "彩虹", "彩虹", 10, "拥有【彩虹】"],
-	["1004", "采花贼", "采花贼", 2, "", "奇花", 99, "拥有四种奇花"]
+	["1004", "采花贼", "采花贼", 2, "", "奇花", 99, "拥有四种奇花"],
+	["0107", "A7富豪", "A7", 3, 1000, "银币", 1, "拥有1000银币"],
+	["0108", "A8富豪", "A8", 3, 10000, "银币", 10, "拥有1万银币"],
+	["0109", "A9富豪", "A9", 3, 100000, "银币", 100, "拥有10万银币"],
+	["0110", "A10富豪", "A10", 3, 1000000, "银币", 1000, "拥有100万银币"],
+	["0111", "A11富豪", "A11", 3, 10000000, "银币", 10000, "拥有1000万银币"],
+	["0112", "A12富豪", "A12", 3, 100000000, "银币", 100000, "拥有1亿银币"],
+	["0113", "A13富豪", "A13", 3, 1000000000, "银币", 1000000, "拥有10亿银币"],
+	["0114", "A14富豪", "A14", 3, 10000000000, "银币", 10000000, "拥有100亿银币"],
+	["0115", "A15富豪", "A15", 3, 100000000000, "银币", 100000000, "拥有1000亿银币"],
+	["0116", "A16富豪", "A16", 3, 1000000000000, "银币", 1000000000, "拥有1万亿银币"]
 ]
 # 支线任务金条奖励表（支线1~30关，对应总任务31~60）
 # 1~6关各3根；7~23关各4根；24~28关各32根；29关12根；30关100根
@@ -251,6 +261,14 @@ func get_stg() -> int:
 	var data = json_1.du_qu(json_1.id)
 	return int(data.get("进度", 1))
 
+# 获取存档当前银币数量（用于富豪系列成就实时判定）
+func get_yin_bi() -> int:
+	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json_1 == null:
+		return 0
+	var data = json_1.du_qu(json_1.id)
+	return int(data.get("银币", 0))
+
 # 从存档读取已领取成就序号清单（旧格式/字段缺失一律视为空清单）
 func get_ach() -> void:
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
@@ -281,6 +299,9 @@ func chk_ach(idx: int) -> bool:
 	elif type_1 == 2:
 		# 条件类型2：同时拥有四种奇花
 		return has_item("百合") and has_item("水仙") and has_item("玫瑰") and has_item("鸢尾")
+	elif type_1 == 3:
+		# 条件类型3：银币持有量检测（实时读取当前存档银币，未领取前花掉则回到未完成）
+		return get_yin_bi() >= int(value)
 	return false
 
 # 获取成就状态：0=已完成未领取，1=已领取，2=未完成
@@ -295,7 +316,8 @@ func ach_zhuang_tai(idx: int) -> int:
 func C_ach(idx: int, hang: int, state: int) -> Control:
 	var ach_3 = Control.new()
 	ach_3.size = Vector2(280, 64)
-	ach_3.position = Vector2(0, 6 + hang*66)
+	# 每页6行按容器高度均分（行高64+间距15，末行底部落在y=465），消除列表底部空白
+	ach_3.position = Vector2(0, 6 + hang*79)
 	# 获取成就配置数据
 	var config = ach_data[idx]
 	var ach_name = config[1]
@@ -309,8 +331,13 @@ func C_ach(idx: int, hang: int, state: int) -> Control:
 	ach_bg.size = Vector2(280, 64)
 	ach_3.add_child(ach_bg)
 	# 创建成就图标（已领取用1图，其余用0图）
+	# 富豪系列素材命名为「状态+图标名」（0A7/1A7），其余成就为「图标名+状态」（救世主0/救世主1）
 	var ach_icon = TextureRect.new()
-	ach_icon.texture = load("res://主城/图片/" + tu_biao + ("1" if state == 1 else "0") + ".png")
+	var zt_1 = "1" if state == 1 else "0"
+	if tu_biao.begins_with("A"):
+		ach_icon.texture = load("res://主城/图片/" + zt_1 + tu_biao + ".png")
+	else:
+		ach_icon.texture = load("res://主城/图片/" + tu_biao + zt_1 + ".png")
 	ach_3.add_child(ach_icon)
 	# 创建成就文本标签
 	var lbl = Label.new()
@@ -326,7 +353,11 @@ func C_ach(idx: int, hang: int, state: int) -> Control:
 	else:
 		# 未完成或可领取状态：显示完成条件和奖励
 		var cond_text = config[7]  # 使用配置中的条件描述
-		lbl.text = tr("\n%s\n奖励：%s×%d") % [tr(cond_text), tr(jiang_li), jiang_li_n]
+		if jiang_li == "银币":
+			# 银币奖励直接写数量
+			lbl.text = tr("\n%s\n奖励：%s银币") % [tr(cond_text), 排版工具.shu_zi_suo_xie(jiang_li_n)]
+		else:
+			lbl.text = tr("\n%s\n奖励：%s×%s") % [tr(cond_text), tr(jiang_li), 排版工具.shu_zi_suo_xie(jiang_li_n)]
 		if state == 0: # 可领取状态：绿色文本
 			lbl.add_theme_color_override("font_color", Color("00ff00"))
 		else: # 未完成状态：黑色文本
@@ -371,10 +402,14 @@ func get_ach_R(idx: int) -> void:
 				bag[hua_ming[i]] = int(bag.get(hua_ming[i], 0)) + hua_n[i]
 				parts.append("%s×%d" % [tr(hua_ming[i]), hua_n[i]])
 		tip_text = tr("恭喜获得成就【%s】！\n获得%s！") % [tr(ach_name), "、".join(parts)]
+	elif jiang_li == "银币":
+		# 银币类成就奖励：直接写入存档银币字段，不进入背包
+		data["银币"] = int(data.get("银币", 0)) + jiang_li_n
+		tip_text = tr("恭喜获得成就【%s】！\n奖励%s银币！") % [tr(ach_name), 排版工具.shu_zi_suo_xie(jiang_li_n)]
 	else:
 		# 普通成就：直接发放指定物品
 		bag[jiang_li] = int(bag.get(jiang_li, 0)) + jiang_li_n
-		tip_text = tr("恭喜获得成就【%s】！\n奖励%s×%d！") % [tr(ach_name), tr(jiang_li), jiang_li_n]
+		tip_text = tr("恭喜获得成就【%s】！\n奖励%s×%s！") % [tr(ach_name), tr(jiang_li), 排版工具.shu_zi_suo_xie(jiang_li_n)]
 	data["背包"] = bag
 	# 保存存档（成就字段只记录已领取的序号清单）
 	ach_lq.append(xu_hao)

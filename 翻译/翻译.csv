@@ -129,23 +129,45 @@ keys,zh_CN,en,zh_TW,ja
 猛犸王·犽翡,,Yafei,猛獁王·犽翡,マンモス王·犽翡
 
 不朽者,,Undying,不朽者,不朽者
-拥有【破损稻草人】,,Cheat death by obtaining the [Broken Scarecrow],擁有【破損稻草人】,【壊れたカカシ】を所持
+拥有【破损稻草人】,,Own the [Broken Scarecrow],擁有【破損稻草人】,【壊れたカカシ】を所持
+饮虹使,,Rainbow Drinker,飲虹使,虹を飲む者
+拥有【彩虹】,,Own the [Rainbow],擁有【彩虹】,【虹】を所持
+采花贼,,Flower Thief,採花賊,花泥棒
+拥有四种奇花,,Own 4 different types of rare flowers,擁有四種奇花,4種の奇花を所持
 救世主Ⅰ,,Savior Ⅰ,救世主Ⅰ,救世主Ⅰ
 救世主Ⅱ,,Savior Ⅱ,救世主Ⅱ,救世主Ⅱ
-击败犽翡及其爪牙,,Defeat Yafei and his minions,擊敗犽翡及其爪牙,犽翡とその眷属を倒す
-再次击败犽翡及其爪牙,,Defeat Yafei and his minions again,再次擊敗犽翡及其爪牙,犽翡とその眷属を再び倒す
-饮虹使,,Rainbow Drinker,飲虹使,虹を飲む者
-拥有【彩虹】,,Obtain the [Rainbow],擁有【彩虹】,【虹】を所持
-采花贼,,Flower Thief,採花賊,花泥棒
-拥有四种奇花,,Collect 4 different types of rare flowers,擁有四種奇花,4種の奇花を所持
+通关主线,,Complete Main mode,通關主線,メインモードクリア
+通关支线,,Complete Side mode,通關支線,サブモードクリア
+A7富豪,,A7 Fortune,A7富豪,A7富豪
+A8富豪,,A8 Fortune,A8富豪,A8富豪
+A9富豪,,A9 Fortune, A9富豪, A9富豪
+A10富豪,,A10 Fortune,A10富豪,A10富豪
+A11富豪,,A11 Fortune,A11富豪,A11富豪
+A12富豪,,A12 Fortune,A12富豪,A12富豪
+A13富豪,,A13 Fortune,A13富豪,A13富豪
+A14富豪,,A14 Fortune,A14富豪,A14富豪
+A15富豪,,A15 Fortune,A15富豪,A15富豪
+A16富豪,,A16 Fortune,A16富豪,A16富豪
+拥有1000银币,,Own 1K Silver,擁有1000銀幣,1000銀貨を所持
+拥有1万银币,,Own 10K Silver,擁有1萬銀幣,1万銀貨を所持
+拥有10万银币,,Own 100K Silver,擁有10萬銀幣,10万銀貨を所持
+拥有100万银币,,Own 1M Silver,擁有100萬銀幣,100万銀貨を所持
+拥有1000万银币,,Own 10M Silver,擁有1000萬銀幣,1000万銀貨を所持
+拥有1亿银币,,Own 100M Silver,擁有1億銀幣,1億銀貨を所持
+拥有10亿银币,,Own 1B Silver,擁有10億銀幣,10億銀貨を所持
+拥有100亿银币,,Own 10B Silver,擁有100億銀幣,100億銀貨を所持
+拥有1000亿银币,,Own 100B Silver,擁有1000億銀幣,1000億銀貨を所持
+拥有1万亿银币,,Own 1T Silver,擁有1萬億銀幣,1兆銀貨を所持
 
 完成成就【不朽者】解锁英雄【玄戈】！,,"Complete achievement [Immortal] to unlock hero [Xuange]!",完成成就【不朽者】解鎖英雄【玄戈】！,実績【不朽者】を達成し、英雄【玄戈】を解放！
 完成成就【救世主Ⅰ】解锁英雄【秤干戚】！,,"Complete achievement [Savior Ⅰ] to unlock hero [Scale Ganqi]!",完成成就【救世主Ⅰ】解鎖英雄【秤干戚】！,実績【救世主Ⅰ】を達成し、英雄【秤干戚】を解放！
 恭喜获得成就【%s】！\n获得%s！,,Achievement unlocked: [%s]!\nObtained %s!,恭喜獲得成就【%s】！\n獲得%s！,実績【%s】を獲得！\n%sを入手！
-恭喜获得成就【%s】！\n奖励%s×%d！,,Achievement unlocked: [%s]!\nReward: %s ×%d!,恭喜獲得成就【%s】！\n獎勵%s×%d！,実績【%s】を獲得！\n報酬：%s×%d！
+恭喜获得成就【%s】！\n奖励%s×%s！,,Achievement unlocked: [%s]!\nReward: %s ×%s!,恭喜獲得成就【%s】！\n獎勵%s×%s！,実績【%s】を獲得！\n報酬：%s×%s！
 免费开启获得【%s】×%d！,,Free open: obtained [%s] ×%d!,免費開啟獲得【%s】×%d！,無料で開けて【%s】×%dを獲得！
 \n已获得成就【%s】,,\nAchievement unlocked: [%s],\n已獲得成就【%s】,\n実績【%s】を獲得
-\n%s\n奖励：%s×%d,,\n%s\nReward: %s×%d,\n%s\n獎勵：%s×%d,\n%s\n報酬：%s×%d
+\n%s\n奖励：%s×%s,,\n%s\nReward: %s×%s,\n%s\n獎勵：%s×%s,\n%s\n報酬：%s×%s
+\n%s\n奖励：%s银币,,\n%s\nReward: %s Silver,\n%s\n獎勵：%s銀幣,\n%s\n報酬：銀貨%s枚
+恭喜获得成就【%s】！\n奖励%s银币！,,Achievement unlocked: [%s]!\nReward: %s Silver!,恭喜獲得成就【%s】！\n獎勵%s銀幣！,実績【%s】を獲得！\n報酬：銀貨%s枚！
 
 道具栏,,Prop Slots,道具欄,アイテムスロット
 主线,,Main,主線,メイン
@@ -214,7 +236,6 @@ keys,zh_CN,en,zh_TW,ja
 力量,,Strength,力量,力
 防御,,Defense,防禦,防御
 穿透,,Pierce,穿透,貫通
-
 
 银币不足！,,Not enough silver!,銀幣不足！,銀貨が足りません！
 不够好运，强化失败！,,Bad luck. Enhancement failed!,不夠好運，強化失敗！,運が悪く、強化失敗！
