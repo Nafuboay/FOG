@@ -13,10 +13,21 @@ const ZHEN_LV_MAX: int = 60
 const DONG_HUA_BEI_LV: float = 1.0
 # 动画资源自身的原始帧率（项目所有 .tres SpriteFrames 的 speed 均为60）
 const ZI_YUAN_ZHEN_LV: float = 60.0
+# 镜头跟随速度默认档位索引（3 = 180像素/秒）
+const JING_TOU_SU_DU_MO_REN: int = 3
+# 镜头跟随速度档位索引下限（0档 = 画面不移动）
+const JING_TOU_SU_DU_MIN: int = 0
+# 镜头跟随速度档位索引上限
+const JING_TOU_SU_DU_MAX: int = 7
+# 镜头跟随速度档位数值表（像素/秒，实际速度 = 档位值 × 当前缩放；0档画面不移动）
+# 设置界面显示与关卡补间共用此表，避免两处各存一份
+const JING_TOU_SU_DU_DANG_WEI: Array = [0, 18, 36, 72, 180, 360, 720, 1800]
 # 当前使用的存档槽位编号(0~14)
 var id: int = 0
 # 基础帧率内存缓存（-1表示未加载；避免战斗中每次播放动画都读存档文件）
 var ji_chu_zhen_lv_huan_cun: int = -1
+# 镜头跟随速度内存缓存（-1表示未加载；避免英雄每走一步都读存档文件）
+var jing_tou_su_du_huan_cun: int = -1
 # 存档文件夹路径（系统用户数据目录下，Windows 为 %APPDATA%\Godot\app_userdata\FOG\迷雾存档）
 var mi_wu_json: String = ""
 
@@ -27,7 +38,7 @@ func _ready() -> void:
 	wen_jian_jia()
 	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音，语言简体中文），所有档共用
 	if not FileAccess.file_exists(get_ty_lu_jing()):
-		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN", "基础帧率": ZHEN_LV_MO_REN})
+		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN", "基础帧率": ZHEN_LV_MO_REN, "镜头跟随速度": JING_TOU_SU_DU_MO_REN})
 	# 手动加载翻译资源（project.godot 的 [locale] 配置在含中文路径"翻译/"时可能加载失败，代码手动加载更可靠）
 	_jia_zai_fan_yi()
 	# 启动时应用存档中的语言设置
@@ -386,6 +397,29 @@ func set_ji_chu_zhen_lv(zhen_lv: int) -> void:
 	data["基础帧率"] = clampi(zhen_lv, ZHEN_LV_MIN, ZHEN_LV_MAX)
 	bao_cun_ty(data)
 	ji_chu_zhen_lv_huan_cun = int(data["基础帧率"])
+
+# 获取镜头跟随速度档位索引（0~7；首次调用读存档并缓存，缺失/非法值回落默认档位3）
+func get_jing_tou_su_du() -> int:
+	if jing_tou_su_du_huan_cun < 0:
+		var v = du_qu_ty().get("镜头跟随速度", JING_TOU_SU_DU_MO_REN)
+		var dang: int = JING_TOU_SU_DU_MO_REN
+		if v is int or v is float:
+			dang = int(v)
+		elif v is String and v.is_valid_int():
+			dang = int(v)
+		jing_tou_su_du_huan_cun = clampi(dang, JING_TOU_SU_DU_MIN, JING_TOU_SU_DU_MAX)
+	return jing_tou_su_du_huan_cun
+
+# 保存镜头跟随速度档位索引到通用存档（clamp到0~7后写入，并同步更新缓存）
+func set_jing_tou_su_du(dang: int) -> void:
+	var data = du_qu_ty()
+	data["镜头跟随速度"] = clampi(dang, JING_TOU_SU_DU_MIN, JING_TOU_SU_DU_MAX)
+	bao_cun_ty(data)
+	jing_tou_su_du_huan_cun = int(data["镜头跟随速度"])
+
+# 获取当前镜头跟随速度数值（像素/秒；0表示画面不移动，实际速度还需乘当前缩放）
+func get_jing_tou_su_du_zhi() -> float:
+	return float(JING_TOU_SU_DU_DANG_WEI[get_jing_tou_su_du()])
 
 # 计算 AnimatedSprite2D 的播放速度缩放值
 # 动画资源原始帧率为60，speed_scale=基础帧率/60×倍率，实际帧率即等于基础帧率×倍率

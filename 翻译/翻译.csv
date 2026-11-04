@@ -307,3 +307,7 @@ keys,zh_CN,en,zh_TW,ja
 音量,,Volume,音量,音量
 基础帧率,,Base Frame Rate,基礎幀率,基本フレームレート
 帧率：%d,,Frame Rate: %d,幀率：%d,フレームレート：%d
+镜头跟随速度,,Camera Follow Speed,鏡頭跟隨速度,カメラ追従速度
+英雄移动后，画面移到中心的过渡速度,,Speed at which the view re-centers on the hero after moving,英雄移動後，畫面移到中心的過渡速度,ヒーロー移動後に画面が中央へ戻る速さ
+镜头速度：%d 像素/秒,,Camera speed: %d px/s,鏡頭速度：%d 像素/秒,カメラ速度：%d px/s
+镜头速度：不移动,,Camera speed: Off (view stays still),鏡頭速度：不移動,カメラ速度：移動しない

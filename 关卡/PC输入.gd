@@ -415,19 +415,30 @@ func helo_move(x: int, y: int) -> void:
 	# 容器跟随人物移动，保持人物在屏幕中心
 	rong_qi_move_to_center(GZ_z)
 
-# 容器移动到人物居中位置
+# 容器移动到人物居中位置（速度取通用存档「镜头跟随速度」档位，0档=画面完全不移动）
 func rong_qi_move_to_center(GZ_z: Vector2) -> void:
 	var suo_fang = guan_qia.rong_qi.scale.x
+	# 档位数值（像素/秒），无存档节点时按默认档位兜底
+	var dang_wei = float(游戏存档.JING_TOU_SU_DU_DANG_WEI[游戏存档.JING_TOU_SU_DU_MO_REN])
+	var json = get_node_or_null("/root/游戏存档")
+	if json != null and json.has_method("get_jing_tou_su_du_zhi"):
+		dang_wei = json.get_jing_tou_su_du_zhi()
+	# 实际速度 = 档位值 × 当前缩放（保持原倍率方案，诛邪317%等放大档位同样更快）
+	var speed = dang_wei * suo_fang
+	# 0档：不做补间，同时清理可能残留的动画与目标位置，避免容器卡在中间位置
+	if speed <= 0.0:
+		if current_tween != null and current_tween.is_valid():
+			current_tween.kill()
+		current_tween = null
+		target_grid_x = -1
+		target_grid_y = -1
+		return
 	# 使用视口大小
 	var viewport_size = guan_qia.get_viewport_rect().size
 	var mu_biao = viewport_size / 2 - GZ_z * suo_fang
 	# 计算移动距离和时间
 	var distance = guan_qia.rong_qi.position.distance_to(mu_biao)
-	var speed = 60.0 * suo_fang  # 每秒移速
 	var duration = distance / speed
-	# 画面移动时间上限4.8秒
-	if duration > 4.8:
-		duration = 4.8
 	# 如果正在移动，先停止当前动画
 	if current_tween != null and current_tween.is_valid():
 		current_tween.kill()

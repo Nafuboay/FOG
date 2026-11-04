@@ -187,6 +187,9 @@ func hua_xiang_chong_suan_zhou_wei(hx: int, hy: int) -> void:
 # 上限变动时当前生命由属性加成模块统一同步
 func _hua_chong_suan_yi_zhi(x: int, y: int, is_boss: bool) -> void:
 	var cells = guan_qia.shu_xing.qu_cells(x, y, is_boss)
+	# 未翻开的怪物/BOSS 还没有基础属性：跳过重算，翻开时会按当时存在的花重新扫描加成
+	if not guan_qia.shu_xing.yi_chu_shi_hua(cells[0]):
+		return
 	# 新花香贡献 = 重扫周围现存的花
 	var hua_add = hua_xiang_jia_cheng(x, y, is_boss)
 	guan_qia.shu_xing.she_zhi(cells, "花香", hua_add)

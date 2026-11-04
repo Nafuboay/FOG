@@ -36,13 +36,20 @@ func qu_cells(x: int, y: int, is_boss: bool) -> Array:
 			cells.append(guan_qia.GZ[by][bx])
 	return cells
 
+# 是否已完成属性初始化（未翻开的怪物格还没有基础值，不能参与加成重算）
+func yi_chu_shi_hua(cell: Dictionary) -> bool:
+	return cell.has("shp_base")
+
 # 覆盖式设置某来源的贡献（gong_xian = {shp,ll,fy,ct}），并重算 cells 的总变化量与当前值
+# 未完成初始化的格子（尚未翻开的怪物/BOSS）直接跳过：它们在翻开时才按当时的花重新计算加成
 func she_zhi(cells: Array, lai_yuan: String, gong_xian: Dictionary) -> void:
 	# 补全缺省属性为0
 	var gong = {"shp": 0, "ll": 0, "fy": 0, "ct": 0}
 	for k in gong.keys():
 		gong[k] = gong_xian.get(k, 0)
 	for cell in cells:
+		if not yi_chu_shi_hua(cell):
+			continue
 		var jia = cell.get("jia_cheng", {})
 		jia[lai_yuan] = gong
 		cell["jia_cheng"] = jia

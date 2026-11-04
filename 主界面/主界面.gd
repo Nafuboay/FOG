@@ -43,13 +43,18 @@ var she_zhi_mu_lu: Control = null
 var she_zhi_yu_yan: Control = null
 # 设置内嵌的音量调节模块实例（其P面板即音量子界面，保持原320×180居中布局不改；不做静态类型声明以便访问脚本成员P）
 var VOL_sz = null
-# 设置当前所在层级：0=三项目录 1=语言 2=音量 3=基础帧率（用于齿轮按钮逐级返回）
+# 设置当前所在层级：0=三项目录 1=语言 2=音量 3=基础帧率 4=镜头跟随速度（用于齿轮按钮逐级返回）
 var she_zhi_ceng: int = 0
 # 基础帧率子界面
 var she_zhi_zhen_lv: Control = null
 # 基础帧率子界面控件
 var she_zhi_zl_lbl: Label = null
 var she_zhi_zl_slider: HSlider = null
+# 镜头跟随速度子界面
+var she_zhi_jing_tou: Control = null
+# 镜头跟随速度子界面控件
+var she_zhi_jt_lbl: Label = null
+var she_zhi_jt_slider: HSlider = null
 # 支持的语言列表 {code: 语言代码, ming: 显示名称}
 const YU_YAN_LIE_BIAO: Array = [
 	{"code": "zh_CN", "ming": "简体中文"},
@@ -248,8 +253,10 @@ func chuang_jian_she_zhi() -> void:
 	she_zhi_mu_lu = C_she_zhi_mu_lu(win_x, win_y)
 	she_zhi_yu_yan = C_she_zhi_yu_yan(win_x, win_y)
 	she_zhi_zhen_lv = C_she_zhi_zhen_lv(win_x, win_y)
+	she_zhi_jing_tou = C_she_zhi_jing_tou(win_x, win_y)
 	she_zhi_yu_yan.visible = false
 	she_zhi_zhen_lv.visible = false
+	she_zhi_jing_tou.visible = false
 	# 音量子界面：直接内嵌音量调节模块，其320×180面板照搬原样（屏幕居中），显隐由qie_huan_zi_jie_mian控制
 	VOL_sz = load("res://音乐/音量调节.gd").new()
 	VOL_sz.qian_ru = true
@@ -333,12 +340,13 @@ func C_she_zhi_tiao_mu(rong_qi: Control, wen_ben: String, wei_zhi: Vector2, hui_
 	she_zhi_kai_ti(lbl)
 	tiao_mu_bg.add_child(lbl)
 
-# 创建三项目录面板：语言/音量/基础帧率（高度随条目数自动调整，后续加项只需在数组里追加）
+# 创建三项目录面板：语言/音量/基础帧率/镜头跟随速度（高度随条目数自动调整，后续加项只需在数组里追加）
 func C_she_zhi_mu_lu(win_x: float, win_y: float) -> Control:
 	return C_tiao_mu_ban("设置", [
 		["语言", qie_huan_zi_jie_mian.bind(1)],
 		["音量", qie_huan_zi_jie_mian.bind(2)],
 		["基础帧率", qie_huan_zi_jie_mian.bind(3)],
+		["镜头跟随速度", qie_huan_zi_jie_mian.bind(4)],
 	], win_x, win_y)
 
 # 创建语言子界面面板：四种语言各用一条签名框条目
@@ -396,6 +404,75 @@ func C_she_zhi_zhen_lv(win_x: float, win_y: float) -> Control:
 	she_zhi_panel.add_child(jie)
 	return jie
 
+# 创建镜头跟随速度子界面：标题 + 说明文字 + 档位数值 + 0~7共8档滑块，按内容定高230
+func C_she_zhi_jing_tou(win_x: float, win_y: float) -> Control:
+	var jie = Control.new()
+	var ban_pos := Vector2((win_x - 320) / 2.0, (win_y - 230) / 2.0)
+	var ban_bg = TextureRect.new()
+	ban_bg.texture = load("res://全局/图片/背包背景.png")
+	ban_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ban_bg.size = Vector2(320, 230)
+	ban_bg.position = ban_pos
+	jie.add_child(ban_bg)
+	# 面板标题
+	var tit = Label.new()
+	tit.text = tr("镜头跟随速度")
+	tit.size = Vector2(320, 44)
+	tit.position = ban_pos + Vector2(0, 24)
+	tit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tit.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tit.add_theme_font_size_override("font_size", 28)
+	tit.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(tit)
+	jie.add_child(tit)
+	# 说明文字：固定宽度自动换行，避免长文本超出320宽面板（翻译后长度会变化）
+	var shuo = Label.new()
+	shuo.text = tr("英雄移动后，画面移到中心的过渡速度")
+	shuo.position = ban_pos + Vector2(20, 68)
+	shuo.size = Vector2(280, 66)
+	shuo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	shuo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	shuo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	shuo.add_theme_font_size_override("font_size", 16)
+	shuo.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(shuo)
+	jie.add_child(shuo)
+	# 当前档位数值文字（0档显示「不移动」）
+	she_zhi_jt_lbl = Label.new()
+	she_zhi_jt_lbl.position = ban_pos + Vector2(0, 136)
+	she_zhi_jt_lbl.size = Vector2(320, 32)
+	she_zhi_jt_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	she_zhi_jt_lbl.add_theme_font_size_override("font_size", 24)
+	she_zhi_jt_lbl.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(she_zhi_jt_lbl)
+	jie.add_child(she_zhi_jt_lbl)
+	# 档位滑块（0~7共8档吸附，拖动即写入通用存档）
+	she_zhi_jt_slider = HSlider.new()
+	she_zhi_jt_slider.position = ban_pos + Vector2(20, 180)
+	she_zhi_jt_slider.size = Vector2(280, 20)
+	she_zhi_jt_slider.min_value = 游戏存档.JING_TOU_SU_DU_MIN
+	she_zhi_jt_slider.max_value = 游戏存档.JING_TOU_SU_DU_MAX
+	she_zhi_jt_slider.step = 1
+	she_zhi_jt_slider.tick_count = 游戏存档.JING_TOU_SU_DU_MAX - 游戏存档.JING_TOU_SU_DU_MIN + 1
+	she_zhi_jt_slider.value_changed.connect(func(value):
+		# 拖动即写入通用存档；关卡内下次移动生效
+		if json != null:
+			json.set_jing_tou_su_du(int(value))
+		upd_jing_tou_lbl(int(value))
+	)
+	jie.add_child(she_zhi_jt_slider)
+	she_zhi_panel.add_child(jie)
+	return jie
+
+# 刷新镜头跟随速度的数值文字（0档显示「不移动」，其余显示档位像素/秒）
+func upd_jing_tou_lbl(dang: int) -> void:
+	if she_zhi_jt_lbl == null or not is_instance_valid(she_zhi_jt_lbl):
+		return
+	if dang <= 0:
+		she_zhi_jt_lbl.text = tr("镜头速度：不移动")
+		return
+	she_zhi_jt_lbl.text = tr("镜头速度：%d 像素/秒") % int(游戏存档.JING_TOU_SU_DU_DANG_WEI[dang])
+
 # 给控件套用楷体字体（无字体缓存时保持默认字体）
 func she_zhi_kai_ti(control: Control) -> void:
 	var kai_ti = 提示弹幕.get_kai_ti_font()
@@ -410,11 +487,12 @@ func dakai_she_zhi(da: bool) -> void:
 	if da:
 		qie_huan_zi_jie_mian(0)
 		du_qu_zhen_lv()
+		du_qu_jing_tou()
 	elif json != null:
 		# 关闭设置后，主界面现有的存档/选角待机动画立即按新基础帧率播放
 		json.shua_xin_dong_hua_su_du()
 
-# 切换设置内的子界面并记录当前层级：0=三项目录 1=语言 2=音量 3=基础帧率
+# 切换设置内的子界面并记录当前层级：0=三项目录 1=语言 2=音量 3=基础帧率 4=镜头跟随速度
 func qie_huan_zi_jie_mian(n: int) -> void:
 	she_zhi_ceng = n
 	she_zhi_mu_lu.visible = n == 0
@@ -423,6 +501,7 @@ func qie_huan_zi_jie_mian(n: int) -> void:
 	if VOL_sz != null and VOL_sz.P != null:
 		VOL_sz.P.visible = n == 2
 	she_zhi_zhen_lv.visible = n == 3
+	she_zhi_jing_tou.visible = n == 4
 
 # 从通用存档读取基础帧率并同步到滑块与文字
 func du_qu_zhen_lv() -> void:
@@ -433,6 +512,15 @@ func du_qu_zhen_lv() -> void:
 		she_zhi_zl_slider.value = zhen_lv
 	if she_zhi_zl_lbl != null:
 		she_zhi_zl_lbl.text = tr("帧率：%d") % zhen_lv
+
+# 从通用存档读取镜头跟随速度档位并同步到滑块与文字
+func du_qu_jing_tou() -> void:
+	if json == null:
+		return
+	var dang = json.get_jing_tou_su_du()
+	if she_zhi_jt_slider != null:
+		she_zhi_jt_slider.value = dang
+	upd_jing_tou_lbl(dang)
 
 # 语言选项被点击：保存到通用存档、关闭设置并重建场景让所有文本按新语言刷新
 func _on_yu_yan_xuan_ze(code: String) -> void:
