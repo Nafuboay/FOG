@@ -24,6 +24,8 @@ var pct_lbl: Label = null
 var mut_btn: TextureRect = null
 # 音量调节滑块
 var dB_S: HSlider = null
+# 嵌入模式：true时不创建音量按钮、面板显隐由外部界面直接控制P.visible（主界面设置使用），false为独立悬浮模式
+var qian_ru: bool = false
 
 # 节点初始化完成时调用
 func _ready() -> void:
@@ -31,12 +33,13 @@ func _ready() -> void:
 	win_size = get_viewport_rect().size
 	# 获取主音频总线索引
 	zhu_bus = AudioServer.get_bus_index("Master")
-	# 创建音量按钮
-	C_btn()
+	# 创建音量按钮（嵌入模式不创建，打开/关闭由外部界面控制）
+	if not qian_ru:
+		C_btn()
 	# 创建音量调节面板
 	C_P()
-	# 从存档加载音量设置
-	load_dB()
+	# 从存档加载音量设置（延迟到空闲帧执行：主界面首次启动时游戏存档节点是延迟入树的，立即读会读不到导致显示满值）
+	call_deferred("load_dB")
 
 # 创建音量按钮
 func C_btn() -> void:
@@ -244,6 +247,9 @@ func kai_ti(control: Control) -> void:
 
 # 全局输入事件处理（点击面板外区域关闭面板）
 func _input(event: InputEvent) -> void:
+	# 嵌入模式不响应点击外部关闭（显隐由外部界面控制）
+	if qian_ru:
+		return
 	# 如果面板已打开
 	if is_VOL:
 		# 判断是否为鼠标左键点击

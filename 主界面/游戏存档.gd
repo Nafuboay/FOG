@@ -3,8 +3,20 @@ class_name 游戏存档 extends Node
 const cao_wei: int = 15
 # 角色最高等级（开放更高等级只需改此处）
 const MAX_LV: int = 4
+# 动画基础帧率默认值（24帧/秒，即所有动画默认播放速度）
+const ZHEN_LV_MO_REN: int = 24
+# 动画基础帧率下限（设置界面滑块最小值）
+const ZHEN_LV_MIN: int = 10
+# 动画基础帧率上限（设置界面滑块最大值）
+const ZHEN_LV_MAX: int = 60
+# 动画帧率倍率：实际帧率 = 基础帧率 × 倍率（目前所有动画统一为1，保留常量便于后续单独调整）
+const DONG_HUA_BEI_LV: float = 1.0
+# 动画资源自身的原始帧率（项目所有 .tres SpriteFrames 的 speed 均为60）
+const ZI_YUAN_ZHEN_LV: float = 60.0
 # 当前使用的存档槽位编号(0~14)
 var id: int = 0
+# 基础帧率内存缓存（-1表示未加载；避免战斗中每次播放动画都读存档文件）
+var ji_chu_zhen_lv_huan_cun: int = -1
 # 存档文件夹路径（系统用户数据目录下，Windows 为 %APPDATA%\Godot\app_userdata\FOG\迷雾存档）
 var mi_wu_json: String = ""
 
@@ -15,7 +27,7 @@ func _ready() -> void:
 	wen_jian_jia()
 	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音，语言简体中文），所有档共用
 	if not FileAccess.file_exists(get_ty_lu_jing()):
-		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN"})
+		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN", "基础帧率": ZHEN_LV_MO_REN})
 	# 手动加载翻译资源（project.godot 的 [locale] 配置在含中文路径"翻译/"时可能加载失败，代码手动加载更可靠）
 	_jia_zai_fan_yi()
 	# 启动时应用存档中的语言设置
@@ -360,3 +372,34 @@ func set_yu_yan(yu_yan: String) -> void:
 	bao_cun_ty(data)
 	# 立即切换引擎语言（zh_CN 走空 locale 避免回退到繁体）
 	_ying_yong_yu_yan(yu_yan)
+
+# 获取动画基础帧率（首次调用读存档并缓存，之后直接返回缓存值）
+func get_ji_chu_zhen_lv() -> int:
+	if ji_chu_zhen_lv_huan_cun < 0:
+		ji_chu_zhen_lv_huan_cun = clampi(int(du_qu_ty().get("基础帧率", ZHEN_LV_MO_REN)), ZHEN_LV_MIN, ZHEN_LV_MAX)
+	return ji_chu_zhen_lv_huan_cun
+
+# 保存动画基础帧率到通用存档（限制在10~60之间后写入，并同步更新缓存）
+# zhen_lv 基础帧率（帧/秒）
+func set_ji_chu_zhen_lv(zhen_lv: int) -> void:
+	var data = du_qu_ty()
+	data["基础帧率"] = clampi(zhen_lv, ZHEN_LV_MIN, ZHEN_LV_MAX)
+	bao_cun_ty(data)
+	ji_chu_zhen_lv_huan_cun = int(data["基础帧率"])
+
+# 计算 AnimatedSprite2D 的播放速度缩放值
+# 动画资源原始帧率为60，speed_scale=基础帧率/60×倍率，实际帧率即等于基础帧率×倍率
+func get_dong_hua_su_du() -> float:
+	return get_ji_chu_zhen_lv() / ZI_YUAN_ZHEN_LV * DONG_HUA_BEI_LV
+
+# 立即刷新当前场景内所有动画节点的播放速度（用于主界面改完基础帧率后马上生效）
+func shua_xin_dong_hua_su_du() -> void:
+	# 当前场景为空（切换场景过程中）时直接返回
+	var chang_jing = get_tree().current_scene
+	if chang_jing == null:
+		return
+	var su_du = get_dong_hua_su_du()
+	# 递归查找场景内所有 AnimatedSprite2D 并统一设置速度
+	for dong_hua in chang_jing.find_children("*", "AnimatedSprite2D", true, false):
+		if dong_hua is AnimatedSprite2D:
+			dong_hua.speed_scale = su_du

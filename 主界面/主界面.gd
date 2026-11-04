@@ -33,10 +33,23 @@ var json_fan_hui: Button
 var json: Node
 # 当前选中的存档槽位
 var json_id: int = 0
-# 语言切换按钮
-var yu_yan_btn: TextureRect = null
-# 语言选择面板
-var yu_yan_panel: Control = null
+# 设置按钮（右上角齿轮图标）
+var she_zhi_btn: TextureRect = null
+# 设置面板总容器（含全屏遮罩与320×540背景）
+var she_zhi_panel: Control = null
+# 设置三项目录层（语言/音量/基础帧率）
+var she_zhi_mu_lu: Control = null
+# 语言选择子界面
+var she_zhi_yu_yan: Control = null
+# 设置内嵌的音量调节模块实例（其P面板即音量子界面，保持原320×180居中布局不改；不做静态类型声明以便访问脚本成员P）
+var VOL_sz = null
+# 设置当前所在层级：0=三项目录 1=语言 2=音量 3=基础帧率（用于齿轮按钮逐级返回）
+var she_zhi_ceng: int = 0
+# 基础帧率子界面
+var she_zhi_zhen_lv: Control = null
+# 基础帧率子界面控件
+var she_zhi_zl_lbl: Label = null
+var she_zhi_zl_slider: HSlider = null
 # 支持的语言列表 {code: 语言代码, ming: 显示名称}
 const YU_YAN_LIE_BIAO: Array = [
 	{"code": "zh_CN", "ming": "简体中文"},
@@ -141,6 +154,8 @@ func _ready() -> void:
 	if not has_node("/root/游戏存档"):
 		# 加载存档管理脚本并创建新节点
 		json = load("res://主界面/游戏存档.gd").new()
+		# 必须命名为"游戏存档"：全局统一通过/root/游戏存档路径访问，缺名会导致按路径查找永远失败
+		json.name = "游戏存档"
 		# 将节点添加到根节点下（全局单例）
 		get_tree().root.call_deferred("add_child", json)
 	else:
@@ -163,7 +178,7 @@ func _ready() -> void:
 		# 加载预定义的待机动画
 		idle[i].sprite_frames = load("res://角色/人物/" + helo_ming[i] + "/" + helo_ming[i] + "动画.tres")
 		idle[i].play("idle")
-		idle[i].speed_scale = 0.4
+		idle[i].speed_scale = json.get_dong_hua_su_du()
 		# 设置按钮背景
 		var cao_yuan_0 = StyleBoxTexture.new()
 		cao_yuan_0.texture = load("res://主界面/图片/模块0.png")
@@ -198,109 +213,232 @@ func _ready() -> void:
 		shan_chus[i].add_theme_stylebox_override("pressed", shan_chu_11)
 		# 程序化连接删除按钮的点击信号
 		shan_chus[i].pressed.connect(shan_chu_an_niu.bind(i))
-	# 创建语言切换按钮
-	chuang_jian_yu_yan_btn()
+	# 创建设置按钮与设置面板
+	chuang_jian_she_zhi()
 
-# 创建语言切换按钮（右上角，TextureRect + Label 模式）
-func chuang_jian_yu_yan_btn() -> void:
-	# 获取窗口大小
+# 创建设置齿轮按钮与设置面板（替代原来的语言按钮）
+func chuang_jian_she_zhi() -> void:
+	# 获取窗口大小，用于设置面板居中
 	var size = get_viewport_rect().size
 	var win_x = size.x
 	var win_y = size.y
-	# 按钮背景用模块图片，拉伸到 120x40
-	yu_yan_btn = TextureRect.new()
-	yu_yan_btn.texture = load("res://主界面/图片/模块0.png")
-	yu_yan_btn.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	yu_yan_btn.size = Vector2(120, 40)
-	yu_yan_btn.position = Vector2(1140, 10)
-	yu_yan_btn.z_index = 100
-	# 悬停提亮
-	yu_yan_btn.mouse_entered.connect(func(): yu_yan_btn.modulate = Color(1.3, 1.3, 1.3, 1))
-	yu_yan_btn.mouse_exited.connect(func(): yu_yan_btn.modulate = Color(1, 1, 1, 1))
-	# 点击打开语言选择面板
-	yu_yan_btn.gui_input.connect(func(event):
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			yu_yan_panel.visible = not yu_yan_panel.visible
-	)
-	add_child(yu_yan_btn)
-	# 按钮上的文字
-	var label = Label.new()
-	label.text = tr("语言")
-	label.size = Vector2(120, 40)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_color_override("font_color", Color.BLACK)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	yu_yan_btn.add_child(label)
-	# 创建语言选择面板（初始隐藏）
-	yu_yan_panel = Control.new()
-	yu_yan_panel.visible = false
-	yu_yan_panel.z_index = 1000
-	# 全屏半透明遮罩，点击关闭
+	# 齿轮按钮使用图片原始尺寸64×64，贴右上角
+	she_zhi_btn = TextureRect.new()
+	she_zhi_btn.texture = load("res://主界面/图片/齿轮0.png")
+	she_zhi_btn.size = Vector2(64, 64)
+	# 位置与项目统一的返回按钮一致（右上角，视口宽-96, 32）
+	she_zhi_btn.position = Vector2(win_x - 96, 32)
+	# 层级高于设置面板(1000)，保证设置打开时齿轮仍显示在最上层
+	she_zhi_btn.z_index = 1001
+	# 悬停图标切换在_input中按鼠标位置判定（面板开关瞬间mouse_entered/exited信号会丢失，信号方式不可靠）
+	add_child(she_zhi_btn)
+	# 设置面板总容器：只有全屏遮罩（初始隐藏，置于最上层）
+	she_zhi_panel = Control.new()
+	she_zhi_panel.size = Vector2(win_x, win_y)
+	she_zhi_panel.visible = false
+	she_zhi_panel.z_index = 1000
+	# 全屏半透明遮罩（仅压暗并拦截对底层的点击，点击外部不关闭设置，返回只能点齿轮）
 	var mask = ColorRect.new()
 	mask.color = Color(0, 0, 0, 0.5)
 	mask.anchor_right = 1.0
 	mask.anchor_bottom = 1.0
 	mask.mouse_filter = Control.MOUSE_FILTER_STOP
-	mask.gui_input.connect(func(event):
-		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			yu_yan_panel.visible = false
-	)
-	yu_yan_panel.add_child(mask)
-	# 面板主体（居中）
-	var panel = Panel.new()
-	panel.size = Vector2(300, 300)
-	panel.position = Vector2((win_x - 300) / 2.0, (win_y - 300) / 2.0)
-	# 面板背景用模块图片
-	var panel_style = StyleBoxTexture.new()
-	panel_style.texture = load("res://主界面/图片/模块0.png")
-	panel_style.texture_margin_left = 10
-	panel_style.texture_margin_top = 10
-	panel_style.texture_margin_right = 10
-	panel_style.texture_margin_bottom = 10
-	panel.add_theme_stylebox_override("panel", panel_style)
-	yu_yan_panel.add_child(panel)
-	# 标题
-	var title = Label.new()
-	title.text = tr("语言")
-	title.size = Vector2(300, 50)
-	title.position = Vector2(0, 10)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 28)
-	title.add_theme_color_override("font_color", Color.BLACK)
-	panel.add_child(title)
-	# 四个语言选项
-	for i in range(YU_YAN_LIE_BIAO.size()):
-		var item = TextureRect.new()
-		item.texture = load("res://主界面/图片/模块0.png")
-		item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		item.size = Vector2(240, 50)
-		item.position = Vector2(30, 70 + i * 55)
-		item.mouse_entered.connect(func(): item.modulate = Color(1.3, 1.3, 1.3, 1))
-		item.mouse_exited.connect(func(): item.modulate = Color(1, 1, 1, 1))
-		var code = YU_YAN_LIE_BIAO[i]["code"]
-		item.gui_input.connect(func(event, c = code):
-			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-				_on_yu_yan_xuan_ze(c)
-		)
-		panel.add_child(item)
-		# 选项文字
-		var item_label = Label.new()
-		item_label.text = tr(YU_YAN_LIE_BIAO[i]["ming"])
-		item_label.size = Vector2(240, 50)
-		item_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		item_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		item_label.add_theme_color_override("font_color", Color.BLACK)
-		item_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		item.add_child(item_label)
-	add_child(yu_yan_panel)
+	she_zhi_panel.add_child(mask)
+	# 三项目录与各子面板：各自按内容定高、屏幕居中，通过可见性切换
+	she_zhi_mu_lu = C_she_zhi_mu_lu(win_x, win_y)
+	she_zhi_yu_yan = C_she_zhi_yu_yan(win_x, win_y)
+	she_zhi_zhen_lv = C_she_zhi_zhen_lv(win_x, win_y)
+	she_zhi_yu_yan.visible = false
+	she_zhi_zhen_lv.visible = false
+	# 音量子界面：直接内嵌音量调节模块，其320×180面板照搬原样（屏幕居中），显隐由qie_huan_zi_jie_mian控制
+	VOL_sz = load("res://音乐/音量调节.gd").new()
+	VOL_sz.qian_ru = true
+	she_zhi_panel.add_child(VOL_sz)
+	add_child(she_zhi_panel)
 
-# 语言选项被点击：切换语言、保存到通用存档、刷新按钮文字
+# 齿轮按钮的点击与悬停在_input中直接判定（不依赖控件信号，保证设置开/关后依然生效）
+func _input(event: InputEvent) -> void:
+	if she_zhi_btn == null or not she_zhi_btn.visible:
+		return
+	# 悬停：按鼠标是否在齿轮64×64区域内切换图标
+	if event is InputEventMouseMotion:
+		var xuan_ting = Rect2(she_zhi_btn.position, she_zhi_btn.size).has_point(event.position)
+		she_zhi_btn.texture = load("res://主界面/图片/齿轮1.png") if xuan_ting else load("res://主界面/图片/齿轮0.png")
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		# 只响应落在齿轮64×64区域内的点击
+		if Rect2(she_zhi_btn.position, she_zhi_btn.size).has_point(event.position):
+			# 逐级切换：关闭状态→打开设置目录；子界面→返回设置目录；目录→关闭设置
+			if not she_zhi_panel.visible:
+				dakai_she_zhi(true)
+			elif she_zhi_ceng > 0:
+				qie_huan_zi_jie_mian(0)
+			else:
+				dakai_she_zhi(false)
+			# 标记事件已处理，避免同一点击穿透到底层遮罩或按钮
+			get_viewport().set_input_as_handled()
+
+# 创建条目式设置面板：标题+签名框条目列表，高度随条目数自动调整（顶部90放标题、每条64、底部留白20），屏幕居中
+func C_tiao_mu_ban(biao_ti: String, tiao_mus: Array, win_x: float, win_y: float) -> Control:
+	var jie = Control.new()
+	var gao: int = 110 + 64 * tiao_mus.size()
+	var ban_pos := Vector2((win_x - 320) / 2.0, (win_y - gao) / 2.0)
+	# 面板背景：树屋同款背包背景，宽320，高度按内容计算
+	var ban_bg = TextureRect.new()
+	ban_bg.texture = load("res://全局/图片/背包背景.png")
+	ban_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ban_bg.size = Vector2(320, gao)
+	ban_bg.position = ban_pos
+	jie.add_child(ban_bg)
+	# 面板标题
+	var lbl = Label.new()
+	lbl.text = tr(biao_ti)
+	lbl.size = Vector2(320, 50)
+	lbl.position = ban_pos + Vector2(0, 30)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.add_theme_font_size_override("font_size", 28)
+	lbl.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(lbl)
+	jie.add_child(lbl)
+	# 条目列表（每项：[文本, 点击回调]）
+	for i in range(tiao_mus.size()):
+		C_she_zhi_tiao_mu(jie, tiao_mus[i][0], ban_pos + Vector2(20, 90 + i * 64), tiao_mus[i][1])
+	she_zhi_panel.add_child(jie)
+	return jie
+
+# 创建一条签名框样式的设置条目（wei_zhi为面板内相对坐标，hui_diao为点击回调）
+func C_she_zhi_tiao_mu(rong_qi: Control, wen_ben: String, wei_zhi: Vector2, hui_diao: Callable) -> void:
+	# 条目背景用树屋任务同款签名框
+	var tiao_mu_bg = TextureRect.new()
+	tiao_mu_bg.texture = load("res://关卡/信息/签名框1.png")
+	tiao_mu_bg.size = Vector2(280, 54)
+	tiao_mu_bg.position = wei_zhi
+	tiao_mu_bg.mouse_entered.connect(func(): tiao_mu_bg.modulate = Color(1.3, 1.3, 1.3, 1))
+	tiao_mu_bg.mouse_exited.connect(func(): tiao_mu_bg.modulate = Color(1, 1, 1, 1))
+	# 项目惯例：可点击图标一律用 TextureRect + gui_input
+	tiao_mu_bg.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			hui_diao.call()
+	)
+	rong_qi.add_child(tiao_mu_bg)
+	# 条目文字（居中、黑色、楷体）
+	var lbl = Label.new()
+	lbl.text = tr(wen_ben)
+	lbl.size = Vector2(280, 54)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.add_theme_color_override("font_color", Color.BLACK)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	she_zhi_kai_ti(lbl)
+	tiao_mu_bg.add_child(lbl)
+
+# 创建三项目录面板：语言/音量/基础帧率（高度随条目数自动调整，后续加项只需在数组里追加）
+func C_she_zhi_mu_lu(win_x: float, win_y: float) -> Control:
+	return C_tiao_mu_ban("设置", [
+		["语言", qie_huan_zi_jie_mian.bind(1)],
+		["音量", qie_huan_zi_jie_mian.bind(2)],
+		["基础帧率", qie_huan_zi_jie_mian.bind(3)],
+	], win_x, win_y)
+
+# 创建语言子界面面板：四种语言各用一条签名框条目
+func C_she_zhi_yu_yan(win_x: float, win_y: float) -> Control:
+	var tiao_mus: Array = []
+	for yu_yan in YU_YAN_LIE_BIAO:
+		tiao_mus.append([yu_yan["ming"], _on_yu_yan_xuan_ze.bind(yu_yan["code"])])
+	return C_tiao_mu_ban("语言", tiao_mus, win_x, win_y)
+
+# 创建基础帧率子界面面板：标题 + 数值文字 + 10~60 滑块，按内容定高230
+func C_she_zhi_zhen_lv(win_x: float, win_y: float) -> Control:
+	var jie = Control.new()
+	var ban_pos := Vector2((win_x - 320) / 2.0, (win_y - 230) / 2.0)
+	var ban_bg = TextureRect.new()
+	ban_bg.texture = load("res://全局/图片/背包背景.png")
+	ban_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ban_bg.size = Vector2(320, 230)
+	ban_bg.position = ban_pos
+	jie.add_child(ban_bg)
+	# 面板标题
+	var tit = Label.new()
+	tit.text = tr("基础帧率")
+	tit.size = Vector2(320, 50)
+	tit.position = ban_pos + Vector2(0, 30)
+	tit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tit.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tit.add_theme_font_size_override("font_size", 28)
+	tit.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(tit)
+	jie.add_child(tit)
+	# 当前帧率数值文字
+	she_zhi_zl_lbl = Label.new()
+	she_zhi_zl_lbl.position = ban_pos + Vector2(0, 100)
+	she_zhi_zl_lbl.size = Vector2(320, 40)
+	she_zhi_zl_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	she_zhi_zl_lbl.add_theme_font_size_override("font_size", 26)
+	she_zhi_zl_lbl.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(she_zhi_zl_lbl)
+	jie.add_child(she_zhi_zl_lbl)
+	# 帧率滑块（10~60，步长1）
+	she_zhi_zl_slider = HSlider.new()
+	she_zhi_zl_slider.position = ban_pos + Vector2(20, 165)
+	she_zhi_zl_slider.size = Vector2(280, 20)
+	she_zhi_zl_slider.min_value = 10
+	she_zhi_zl_slider.max_value = 60
+	she_zhi_zl_slider.step = 1
+	she_zhi_zl_slider.tick_count = 51
+	she_zhi_zl_slider.value_changed.connect(func(value):
+		# 拖动即写入通用存档；主界面动画在关闭设置时统一刷新
+		if json != null:
+			json.set_ji_chu_zhen_lv(int(value))
+		she_zhi_zl_lbl.text = tr("帧率：%d") % int(value)
+	)
+	jie.add_child(she_zhi_zl_slider)
+	she_zhi_panel.add_child(jie)
+	return jie
+
+# 给控件套用楷体字体（无字体缓存时保持默认字体）
+func she_zhi_kai_ti(control: Control) -> void:
+	var kai_ti = 提示弹幕.get_kai_ti_font()
+	if kai_ti != null:
+		control.add_theme_font_override("font", kai_ti)
+
+# 打开或关闭设置面板（打开时总是回到三项目录）
+func dakai_she_zhi(da: bool) -> void:
+	if she_zhi_panel == null:
+		return
+	she_zhi_panel.visible = da
+	if da:
+		qie_huan_zi_jie_mian(0)
+		du_qu_zhen_lv()
+	elif json != null:
+		# 关闭设置后，主界面现有的存档/选角待机动画立即按新基础帧率播放
+		json.shua_xin_dong_hua_su_du()
+
+# 切换设置内的子界面并记录当前层级：0=三项目录 1=语言 2=音量 3=基础帧率
+func qie_huan_zi_jie_mian(n: int) -> void:
+	she_zhi_ceng = n
+	she_zhi_mu_lu.visible = n == 0
+	she_zhi_yu_yan.visible = n == 1
+	# 音量子界面即音量调节模块的P面板
+	if VOL_sz != null and VOL_sz.P != null:
+		VOL_sz.P.visible = n == 2
+	she_zhi_zhen_lv.visible = n == 3
+
+# 从通用存档读取基础帧率并同步到滑块与文字
+func du_qu_zhen_lv() -> void:
+	if json == null:
+		return
+	var zhen_lv = json.get_ji_chu_zhen_lv()
+	if she_zhi_zl_slider != null:
+		she_zhi_zl_slider.value = zhen_lv
+	if she_zhi_zl_lbl != null:
+		she_zhi_zl_lbl.text = tr("帧率：%d") % zhen_lv
+
+# 语言选项被点击：保存到通用存档、关闭设置并重建场景让所有文本按新语言刷新
 func _on_yu_yan_xuan_ze(code: String) -> void:
 	json.set_yu_yan(code)
-	yu_yan_panel.visible = false
-	# 重新加载当前场景，让所有已渲染的 UI 文本按新语言重新走 tr() 渲染
-	# （Label 的 text 是一次性赋值，set_locale 后旧 Label 不会自动刷新，需重建场景）
+	she_zhi_panel.visible = false
+	# Label 的 text 是一次性赋值，切换 locale 后需重建场景才能按新语言渲染
 	get_tree().reload_current_scene()
 
 # 当鼠标移动到按钮上时，显示悬停图片并将画面调亮
@@ -321,9 +459,9 @@ func _on_button_input(_viewport, event, _shape_idx):
 			an_niu.visible = false
 			# 显示存档返回按钮
 			json_fan_hui.visible = true
-			# 隐藏语言按钮（如果语言面板开着也一并关闭）
-			yu_yan_panel.visible = false
-			yu_yan_btn.visible = false
+			# 隐藏设置齿轮按钮（如果设置面板开着也一并关闭）
+			dakai_she_zhi(false)
+			she_zhi_btn.visible = false
 			an_niu_upd()
 
 # 存档槽位悬停：应用该槽位对应的颜色
@@ -352,7 +490,7 @@ func an_niu_upd() -> void:
 				json_idles[i].sprite_frames = dong_hua
 				json_idles[i].visible = true
 				json_idles[i].play("idle")
-				json_idles[i].speed_scale = 0.4
+				json_idles[i].speed_scale = json.get_dong_hua_su_du()
 		else:
 			an_nius[i].text = "   %d\n\n\n\n\n" % (i + 1)
 			# 隐藏删除按钮
@@ -588,5 +726,5 @@ func on_json_fan_hui() -> void:
 		idle.visible = false
 	# 显示开始游戏按钮
 	an_niu.visible = true
-	# 恢复显示语言按钮
-	yu_yan_btn.visible = true
+	# 恢复显示设置齿轮按钮
+	she_zhi_btn.visible = true

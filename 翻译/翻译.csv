@@ -303,3 +303,7 @@ keys,zh_CN,en,zh_TW,ja
 第%d次消耗钥匙获得【%s】×%d！,,Open #%d (key used): obtained [%s] ×%d!,第%d次消耗鑰匙獲得【%s】×%d！,%d回目：鍵を消費し【%s】×%dを獲得！
 获得【%s】×%d！,,Obtained [%s] ×%d!,獲得【%s】×%d！,【%s】×%dを獲得！
 使用【%s】探明了%d×%d及周边区域！,,Used [%s]: revealed %d×%d and surrounding area!,使用【%s】探明了%d×%d及周邊區域！,【%s】を使い%d×%dと周辺エリアを探明！
+设置,,Settings,設定,設定
+音量,,Volume,音量,音量
+基础帧率,,Base Frame Rate,基礎幀率,基本フレームレート
+帧率：%d,,Frame Rate: %d,幀率：%d,フレームレート：%d

@@ -277,7 +277,9 @@ func xian_shi() -> void:
 				var s = idle[i] as AnimatedSprite2D
 				s.sprite_frames = guai_wu_dong_hua[i]
 				s.play("idle")
-				s.speed_scale = 0.4
+				# 按当前基础帧率播放（与关卡内动画同源，实际帧率=基础帧率）
+				var json_sd = get_node_or_null("/root/游戏存档")
+				s.speed_scale = json_sd.get_dong_hua_su_du() if json_sd != null else 0.4
 				s.visible = true
 			# 重置×跟随关卡模块定位到右上角
 			chong_zhi_btns[i].position = Vector2(x + 104, y - 8)
