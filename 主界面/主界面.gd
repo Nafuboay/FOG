@@ -66,6 +66,12 @@ const YU_YAN_LIE_BIAO: Array = [
 var xuan_ge_suo: bool = false
 # 秤干戚是否处于锁定状态（历史成就【救世主Ⅱ】0002 不存在时为true）
 var cheng_gan_qi_suo: bool = false
+# 存档模式选择面板（创建空槽存档前弹出）
+var mo_shi_panel: Control = null
+# 当前选中的模式（默认标准）
+var mo_shi_xuan: int = 游戏存档.MO_SHI_BIAO_ZHUN
+# 建造档中标志：防止连点重复创建存档（模式面板点击条目即生效）
+var zheng_jian_zhong: bool = false
 # 存档数量
 const cao_wei: int = 15
 
@@ -220,6 +226,8 @@ func _ready() -> void:
 		shan_chus[i].pressed.connect(shan_chu_an_niu.bind(i))
 	# 创建设置按钮与设置面板
 	chuang_jian_she_zhi()
+	# 创建存档模式选择面板（初始隐藏）
+	chuang_jian_mo_shi_pan()
 
 # 创建设置齿轮按钮与设置面板（替代原来的语言按钮）
 func chuang_jian_she_zhi() -> void:
@@ -339,6 +347,105 @@ func C_she_zhi_tiao_mu(rong_qi: Control, wen_ben: String, wei_zhi: Vector2, hui_
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	she_zhi_kai_ti(lbl)
 	tiao_mu_bg.add_child(lbl)
+
+# 创建存档模式选择面板：与设置面板同款条目样式，点击条目即选择并进入人物选择
+func chuang_jian_mo_shi_pan() -> void:
+	var size = get_viewport_rect().size
+	var win_x = size.x
+	var win_y = size.y
+	mo_shi_panel = Control.new()
+	mo_shi_panel.size = Vector2(win_x, win_y)
+	mo_shi_panel.visible = false
+	# 层级低于设置面板（1000）、高于槽位层
+	mo_shi_panel.z_index = 900
+	# 全屏半透明遮罩：拦截底层槽位点击，点面板外空白处取消并回到槽位列表
+	var mask = ColorRect.new()
+	mask.color = Color(0, 0, 0, 0.5)
+	mask.anchor_right = 1.0
+	mask.anchor_bottom = 1.0
+	mask.mouse_filter = Control.MOUSE_FILTER_STOP
+	mask.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			mo_shi_qu_xiao()
+	)
+	mo_shi_panel.add_child(mask)
+	# 面板：标题 90 + 两条目 + 底部提示
+	var gao = 270
+	var ban_pos = Vector2((win_x - 320) / 2.0, (win_y - gao) / 2.0)
+	var ban_bg = TextureRect.new()
+	ban_bg.texture = load("res://全局/图片/背包背景.png")
+	ban_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ban_bg.size = Vector2(320, gao)
+	ban_bg.position = ban_pos
+	ban_bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	mo_shi_panel.add_child(ban_bg)
+	# 面板标题
+	var tit = Label.new()
+	tit.text = tr("选择存档模式")
+	tit.size = Vector2(320, 50)
+	tit.position = ban_pos + Vector2(0, 30)
+	tit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tit.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tit.add_theme_font_size_override("font_size", 28)
+	tit.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(tit)
+	mo_shi_panel.add_child(tit)
+	# 两个模式条目：与设置面板条目样式一致，点击即选择并进入人物选择
+	C_mo_shi_tiao_mu("标准模式", ban_pos + Vector2(20, 90), 游戏存档.MO_SHI_BIAO_ZHUN)
+	C_mo_shi_tiao_mu("富豪模式", ban_pos + Vector2(20, 154), 游戏存档.MO_SHI_FU_HAO)
+	# 简短提示（常驻）
+	var shuo = Label.new()
+	shuo.text = tr("富豪模式无法获得成就")
+	shuo.size = Vector2(320, 30)
+	shuo.position = ban_pos + Vector2(0, 224)
+	shuo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	shuo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	shuo.add_theme_font_size_override("font_size", 16)
+	shuo.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(shuo)
+	mo_shi_panel.add_child(shuo)
+	add_child(mo_shi_panel)
+
+# 创建一条模式条目（签名框背景 + 居中文字），点击后按所选模式进入人物选择
+func C_mo_shi_tiao_mu(wen_ben: String, wei_zhi: Vector2, mo: int) -> void:
+	var tiao_mu_bg = TextureRect.new()
+	tiao_mu_bg.texture = load("res://关卡/信息/签名框1.png")
+	tiao_mu_bg.size = Vector2(280, 54)
+	tiao_mu_bg.position = wei_zhi
+	tiao_mu_bg.mouse_entered.connect(func(): tiao_mu_bg.modulate = Color(1.3, 1.3, 1.3, 1))
+	tiao_mu_bg.mouse_exited.connect(func(): tiao_mu_bg.modulate = Color(1, 1, 1, 1))
+	tiao_mu_bg.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			mo_shi_xuan_ze(mo)
+	)
+	mo_shi_panel.add_child(tiao_mu_bg)
+	var lbl = Label.new()
+	lbl.text = tr(wen_ben)
+	lbl.size = Vector2(280, 54)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.add_theme_color_override("font_color", Color.BLACK)
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	she_zhi_kai_ti(lbl)
+	tiao_mu_bg.add_child(lbl)
+
+# 点击某个模式：记录选择、关闭面板并进入人物选择（异常取值按标准模式兜底）
+func mo_shi_xuan_ze(mo: int) -> void:
+	mo_shi_xuan = 游戏存档.MO_SHI_BIAO_ZHUN
+	if mo == 游戏存档.MO_SHI_FU_HAO:
+		mo_shi_xuan = 游戏存档.MO_SHI_FU_HAO
+	if mo_shi_panel != null:
+		mo_shi_panel.visible = false
+	helo_xuan_ze.visible = true
+	# 进入人物面板时刷新英雄锁定状态
+	upd_xuan_ge_suo()
+	upd_cheng_gan_qi_suo()
+
+# 显示模式面板（每次打开都回到标准模式，点条目后才生效）
+func xian_shi_mo_shi_pan() -> void:
+	mo_shi_xuan = 游戏存档.MO_SHI_BIAO_ZHUN
+	if mo_shi_panel != null:
+		mo_shi_panel.visible = true
 
 # 创建三项目录面板：语言/音量/基础帧率/镜头跟随速度（高度随条目数自动调整，后续加项只需在数组里追加）
 func C_she_zhi_mu_lu(win_x: float, win_y: float) -> Control:
@@ -569,7 +676,11 @@ func an_niu_upd() -> void:
 		if json.you_cai_dang(i):
 			var data = json.du_qu(i)
 			var lv = data.get("等级", 1)
-			an_nius[i].text = "   %d\n\n\n\n    Lv.%d" % [i + 1, lv]
+			# 富豪模式复用本次已读取的 data 判定，不额外读档
+			if 游戏存档.mo_shi_biao_zhi_of(data) == 游戏存档.MO_SHI_FU_HAO:
+				an_nius[i].text = "   %d\n\n\n\n  %s" % [i + 1, tr("富豪Lv.%d") % lv]
+			else:
+				an_nius[i].text = "   %d\n\n\n\n    Lv.%d" % [i + 1, lv]
 			shan_chus[i].visible = true
 			# 显示待机动画（英雄名无效时跳过，避免加载失败）
 			var ming_zi = data.get("英雄", "")
@@ -625,6 +736,9 @@ func dian_ji(dang_wei: int) -> void:
 		# 检查成就字段（已领取成就序号清单，字段不存在时建空数组）
 		if not data.has("成就") or not data["成就"] is Array:
 			data["成就"] = []
+		# 检查模式标识字段（旧档缺失时补标准模式；已存在但为非法值时保持原样，读取侧按标准处理）
+		if not data.has(游戏存档.MO_SHI_ZI_DUAN):
+			data[游戏存档.MO_SHI_ZI_DUAN] = 游戏存档.MO_SHI_BIAO_ZHUN
 		# 保存
 		json.bao_cun(dang_wei, data)
 		# 保存当前存档ID到游戏存档节点
@@ -654,10 +768,8 @@ func dian_ji(dang_wei: int) -> void:
 			s.visible = false
 		# 隐藏存档返回按钮
 		json_fan_hui.visible = false
-		helo_xuan_ze.visible = true
-		# 显示前刷新玄戈与秤干戚的解锁/锁定状态
-		upd_xuan_ge_suo()
-		upd_cheng_gan_qi_suo()
+		# 先选择存档模式，确认后才进入人物选择（英雄锁定态在确认时刷新）
+		xian_shi_mo_shi_pan()
 
 # 刷新玄戈的解锁状态：历史成就【救世主Ⅰ】（序号0001）不存在时锁定
 func upd_xuan_ge_suo() -> void:
@@ -680,6 +792,14 @@ func upd_cheng_gan_qi_suo() -> void:
 	else:
 		cheng_gan_qi.modulate = Color(1, 1, 1, 1)
 		cheng_gan_qi_idle.modulate = Color(1, 1, 1, 1)
+
+
+# 模式面板取消：回到槽位列表，不创建存档、不写任何文件
+func mo_shi_qu_xiao() -> void:
+	if mo_shi_panel != null:
+		mo_shi_panel.visible = false
+	json_fan_hui.visible = true
+	an_niu_upd()
 
 # 点击爱丽丝
 func _on_爱丽丝按钮_input() -> void:
@@ -727,29 +847,52 @@ func _on_秤干戚按钮_exit() -> void:
 		return
 	cheng_gan_qi.modulate = Color(1, 1, 1, 1)
 
-# 选择人物并创建存档
+# 选择人物并创建存档（按所选模式写入模式标识与初始银币）
 func C_json(helo_name: String) -> void:
-	# 拼接人物场景路径
+	# 防连点：建档尚未结束时忽略后续点击
+	if zheng_jian_zhong:
+		return
+	# 槽位已被占用时不覆盖已有存档
+	if json.you_cai_dang(json_id):
+		提示弹幕.wen_ben(tr("保存失败，请稍后重试"), 0)
+		日志.打印("新建存档失败：槽位已被占用 槽位=" + str(json_id))
+		return
+	# 拼接人物场景路径并加载
 	var helo_path = "res://角色/人物/" + helo_name + "/" + helo_name + ".tscn"
-	# 加载人物场景
 	var helo_tscn = load(helo_path)
+	if helo_tscn == null:
+		提示弹幕.wen_ben(tr("保存失败，请稍后重试"), 0)
+		日志.打印("新建存档失败：角色加载失败 " + helo_path)
+		return
+	# 非法模式取值一律按标准模式
+	if mo_shi_xuan != 游戏存档.MO_SHI_FU_HAO:
+		mo_shi_xuan = 游戏存档.MO_SHI_BIAO_ZHUN
 	# 实例化人物节点获取属性
 	var helo = helo_tscn.instantiate()
+	var chu_shi_yin_bi: int = 游戏存档.FU_HAO_CHU_SHI_YIN_BI if mo_shi_xuan == 游戏存档.MO_SHI_FU_HAO else 0
 	# 创建初始存档数据
 	var data = {
 		"英雄": helo.get_name(),
 		"等级": 1,
 		"经验": 0,
-		"银币": 0,
+		"银币": chu_shi_yin_bi,
 		"进度": 1,
 		"任务": [],
 		"强化": [0, 0, 0, 0],
 		"成就": []
 	}
+	data[游戏存档.MO_SHI_ZI_DUAN] = mo_shi_xuan
 	# 释放临时人物节点
 	helo.free()
-	# 保存到指定槽位
-	json.bao_cun(json_id, data)
+	# 单次写入并校验结果
+	zheng_jian_zhong = true
+	var cg: bool = json.bao_cun(json_id, data)
+	zheng_jian_zhong = false
+	if not cg:
+		提示弹幕.wen_ben(tr("保存失败，请稍后重试"), 0)
+		日志.打印("新建存档失败：保存失败 槽位=" + str(json_id) + " 模式=" + str(mo_shi_xuan))
+		return
+	日志.打印("新建存档：槽位%d 模式=%d" % [json_id, mo_shi_xuan])
 	# 隐藏人物选择面板
 	helo_xuan_ze.visible = false
 	# 显示存档返回按钮

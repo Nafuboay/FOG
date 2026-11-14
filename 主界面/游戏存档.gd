@@ -22,6 +22,13 @@ const JING_TOU_SU_DU_MAX: int = 7
 # 镜头跟随速度档位数值表（像素/秒，实际速度 = 档位值 × 当前缩放；0档画面不移动）
 # 设置界面显示与关卡补间共用此表，避免两处各存一份
 const JING_TOU_SU_DU_DANG_WEI: Array = [0, 18, 36, 72, 180, 360, 720, 1800]
+# 存档玩法模式标识字段名（与关卡用的"模式"字段 0主线/1诛邪/2支线互不复用）
+const MO_SHI_ZI_DUAN: String = "模式标识"
+# 模式标识取值：0=标准模式，1=富豪模式
+const MO_SHI_BIAO_ZHUN: int = 0
+const MO_SHI_FU_HAO: int = 1
+# 富豪模式新建存档的初始银币（1亿）
+const FU_HAO_CHU_SHI_YIN_BI: int = 100000000
 # 当前使用的存档槽位编号(0~14)
 var id: int = 0
 # 基础帧率内存缓存（-1表示未加载；避免战斗中每次播放动画都读存档文件）
@@ -295,6 +302,26 @@ func upd_mode(mode: int) -> void:
 	data["模式"] = mode
 	bao_cun(id, data)
 
+# 从存档字典推导玩法模式标识：数值严格等于1时视为富豪，其余（缺字段/0/≥2/true/"1"）一律标准
+# 存档经 JSON 往返后数字统一为 float，因此 int/float 均接受；纯函数，不修改字典、不做迁移
+static func mo_shi_biao_zhi_of(data: Dictionary) -> int:
+	var zhi = data.get(MO_SHI_ZI_DUAN, MO_SHI_BIAO_ZHUN)
+	var lei_xing: int = typeof(zhi)
+	if lei_xing == TYPE_INT or lei_xing == TYPE_FLOAT:
+		if float(zhi) == float(MO_SHI_FU_HAO):
+			return MO_SHI_FU_HAO
+	return MO_SHI_BIAO_ZHUN
+
+# 读取指定槽位（缺省当前槽位）的玩法模式标识，最多读档一次；不写文件、不缓存
+func get_mo_shi_biao_zhi(json_id: int = -1) -> int:
+	var dang_wei: int = get_dang_wei() if json_id < 0 else json_id
+	var data = du_qu(dang_wei)
+	return mo_shi_biao_zhi_of(data)
+
+# 当前槽位（或指定槽位）是否为富豪模式
+func shi_fu_hao(json_id: int = -1) -> bool:
+	return get_mo_shi_biao_zhi(json_id) == MO_SHI_FU_HAO
+
 # 获取通用存档文件路径（所有档位共用一个文件）
 func get_ty_lu_jing() -> String:
 	return mi_wu_json + "/通用存档.json"
@@ -330,10 +357,9 @@ func bao_cun_ty(data: Dictionary) -> bool:
 	wen_jian.close()
 	return true
 
-# 读取当前存档的已领取成就序号清单（4位字符串序号，保留前导零）
-# 字段不存在或旧格式（下标0/1数组）一律视为空清单，不做迁移
-func get_ach_lq() -> Array:
-	var data = du_qu(id)
+# 把存档"成就"字段归一化为已领取序号清单（去重、仅保留非空字符串）
+# 缺失、非数组、含非字符串项一律忽略，行为与改动前一致
+static func ach_lq_of(data: Dictionary) -> Array:
 	var lq = data.get("成就", [])
 	var jg: Array = []
 	if lq is Array:
@@ -342,9 +368,20 @@ func get_ach_lq() -> Array:
 				jg.append(x)
 	return jg
 
+# 读取当前存档的已领取成就序号清单（4位字符串序号，保留前导零）
+func get_ach_lq() -> Array:
+	return ach_lq_of(du_qu(id))
+
 # 记录成就到通用存档历史（某存档领取成就后调用，永久保留）
 # xu_hao 成就序号（4位字符串，如"0001"）
 func add_ach_ty(xu_hao: String) -> bool:
+	# 富豪模式封禁成就：不读取/不写入通用存档，直接拒绝
+	if shi_fu_hao():
+		# 不在 class_name 脚本中直接引用 autoload 标识符，按路径取日志节点避免编译顺序问题
+		var ri_zhi = get_node_or_null("/root/日志")
+		if ri_zhi != null:
+			ri_zhi.打印("富豪模式拒绝写入历史成就：" + xu_hao + " 槽位=" + str(id))
+		return false
 	var data = du_qu_ty()
 	# 读取现有历史成就序号清单（旧格式/非字符串项一律忽略，视为空）
 	var his_ach = data.get("历史成就", [])

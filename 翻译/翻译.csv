@@ -336,3 +336,9 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 英雄移动后，画面移到中心的过渡速度,,Speed at which the view re-centers on the hero after moving,英雄移動後，畫面移到中心的過渡速度,ヒーロー移動後に画面が中央へ戻る速さ
 镜头速度：%d 像素/秒,,Camera speed: %d px/s,鏡頭速度：%d 像素/秒,カメラ速度：%d px/s
 镜头速度：不移动,,Camera speed: Off (view stays still),鏡頭速度：不移動,カメラ速度：移動しない
+选择存档模式,,Choose Save Mode,選擇存檔模式,セーブモードを選択
+标准模式,,Standard Mode,標準模式,スタンダードモード
+富豪模式,,Fortune Mode,富豪模式,富豪モード
+富豪模式无法获得成就,,Achievements are disabled in Fortune Mode,富豪模式無法獲得成就,富豪モードでは実績を獲得できません
+富豪Lv.%d,,Fortune Lv.%d,富豪Lv.%d,富豪Lv.%d
+此存档无法获得成就,,Achievements are disabled for this save,此存檔無法獲得成就,このセーブでは実績を獲得できません

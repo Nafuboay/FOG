@@ -12,6 +12,7 @@ var ach: Control # 成就容器
 var tsk_1: Array = [] # 任务项列表
 var tsk_lq: Array = [] # 当前存档已领取的任务序号清单
 var ach_1: Array = [] # 成就项列表
+var ach_ti_shi: Label = null # 成就页顶部提示行（富豪模式/读档失败）
 var ach_lq: Array = [] # 当前存档已领取的成就序号清单
 var fan_ye_tsk = null # 任务翻页系统
 var fan_ye_ach = null # 成就翻页系统
@@ -60,6 +61,20 @@ func _ready() -> void: # 初始化函数
 	fan_ye_tsk.chuang_jian(tsk, Vector2(2, 530))
 	fan_ye_ach = 翻页系统_SCRIPT.new(6, upd_ach)
 	fan_ye_ach.chuang_jian(ach, Vector2(2, 530))
+	# 成就页顶部提示行（富豪模式/读档失败时显示，标准模式隐藏）
+	ach_ti_shi = Label.new()
+	ach_ti_shi.text = tr("此存档无法获得成就")
+	ach_ti_shi.size = Vector2(280, 24)
+	ach_ti_shi.position = Vector2(0, 0)
+	ach_ti_shi.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ach_ti_shi.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	ach_ti_shi.add_theme_font_size_override("font_size", 16)
+	ach_ti_shi.add_theme_color_override("font_color", Color.BLACK)
+	var kai_ti_2 = 提示弹幕.get_kai_ti_font()
+	if kai_ti_2 != null:
+		ach_ti_shi.add_theme_font_override("font", kai_ti_2)
+	ach_ti_shi.visible = false
+	ach.add_child(ach_ti_shi)
 
 func tsk_LMB(event: InputEvent) -> void: # 任务标签按钮点击处理
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -296,16 +311,16 @@ func ach_zhuang_tai(idx: int) -> int:
 		return 0
 	return 2
 
-# 创建单个成就项（idx=成就下标，hang=本页行号，state=成就状态）
-func C_ach(idx: int, hang: int, state: int) -> Control:
+# 创建单个成就项（idx=成就下标，hang=本页行号，state=成就状态，fu_hao=富豪模式版式）
+func C_ach(idx: int, hang: int, state: int, fu_hao: bool = false) -> Control:
 	# 配置非法时跳过展示，不占用行号
 	var config = ach_data[idx]
 	if not 成就配置.he_fa(config):
 		return null
 	var ach_3 = Control.new()
 	ach_3.size = Vector2(280, 64)
-	# 每页6行按容器高度均分（行高64+间距15，末行底部落在y=465），消除列表底部空白
-	ach_3.position = Vector2(0, 6 + hang*79)
+	# 每页6行按容器高度均分；富豪模式为顶部提示行让位，行距略收紧
+	ach_3.position = Vector2(0, 30 + hang*73) if fu_hao else Vector2(0, 6 + hang*79)
 	# 获取成就配置数据
 	var ach_name = config["ming"]
 	var tu_biao = config["tu_biao"]       # 图标名（救世主Ⅰ/Ⅱ共用"救世主"图标）
@@ -367,19 +382,7 @@ func C_ach(idx: int, hang: int, state: int) -> Control:
 func get_ach_R(idx: int) -> void:
 	if idx < 0 or idx >= ach_data.size():
 		return
-	# 检查是否可领取（未完成不可领、已获得不可再领）
-	if ach_zhuang_tai(idx) != 0:
-		return
-	var config = ach_data[idx]
-	if not 成就配置.he_fa(config):
-		日志.打印("成就配置非法：" + str(config.get("xu_hao", "")))
-		return
-	var xu_hao: String = str(config["xu_hao"])   # 成就序号（4位字符串，保留前导零）
-	var ach_name: String = str(config["ming"])
-	var wu_pin: String = str(config["wu_pin"])   # 奖励物品名（空串=无物质奖励）
-	var shu_liang: int = int(config["shu_liang"])  # 奖励数量
-	var ying_xiong: String = str(config["ying_xiong"]) # 英雄绑定（空串=不绑定）
-	# 获取存档数据
+	# 获取存档数据（模式判定与后续发放共用同一次读取）
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json_1 == null:
 		提示弹幕.wen_ben(tr("存档读取失败，请稍后重试"), 0)
@@ -388,6 +391,22 @@ func get_ach_R(idx: int) -> void:
 	if data.is_empty():
 		提示弹幕.wen_ben(tr("存档读取失败，请稍后重试"), 0)
 		return
+	var config = ach_data[idx]
+	var xu_hao: String = str(config["xu_hao"])   # 成就序号（4位字符串，保留前导零）
+	if not 成就配置.he_fa(config):
+		日志.打印("成就配置非法：" + xu_hao)
+		return
+	# 富豪模式封禁成就：不判定条件、不发奖、不写任何记录
+	if 游戏存档.mo_shi_biao_zhi_of(data) == 游戏存档.MO_SHI_FU_HAO:
+		日志.打印("富豪模式拒绝领取成就：" + xu_hao + " 槽位=" + str(json_1.id))
+		return
+	# 检查是否可领取（未完成不可领、已获得不可再领）
+	if ach_zhuang_tai(idx) != 0:
+		return
+	var ach_name: String = str(config["ming"])
+	var wu_pin: String = str(config["wu_pin"])   # 奖励物品名（空串=无物质奖励）
+	var shu_liang: int = int(config["shu_liang"])  # 奖励数量
+	var ying_xiong: String = str(config["ying_xiong"]) # 英雄绑定（空串=不绑定）
 	var bag = data.get("背包", {})
 	var tip_text = ""
 	if ach_name == "采花贼":
@@ -448,8 +467,36 @@ func upd_ach() -> void:
 	for i in ach_1:
 		i.queue_free()
 	ach_1.clear()
-	# 获取最新已领取清单
-	get_ach()
+	# 单次读取当前存档：模式与已领取清单共用本次数据
+	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	var data: Dictionary = {} if json_1 == null else json_1.du_qu(json_1.id)
+	var du_qu_shi_bai: bool = json_1 == null or data.is_empty()
+	var fu_hao: bool = false
+	if not du_qu_shi_bai:
+		fu_hao = 游戏存档.mo_shi_biao_zhi_of(data) == 游戏存档.MO_SHI_FU_HAO
+	ach_lq = [] if du_qu_shi_bai else 游戏存档.ach_lq_of(data)
+	# 顶部提示行：读档失败或富豪模式时显示
+	if ach_ti_shi != null:
+		ach_ti_shi.text = tr("存档读取失败，请稍后重试") if du_qu_shi_bai else tr("此存档无法获得成就")
+		ach_ti_shi.visible = du_qu_shi_bai or fu_hao
+	# 富豪模式/读档失败：不判定任何条件，全部按未获得展示，仅按序号升序
+	if du_qu_shi_bai or fu_hao:
+		var lie_biao_bu_ke: Array = []
+		for i in range(ach_data.size()):
+			lie_biao_bu_ke.append([2, int(ach_data[i]["xu_hao"]), i])
+		lie_biao_bu_ke.sort_custom(func(a, b): return a[1] < b[1])
+		fan_ye_ach.she_zhi(lie_biao_bu_ke.size())
+		var qi_bu_ke = fan_ye_ach.qi_shi()
+		var hang_shu_bu_ke = min(6, lie_biao_bu_ke.size() - qi_bu_ke)
+		for j in range(hang_shu_bu_ke):
+			var xiang_bu_ke = lie_biao_bu_ke[qi_bu_ke + j]
+			var ach_bu_ke = C_ach(xiang_bu_ke[2], j, 2, true)
+			# 配置非法时不展示，该行留空
+			if ach_bu_ke == null:
+				continue
+			ach.add_child(ach_bu_ke)
+			ach_1.append(ach_bu_ke)
+		return
 	# 排序依据：[状态, 序号数值, 成就下标]
 	# 状态分组：已完成未领取(0) → 已完成已领取(1) → 未完成(2)，组内按序号升序
 	var lie_biao: Array = []
