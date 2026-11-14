@@ -13,10 +13,75 @@
 
 extends 关卡基类
 
+# ---- 夜晚遮罩：以英雄所在格中心为点光源，向外加深至全黑 ----
+const 夜晚遮罩_SHADER = preload("res://关卡/夜晚遮罩.gdshader")
+# 光圈半径（格）。每帧按当前屏幕格距换算
+const 夜晚_半径格数: float = 3.0
+# 圆外黑度（1 = 全黑）
+const 夜晚_外圈黑度: float = 1.0
+# 遮罩节点与材质（用 Sprite2D 而非 Control，避免被 PC输入 的 GUI 点击检测当成控件拦截点击）
+var ye_wan_zhe_zhao: Sprite2D = null
+var ye_wan_cai_zhi: ShaderMaterial = null
+# 当前光圈中心的屏幕坐标（平滑跟随英雄所在格）
+var ye_wan_zhong_xin: Vector2 = Vector2.ZERO
+
 # ---- 覆写 _ready：先设支线倍率，再执行基类 _ready（C_GZ 内会调用我们覆写的生成函数）----
 func _ready() -> void:
 	_zhi_xian_bei_zhi()
 	super()
+	# 基类初始化完成后再挂夜晚遮罩（此时人物/容器已创建）
+	C_ye_wan_zhe_zhao()
+
+# 创建夜晚遮罩：全屏 Sprite2D + 径向暗角 shader
+# 层级 500：高于世界内容（格子/怪物 z_index ≤ 约90）、低于关卡UI（1000）
+func C_ye_wan_zhe_zhao() -> void:
+	ye_wan_zhe_zhao = Sprite2D.new()
+	ye_wan_zhe_zhao.centered = false
+	ye_wan_zhe_zhao.position = Vector2.ZERO
+	# 1×1 纯白纹理靠缩放铺满全屏（shader 直接输出颜色，与纹理无关）
+	var bai = Image.create(1, 1, false, Image.FORMAT_RGBA8)
+	bai.fill(Color.WHITE)
+	ye_wan_zhe_zhao.texture = ImageTexture.create_from_image(bai)
+	ye_wan_zhe_zhao.scale = get_viewport_rect().size
+	ye_wan_zhe_zhao.z_index = 500
+	ye_wan_cai_zhi = ShaderMaterial.new()
+	ye_wan_cai_zhi.shader = 夜晚遮罩_SHADER
+	ye_wan_cai_zhi.set_shader_parameter("outer_radius", 夜晚_半径格数 * ge_jian_ping_mu())
+	ye_wan_cai_zhi.set_shader_parameter("darkness", 夜晚_外圈黑度)
+	ye_wan_zhe_zhao.material = ye_wan_cai_zhi
+	add_child(ye_wan_zhe_zhao)
+	# 初始中心直接对准英雄所在格中心，避免第一帧从屏幕左上角滑入
+	ye_wan_zhong_xin = ge_zhong_xin_ping_mu()
+	ye_wan_cai_zhi.set_shader_parameter("center", ye_wan_zhong_xin)
+
+# 每帧更新光圈中心与半径：中心平滑跟随英雄格，半径随画面比例换算
+func _process(delta: float) -> void:
+	if ye_wan_cai_zhi == null:
+		return
+	var mu_biao = ge_zhong_xin_ping_mu()
+	# 与帧率无关的指数平滑
+	ye_wan_zhong_xin = ye_wan_zhong_xin.lerp(mu_biao, 1.0 - exp(-12.0 * delta))
+	ye_wan_cai_zhi.set_shader_parameter("center", ye_wan_zhong_xin)
+	# 按当前格距换算半径：缩小/放大画面时始终保持设定格数
+	ye_wan_cai_zhi.set_shader_parameter("outer_radius", 夜晚_半径格数 * ge_jian_ping_mu())
+
+# 英雄所在格中心的屏幕坐标（helo_x/helo_y 从 1 开始，GZ_zhong 用 0 基索引）
+func ge_zhong_xin_ping_mu() -> Vector2:
+	if helo == null:
+		return get_viewport_rect().size / 2.0
+	var ju_bu = GZ_zhong(helo_x - 1, helo_y - 1)
+	if rong_qi != null:
+		ju_bu = rong_qi.to_global(ju_bu)
+	return get_viewport().get_canvas_transform() * ju_bu
+
+# 一格在屏幕上的像素宽度（含关卡画面比例缩放与画布变换）
+func ge_jian_ping_mu() -> float:
+	if rong_qi == null:
+		return float(GZ_size)
+	var bian_huan = get_viewport().get_canvas_transform()
+	var jichu = bian_huan * rong_qi.to_global(GZ_zhong(0, 0))
+	var lin = bian_huan * rong_qi.to_global(GZ_zhong(1, 0))
+	return (lin - jichu).length()
 
 # ---- 支线专属属性倍率 ----
 func _zhi_xian_bei_zhi() -> void:
