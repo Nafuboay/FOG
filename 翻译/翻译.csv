@@ -342,3 +342,17 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 富豪模式无法获得成就,,Achievements are disabled in Fortune Mode,富豪模式無法獲得成就,富豪モードでは実績を獲得できません
 富豪Lv.%d,,Fortune Lv.%d,富豪Lv.%d,富豪Lv.%d
 此存档无法获得成就,,Achievements are disabled for this save,此存檔無法獲得成就,このセーブでは実績を獲得できません
+火焰余烬,,Flame Ember,火焰餘燼,炎の残り火
+爆炸余烬,,Blast Ember,爆炸餘燼,爆発の残り火
+流星余烬,,Meteor Ember,流星餘燼,流星の残り火
+太阳余烬,,Sun Ember,太陽餘燼,太陽の残り火
+你该把余烬放在不同的地方！,,You should put your embers in different places!,你該把餘燼放在不同的地方！,残り火は別の場所に置くべきだ！
+火焰太多了，好热！,,"Too many flames, it's so hot!",火焰太多了，好熱！,炎が多すぎる、暑い！
+你不害怕爆炸吗？,,Aren't you afraid of explosions?,你不害怕爆炸嗎？,爆発が怖くないのか？
+流星已经够多了，快来许愿吧！,,"That's enough meteors, hurry up and make a wish!",流星已經夠多了，快來許願吧！,流星はもう十分だ、早く願い事をしよう！
+世界不希望同时出现两个太阳！,,The world doesn't want two suns at once!,世界不希望同時出現兩個太陽！,世界は同時に二つの太陽を望まない！
+世界不希望同时出现三个太阳！,,The world doesn't want three suns at once!,世界不希望同時出現三個太陽！,世界は同時に三つの太陽を望まない！
+战斗中无法使用【%s】！,,Can't use [%s] in combat!,戰鬥中無法使用【%s】！,戦闘中は【%s】を使えない！
+使用【%s】，照亮周围%d格，持续%d秒！,,Used [%s]: lights %d tiles for %d seconds!,使用【%s】，照亮周圍%d格，持續%d秒！,【%s】を使った。周囲%dマスを%d秒照らす！
+支线照明，照亮周围%d格，持续%d秒,,Branch-level light: %d tiles for %d seconds,支線照明，照亮周圍%d格，持續%d秒,支線の照明。周囲%dマスを%d秒照らす
+余烬已燃尽,,The ember burned out,餘燼已燃盡,残り火は燃え尽きた

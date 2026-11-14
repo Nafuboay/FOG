@@ -2,3 +2,5 @@
 .godot/
 /android/
 /迷雾存档/
+# 本地便携工具（Node.js 等，不纳入版本库）
+.tools/

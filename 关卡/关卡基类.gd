@@ -68,6 +68,10 @@ var zhang_ai_xy = []
 const 奇花系统_SCRIPT = preload("res://关卡/奇花系统.gd")
 # 奇花系统节点引用（由 _ready 创建并 add_child）
 var qi_hua = null
+# 余烬燃烧实体系统预加载（主线/诛邪/支线共用；无夜晚遮罩时只显示动画与色调）
+const 余烬系统_SCRIPT = preload("res://关卡/余烬系统.gd")
+# 余烬系统节点引用（由 _guan_qia_chu_shi 创建）
+var yu_jin = null
 # BOSS位置列表，存储主格(x,y)坐标
 var BOSS_xy = []
 # 战斗系统预加载
@@ -202,6 +206,9 @@ func _guan_qia_chu_shi() -> void:
 	BOSS_xian_shi()
 	# 创建人物
 	C_helo()
+	# 创建余烬燃烧实体系统（三模式共用；支线由夜晚遮罩读取其光源，主线/诛邪仅显示动画）
+	yu_jin = 余烬系统_SCRIPT.new(self)
+	add_child(yu_jin)
 	# 创建人物面板
 	XX.C_look_helo()
 	# 创建缩放按钮

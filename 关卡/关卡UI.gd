@@ -315,6 +315,14 @@ func dao_ju_upd() -> void:
 								dao_ju_yong.use_zhu_que_sheng_xiang()
 								get_viewport().gui_release_focus()
 						)
+					# 为余烬添加点击事件（在英雄所在格放置照明）
+					if 余烬档位.shi_yu_jin(wu_ming):
+						wu_pin_tu.gui_input.connect(func(event, ming=wu_ming):
+							if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+								if guan_qia.yu_jin != null:
+									guan_qia.yu_jin.fang_zhi(ming)
+								get_viewport().gui_release_focus()
+						)
 					dao_ju.add_child(wu_pin_tu)
 					# 如果数量大于1，显示数量标签
 					if n > 1:
@@ -399,6 +407,10 @@ func suo_fang_upd(fang_da: bool) -> void:
 # xia_yi_guan_callback: 下一关按钮点击时调用的回调函数名（Callable）
 # xian_shi_an_niu: 是否显示下一关按钮
 func _C_sheng_li_jie_mian(xia_yi_guan_callback: Callable, xian_shi_an_niu: bool) -> void:
+	# 清空全部余烬（胜利后不再显示动画与光照）
+	var yj = guan_qia.get("yu_jin")
+	if yj != null and is_instance_valid(yj):
+		yj.quan_bu_qing_li()
 	# 获取视口尺寸用于居中显示（逻辑分辨率）
 	var viewport_size = guan_qia.get_viewport_rect().size
 	# 加载胜利图片

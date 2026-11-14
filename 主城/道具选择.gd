@@ -13,7 +13,7 @@ var GZ_png2: Texture2D = null # 已选格子贴图
 
 const ZUI_DUO: int = 10 # 携带栏位上限
 const H_LIE: int = 6 # 候选网格每行列数
-const H_DA: int = 64 # 候选格子边长（格子间不留缝隙）
+const H_DA: int = 56 # 候选格子边长（24 项 6×4，格子间不留缝隙）
 const X_DA: int = 48 # 携带格子边长（格子间不留缝隙）
 
 # 初始化：隐藏并构建弹窗
@@ -46,9 +46,9 @@ func C_mian_ban() -> void:
 	biao_ti.position = Vector2(0, 20)
 	biao_ti.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	rong_qi.add_child(biao_ti)
-	# 候选网格容器（6列×3行，64格无缝，共384宽，居中起点58）
+	# 候选网格容器（6列×4行，56格无缝，共336宽，居中起点82；4行底边68+224=292）
 	hou_xuan = Control.new()
-	hou_xuan.position = Vector2(58, 100)
+	hou_xuan.position = Vector2(82, 68)
 	rong_qi.add_child(hou_xuan)
 	# 携带栏容器（10格48无缝，共480宽，起点10；候选3行后下移）
 	xie_dai = Control.new()
@@ -113,6 +113,9 @@ func upd() -> void:
 func upd_hou_xuan() -> void:
 	for c in hou_xuan.get_children():
 		c.queue_free()
+	# 行高按候选数兜底：当前 24 项 = 6×4、56 格；将来超过 24 项时自动压缩，保证 4 行不越界
+	var hang_shu: int = ceili(物品信息.guan_kia_dao_ju.size() / float(H_LIE))
+	var da: int = min(H_DA, int(floor(224.0 / max(hang_shu, 1))))
 	for i in range(物品信息.guan_kia_dao_ju.size()):
 		var wu_ming = 物品信息.guan_kia_dao_ju[i]
 		var h = int(i / float(H_LIE))
@@ -121,8 +124,8 @@ func upd_hou_xuan() -> void:
 		var ge = TextureRect.new()
 		ge.texture = GZ_png2 if xuan_ze.has(wu_ming) else GZ_png1
 		ge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		ge.size = Vector2(H_DA, H_DA)
-		ge.position = Vector2(l * H_DA, h * H_DA)
+		ge.size = Vector2(da, da)
+		ge.position = Vector2(l * da, h * da)
 		ge.gui_input.connect(func(event, ming=wu_ming):
 			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 				qie_huan(ming)
@@ -134,7 +137,7 @@ func upd_hou_xuan() -> void:
 			tu.texture = load(物品信息.wu_pin_png[wu_ming])
 			tu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			tu.size = Vector2(50, 50)
-			tu.position = Vector2((H_DA - 50) / 2.0, (H_DA - 50) / 2.0)
+			tu.position = Vector2((da - 50) / 2.0, (da - 50) / 2.0)
 			tu.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			ge.add_child(tu)
 

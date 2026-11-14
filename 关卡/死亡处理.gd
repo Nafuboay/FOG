@@ -16,6 +16,10 @@ func _init(gq: Node2D, zd: Node) -> void:
 
 # 人物死亡统一处理：添加破损稻草人、清除人物、显示失败图片并结束战斗
 func helo_si_wang() -> void:
+	# 清空全部余烬（失败后不再显示动画与光照）
+	var yj = guan_qia.get("yu_jin")
+	if yj != null and is_instance_valid(yj):
+		yj.quan_bu_qing_li()
 	var shi_jian = (Time.get_ticks_msec() - zhan_dou.zhan_dou_time) / 1000.0
 	日志.打印("%.2f秒 英雄死亡\n" % shi_jian)
 	# 人物死亡时添加破损稻草人到永久背包
