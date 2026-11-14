@@ -62,9 +62,9 @@ const YU_YAN_LIE_BIAO: Array = [
 	{"code": "zh_TW", "ming": "繁体中文"},
 	{"code": "ja", "ming": "日语"},
 ]
-# 玄戈是否处于锁定状态（历史成就【不朽者】未完成时为true）
+# 玄戈是否处于锁定状态（历史成就【救世主Ⅰ】0001 不存在时为true）
 var xuan_ge_suo: bool = false
-# 秤干戚是否处于锁定状态（历史成就【救世主Ⅰ】未完成时为true）
+# 秤干戚是否处于锁定状态（历史成就【救世主Ⅱ】0002 不存在时为true）
 var cheng_gan_qi_suo: bool = false
 # 存档数量
 const cao_wei: int = 15
@@ -659,10 +659,10 @@ func dian_ji(dang_wei: int) -> void:
 		upd_xuan_ge_suo()
 		upd_cheng_gan_qi_suo()
 
-# 刷新玄戈的解锁状态：历史成就【不朽者】（序号1000）未完成时锁定
+# 刷新玄戈的解锁状态：历史成就【救世主Ⅰ】（序号0001）不存在时锁定
 func upd_xuan_ge_suo() -> void:
-	# 任意存档领取过【不朽者】即解锁（通用存档历史成就，跨存档永久保留）
-	xuan_ge_suo = not json.has_ach_ty("1000")
+	# 解锁依据由 has_hero_jie_suo 按历史成就实时推导（不迁移、不读当前存档英雄字段）
+	xuan_ge_suo = not json.has_hero_jie_suo("玄戈")
 	if xuan_ge_suo:
 		# 锁定：按钮与待机动画一起暗淡
 		xuan_ge.modulate = Color(0.5, 0.5, 0.5, 1)
@@ -671,9 +671,9 @@ func upd_xuan_ge_suo() -> void:
 		# 已解锁：恢复正常亮度
 		xuan_ge.modulate = Color(1, 1, 1, 1)
 		xuan_ge_idle.modulate = Color(1, 1, 1, 1)
-# 刷新秤干戚的解锁状态：历史成就【救世主Ⅰ】（序号0001）未完成时锁定
+# 刷新秤干戚的解锁状态：历史成就【救世主Ⅱ】（序号0002）不存在时锁定
 func upd_cheng_gan_qi_suo() -> void:
-	cheng_gan_qi_suo = not json.has_ach_ty("0001")
+	cheng_gan_qi_suo = not json.has_hero_jie_suo("秤干戚")
 	if cheng_gan_qi_suo:
 		cheng_gan_qi.modulate = Color(0.5, 0.5, 0.5, 1)
 		cheng_gan_qi_idle.modulate = Color(0.5, 0.5, 0.5, 1)
@@ -688,13 +688,13 @@ func _on_爱丽丝按钮_input() -> void:
 func _on_玄戈按钮_input() -> void:
 	# 锁定状态下拦截选择，提示解锁条件，不创建存档
 	if xuan_ge_suo:
-		提示弹幕.wen_ben("完成成就【不朽者】解锁英雄【玄戈】！", 0)
+		提示弹幕.wen_ben(tr("完成成就【%s】解锁英雄【%s】！") % [tr("救世主Ⅰ"), tr("玄戈")], 0)
 		return
 	C_json("玄戈")
 # 点击秤干戚
 func _on_秤干戚按钮_input() -> void:
 	if cheng_gan_qi_suo:
-		提示弹幕.wen_ben("完成成就【救世主Ⅰ】解锁英雄【秤干戚】！", 0)
+		提示弹幕.wen_ben(tr("完成成就【%s】解锁英雄【%s】！") % [tr("救世主Ⅱ"), tr("秤干戚")], 0)
 		return
 	C_json("秤干戚")
 

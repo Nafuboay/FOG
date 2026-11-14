@@ -344,7 +344,7 @@ func get_ach_lq() -> Array:
 
 # 记录成就到通用存档历史（某存档领取成就后调用，永久保留）
 # xu_hao 成就序号（4位字符串，如"0001"）
-func add_ach_ty(xu_hao: String) -> void:
+func add_ach_ty(xu_hao: String) -> bool:
 	var data = du_qu_ty()
 	# 读取现有历史成就序号清单（旧格式/非字符串项一律忽略，视为空）
 	var his_ach = data.get("历史成就", [])
@@ -357,7 +357,7 @@ func add_ach_ty(xu_hao: String) -> void:
 	if not jg.has(xu_hao):
 		jg.append(xu_hao)
 	data["历史成就"] = jg
-	bao_cun_ty(data)
+	return bao_cun_ty(data)
 
 # 检查某成就是否已在通用存档历史中被领取过
 # xu_hao 成就序号（4位字符串，如"1000"）
@@ -368,6 +368,16 @@ func has_ach_ty(xu_hao: String) -> bool:
 		for x in his_ach:
 			if x is String and x == xu_hao:
 				return true
+	return false
+
+# 判断英雄是否已解锁：唯一依据为通用存档历史成就（不做迁移、不新增字段、不缓存）
+# 第一英雄爱丽丝恒为可用；未绑定来源成就或历史成就不可读时一律返回 false
+func has_hero_jie_suo(ying_xiong: String) -> bool:
+	if ying_xiong.is_empty() or ying_xiong == "爱丽丝":
+		return true
+	var lai_yuan: String = 成就配置.lai_yuan_ying_xiong(ying_xiong)
+	if not lai_yuan.is_empty() and has_ach_ty(lai_yuan):
+		return true
 	return false
 
 # 获取当前语言设置（从通用存档读取，默认简体中文 zh_CN）

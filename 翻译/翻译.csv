@@ -159,8 +159,10 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 拥有1000亿银币,,Own 100B Silver,擁有1000億銀幣,1000億銀貨を所持
 拥有1万亿银币,,Own 1T Silver,擁有1萬億銀幣,1兆銀貨を所持
 
-完成成就【不朽者】解锁英雄【玄戈】！,,"Complete achievement [Immortal] to unlock hero [Xuange]!",完成成就【不朽者】解鎖英雄【玄戈】！,実績【不朽者】を達成し、英雄【玄戈】を解放！
-完成成就【救世主Ⅰ】解锁英雄【秤干戚】！,,"Complete achievement [Savior Ⅰ] to unlock hero [Scale Ganqi]!",完成成就【救世主Ⅰ】解鎖英雄【秤干戚】！,実績【救世主Ⅰ】を達成し、英雄【秤干戚】を解放！
+完成成就【%s】解锁英雄【%s】！,,"Complete achievement [%s] to unlock hero [%s]!",完成成就【%s】解鎖英雄【%s】！,実績【%s】を達成し、英雄【%s】を解放！
+解锁英雄【%s】,,Unlocks hero [%s],解鎖英雄【%s】,英雄【%s】を解放
+恭喜获得成就【%s】！,,Achievement unlocked: [%s]!,恭喜獲得成就【%s】！,実績【%s】を獲得！
+解锁英雄【%s】！,,Unlocked hero [%s]!,解鎖英雄【%s】！,英雄【%s】を解放！
 恭喜获得成就【%s】！\n获得%s！,,Achievement unlocked: [%s]!\nObtained %s!,恭喜獲得成就【%s】！\n獲得%s！,実績【%s】を獲得！\n%sを入手！
 恭喜获得成就【%s】！\n奖励%s×%s！,,Achievement unlocked: [%s]!\nReward: %s ×%s!,恭喜獲得成就【%s】！\n獎勵%s×%s！,実績【%s】を獲得！\n報酬：%s×%s！
 免费开启获得【%s】×%d！,,Free open: obtained [%s] ×%d!,免費開啟獲得【%s】×%d！,無料で開けて【%s】×%dを獲得！
@@ -168,6 +170,8 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 \n%s\n奖励：%s×%s,,\n%s\nReward: %s×%s,\n%s\n獎勵：%s×%s,\n%s\n報酬：%s×%s
 \n%s\n奖励：%s银币,,\n%s\nReward: %s Silver,\n%s\n獎勵：%s銀幣,\n%s\n報酬：銀貨%s枚
 恭喜获得成就【%s】！\n奖励%s银币！,,Achievement unlocked: [%s]!\nReward: %s Silver!,恭喜獲得成就【%s】！\n獎勵%s銀幣！,実績【%s】を獲得！\n報酬：銀貨%s枚！
+存档读取失败，请稍后重试,,Save data read failed. Please try again later.,存檔讀取失敗，請稍後重試,セーブデータの読み込みに失敗しました。後でもう一度お試しください。
+保存失败，请稍后重试,,Save failed. Please try again later.,儲存失敗，請稍後重試,セーブに失敗しました。後でもう一度お試しください。
 
 道具栏,,Prop Slots,道具欄,アイテムスロット
 主线,,Main,主線,メイン

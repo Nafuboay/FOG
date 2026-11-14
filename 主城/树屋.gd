@@ -15,23 +15,7 @@ var ach_1: Array = [] # 成就项列表
 var ach_lq: Array = [] # 当前存档已领取的成就序号清单
 var fan_ye_tsk = null # 任务翻页系统
 var fan_ye_ach = null # 成就翻页系统
-var ach_data: Array = [ # 成就配置数据: [序号,成就名称,图标名,条件类型,条件值,奖励物品名,奖励数量,条件描述]
-	["0001", "救世主Ⅰ", "救世主", 1, 31, "金条", 10, "击败犽翡及其爪牙"],
-	["0002", "救世主Ⅱ", "救世主", 1, 61, "金条", 10, "再次击败犽翡及其爪牙"],
-	["1000", "不朽者", "不朽者", 0, "破损稻草人", "朱雀圣像", 1, "拥有【破损稻草人】"],
-	["1001", "饮虹使", "饮虹使", 0, "彩虹", "彩虹", 10, "拥有【彩虹】"],
-	["1004", "采花贼", "采花贼", 2, "", "奇花", 99, "拥有四种奇花"],
-	["0107", "A7富豪", "A7", 3, 1000, "银币", 1, "拥有1000银币"],
-	["0108", "A8富豪", "A8", 3, 10000, "银币", 10, "拥有1万银币"],
-	["0109", "A9富豪", "A9", 3, 100000, "银币", 100, "拥有10万银币"],
-	["0110", "A10富豪", "A10", 3, 1000000, "银币", 1000, "拥有100万银币"],
-	["0111", "A11富豪", "A11", 3, 10000000, "银币", 10000, "拥有1000万银币"],
-	["0112", "A12富豪", "A12", 3, 100000000, "银币", 100000, "拥有1亿银币"],
-	["0113", "A13富豪", "A13", 3, 1000000000, "银币", 1000000, "拥有10亿银币"],
-	["0114", "A14富豪", "A14", 3, 10000000000, "银币", 10000000, "拥有100亿银币"],
-	["0115", "A15富豪", "A15", 3, 100000000000, "银币", 100000000, "拥有1000亿银币"],
-	["0116", "A16富豪", "A16", 3, 1000000000000, "银币", 1000000000, "拥有1万亿银币"]
-]
+var ach_data: Array = 成就配置.quan_bu() # 成就配置（唯一来源见 全局/成就配置.gd）
 # 支线任务金条奖励表（支线1~30关，对应总任务31~60）
 # 1~6关各3根；7~23关各4根；24~28关各32根；29关12根；30关100根
 const ZX_JIN_TIAO: Array = [3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,32,32,32,32,32,12,100]
@@ -288,8 +272,8 @@ func chk_ach(idx: int) -> bool:
 	if idx < 0 or idx >= ach_data.size():
 		return false
 	var config = ach_data[idx]
-	var type_1 = config[3]
-	var value = config[4]
+	var type_1 = int(config["tiao_jian"])
+	var value = config["zhi"]
 	if type_1 == 0:
 		# 条件类型0：背包物品检测
 		return has_item(value)
@@ -306,7 +290,7 @@ func chk_ach(idx: int) -> bool:
 
 # 获取成就状态：0=已完成未领取，1=已领取，2=未完成
 func ach_zhuang_tai(idx: int) -> int:
-	if ach_lq.has(str(ach_data[idx][0])):
+	if ach_lq.has(str(ach_data[idx]["xu_hao"])):
 		return 1
 	if chk_ach(idx):
 		return 0
@@ -314,16 +298,21 @@ func ach_zhuang_tai(idx: int) -> int:
 
 # 创建单个成就项（idx=成就下标，hang=本页行号，state=成就状态）
 func C_ach(idx: int, hang: int, state: int) -> Control:
+	# 配置非法时跳过展示，不占用行号
+	var config = ach_data[idx]
+	if not 成就配置.he_fa(config):
+		return null
 	var ach_3 = Control.new()
 	ach_3.size = Vector2(280, 64)
 	# 每页6行按容器高度均分（行高64+间距15，末行底部落在y=465），消除列表底部空白
 	ach_3.position = Vector2(0, 6 + hang*79)
 	# 获取成就配置数据
-	var config = ach_data[idx]
-	var ach_name = config[1]
-	var tu_biao = config[2]       # 图标名（救世主Ⅰ/Ⅱ共用"救世主"图标）
-	var jiang_li = config[5]      # 奖励物品名
-	var jiang_li_n = config[6]    # 奖励数量
+	var ach_name = config["ming"]
+	var tu_biao = config["tu_biao"]       # 图标名（救世主Ⅰ/Ⅱ共用"救世主"图标）
+	var wu_pin = config["wu_pin"]         # 奖励物品名（空串=无物质奖励）
+	var shu_liang = int(config["shu_liang"])  # 奖励数量
+	var miao_shu = config["miao_shu"]     # 条件描述
+	var ying_xiong = config["ying_xiong"] # 英雄绑定（空串=不绑定）
 	# 创建成就背景（使用签名框背景）
 	var ach_bg = TextureRect.new()
 	ach_bg.texture = load("res://关卡/信息/签名框1.png")
@@ -351,13 +340,17 @@ func C_ach(idx: int, hang: int, state: int) -> Control:
 		lbl.text = tr("\n已获得成就【%s】") % tr(ach_name)
 		lbl.add_theme_color_override("font_color", Color("000000"))
 	else:
-		# 未完成或可领取状态：显示完成条件和奖励
-		var cond_text = config[7]  # 使用配置中的条件描述
-		if jiang_li == "银币":
-			# 银币奖励直接写数量
-			lbl.text = tr("\n%s\n奖励：%s银币") % [tr(cond_text), 排版工具.shu_zi_suo_xie(jiang_li_n)]
+		# 未完成或可领取状态：显示完成条件和奖励；无物质奖励时展示解锁英雄
+		if 成就配置.you_wu_zhi_jiang_li(config):
+			if wu_pin == "银币":
+				# 银币奖励直接写数量
+				lbl.text = tr("\n%s\n奖励：%s银币") % [tr(miao_shu), 排版工具.shu_zi_suo_xie(shu_liang)]
+			else:
+				lbl.text = tr("\n%s\n奖励：%s×%s") % [tr(miao_shu), tr(wu_pin), 排版工具.shu_zi_suo_xie(shu_liang)]
+		elif not str(ying_xiong).is_empty():
+			lbl.text = "\n" + tr(miao_shu) + "\n" + tr("解锁英雄【%s】") % tr(ying_xiong)
 		else:
-			lbl.text = tr("\n%s\n奖励：%s×%s") % [tr(cond_text), tr(jiang_li), 排版工具.shu_zi_suo_xie(jiang_li_n)]
+			lbl.text = tr("\n%s") % tr(miao_shu)
 		if state == 0: # 可领取状态：绿色文本
 			lbl.add_theme_color_override("font_color", Color("00ff00"))
 		else: # 未完成状态：黑色文本
@@ -374,26 +367,34 @@ func C_ach(idx: int, hang: int, state: int) -> Control:
 func get_ach_R(idx: int) -> void:
 	if idx < 0 or idx >= ach_data.size():
 		return
-	# 检查是否可领取
+	# 检查是否可领取（未完成不可领、已获得不可再领）
 	if ach_zhuang_tai(idx) != 0:
 		return
 	var config = ach_data[idx]
-	var xu_hao = str(config[0])   # 成就序号（4位字符串，保留前导零）
-	var ach_name = config[1]
-	var jiang_li = config[5]      # 奖励物品名
-	var jiang_li_n = config[6]    # 奖励数量
+	if not 成就配置.he_fa(config):
+		日志.打印("成就配置非法：" + str(config.get("xu_hao", "")))
+		return
+	var xu_hao: String = str(config["xu_hao"])   # 成就序号（4位字符串，保留前导零）
+	var ach_name: String = str(config["ming"])
+	var wu_pin: String = str(config["wu_pin"])   # 奖励物品名（空串=无物质奖励）
+	var shu_liang: int = int(config["shu_liang"])  # 奖励数量
+	var ying_xiong: String = str(config["ying_xiong"]) # 英雄绑定（空串=不绑定）
 	# 获取存档数据
 	var json_1 = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
 	if json_1 == null:
+		提示弹幕.wen_ben(tr("存档读取失败，请稍后重试"), 0)
 		return
 	var data = json_1.du_qu(json_1.id)
+	if data.is_empty():
+		提示弹幕.wen_ben(tr("存档读取失败，请稍后重试"), 0)
+		return
 	var bag = data.get("背包", {})
 	var tip_text = ""
 	if ach_name == "采花贼":
 		# 采花贼特殊奖励：99朵奇花等概率随机分配给四种花
 		var hua_ming = ["百合", "水仙", "玫瑰", "鸢尾"]
 		var hua_n = [0, 0, 0, 0]
-		for i in range(jiang_li_n):
+		for i in range(shu_liang):
 			hua_n[randi() % 4] += 1
 		# 发放到背包并构建提示文本
 		var parts = []
@@ -401,28 +402,45 @@ func get_ach_R(idx: int) -> void:
 			if hua_n[i] > 0:
 				bag[hua_ming[i]] = int(bag.get(hua_ming[i], 0)) + hua_n[i]
 				parts.append("%s×%d" % [tr(hua_ming[i]), hua_n[i]])
+		data["背包"] = bag
 		tip_text = tr("恭喜获得成就【%s】！\n获得%s！") % [tr(ach_name), "、".join(parts)]
-	elif jiang_li == "银币":
-		# 银币类成就奖励：直接写入存档银币字段，不进入背包
-		data["银币"] = int(data.get("银币", 0)) + jiang_li_n
-		tip_text = tr("恭喜获得成就【%s】！\n奖励%s银币！") % [tr(ach_name), 排版工具.shu_zi_suo_xie(jiang_li_n)]
+	elif 成就配置.you_wu_zhi_jiang_li(config):
+		if wu_pin == "银币":
+			# 银币类成就奖励：直接写入存档银币字段，不进入背包
+			data["银币"] = int(data.get("银币", 0)) + shu_liang
+			tip_text = tr("恭喜获得成就【%s】！\n奖励%s银币！") % [tr(ach_name), 排版工具.shu_zi_suo_xie(shu_liang)]
+		else:
+			# 普通成就：直接发放指定物品
+			bag[wu_pin] = int(bag.get(wu_pin, 0)) + shu_liang
+			data["背包"] = bag
+			tip_text = tr("恭喜获得成就【%s】！\n奖励%s×%s！") % [tr(ach_name), tr(wu_pin), 排版工具.shu_zi_suo_xie(shu_liang)]
+	elif not ying_xiong.is_empty():
+		# 无物质奖励：只解锁英雄，不写背包/银币
+		tip_text = tr("恭喜获得成就【%s】！") % tr(ach_name) + "\n" + tr("解锁英雄【%s】！") % tr(ying_xiong)
 	else:
-		# 普通成就：直接发放指定物品
-		bag[jiang_li] = int(bag.get(jiang_li, 0)) + jiang_li_n
-		tip_text = tr("恭喜获得成就【%s】！\n奖励%s×%s！") % [tr(ach_name), tr(jiang_li), 排版工具.shu_zi_suo_xie(jiang_li_n)]
-	data["背包"] = bag
-	# 保存存档（成就字段只记录已领取的序号清单）
-	ach_lq.append(xu_hao)
-	data["成就"] = ach_lq
-	json_1.bao_cun(json_1.id, data)
-	# 同步记录到通用存档历史成就
-	json_1.add_ach_ty(xu_hao)
+		tip_text = tr("恭喜获得成就【%s】！") % tr(ach_name)
+	# 提交前构造新清单，避免重复点击或状态滞后产生重复序号
+	var xin_lq: Array = ach_lq.duplicate()
+	if not xin_lq.has(xu_hao):
+		xin_lq.append(xu_hao)
+	data["成就"] = xin_lq
+	# 单次写入并校验返回值：失败时不提交任何内存状态，成就保持可领取
+	if not json_1.bao_cun(json_1.id, data):
+		提示弹幕.wen_ben(tr("保存失败，请稍后重试"), 0)
+		日志.打印("成就保存失败：" + xu_hao)
+		upd_ach()
+		return
+	ach_lq = xin_lq
+	# 同步记录到通用存档历史成就（失败仅记日志，不回滚已写入的当前存档）
+	if not json_1.add_ach_ty(xu_hao):
+		日志.打印("历史成就写入失败：" + xu_hao)
 	# 同步上报 Steam 成就（Steam 不可用时静默跳过）
 	Steam管理.jie_suo(xu_hao)
 	# 显示获得提示
 	提示弹幕.wen_ben(tip_text, 0)
 	# 刷新成就列表
 	upd_ach()
+	日志.打印("成就领取成功：" + xu_hao)
 
 # 刷新成就列表（状态实时推导 + 两级排序 + 每页6行）
 func upd_ach() -> void:
@@ -436,7 +454,7 @@ func upd_ach() -> void:
 	# 状态分组：已完成未领取(0) → 已完成已领取(1) → 未完成(2)，组内按序号升序
 	var lie_biao: Array = []
 	for i in range(ach_data.size()):
-		lie_biao.append([ach_zhuang_tai(i), int(ach_data[i][0]), i])
+		lie_biao.append([ach_zhuang_tai(i), int(ach_data[i]["xu_hao"]), i])
 	lie_biao.sort_custom(func(a, b):
 		if a[0] != b[0]:
 			return a[0] < b[0]
@@ -449,5 +467,8 @@ func upd_ach() -> void:
 	for j in range(hang_shu):
 		var xiang = lie_biao[qi + j]
 		var ach_3 = C_ach(xiang[2], j, xiang[0])
+		# 配置非法时不展示，该行留空
+		if ach_3 == null:
+			continue
 		ach.add_child(ach_3)
 		ach_1.append(ach_3)
