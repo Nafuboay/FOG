@@ -13,115 +13,14 @@
 
 extends 关卡基类
 
-# ---- 夜晚遮罩：多光源版（英雄夜视 + N 个余烬），向外加深至全黑 ----
-const 夜晚遮罩_SHADER = preload("res://关卡/夜晚遮罩.gdshader")
-# 遮罩最多光源组数：1 夜视 + 85 余烬（与 shader 的 dian_guang[86] 一致）
-const 遮罩_最大光源: int = 86
-# 英雄夜视半径（格）。每帧按当前屏幕格距换算；保持 2.5，不修改
-const 夜晚_半径格数: float = 2.5
-# 圆外黑度（1 = 全黑）
-const 夜晚_外圈黑度: float = 1.0
-# 遮罩节点与材质（用 Sprite2D 而非 Control，避免被 PC输入 的 GUI 点击检测当成控件拦截点击）
-var ye_wan_zhe_zhao: Sprite2D = null
-var ye_wan_cai_zhi: ShaderMaterial = null
-# 当前光圈中心的屏幕坐标（瞬移跟随英雄所在格）
-var ye_wan_zhong_xin: Vector2 = Vector2.ZERO
-# 预分配光源数组（槽 0 = 英雄夜视，槽 1..n = 余烬）
-var guang_yuan_huan: PackedVector4Array = PackedVector4Array()
-# 色板：0=英雄白光，1~4=四档余烬主色
-var 遮罩_色板: PackedVector3Array = PackedVector3Array([
-	Vector3(1, 1, 1),
-	Vector3(1, 0.2, 0),
-	Vector3(1, 0.6, 0.2),
-	Vector3(1, 0.8, 0.6),
-	Vector3(1, 1, 0.8),
-])
-# 性能降级开关：true 时遮罩改在半分辨率 SubViewport 中渲染（默认关闭，仅在掉帧时手动开启）
-var 遮罩_半分辨率: bool = false
-
 # ---- 覆写 _ready：先设支线倍率，再执行基类 _ready（C_GZ 内会调用我们覆写的生成函数）----
 func _ready() -> void:
 	_zhi_xian_bei_zhi()
 	super()
-	# 基类初始化完成后再挂夜晚遮罩（此时人物/容器已创建）
-	C_ye_wan_zhe_zhao()
-
-# 创建夜晚遮罩：全屏 Sprite2D + 多光源径向暗角 shader
-# 层级 500：高于世界内容（格子/怪物 z_index ≤ 约90）、低于关卡UI（1000）
-func C_ye_wan_zhe_zhao() -> void:
-	ye_wan_zhe_zhao = Sprite2D.new()
-	ye_wan_zhe_zhao.centered = false
-	ye_wan_zhe_zhao.position = Vector2.ZERO
-	# 1×1 纯白纹理靠缩放铺满全屏（shader 直接输出颜色，与纹理无关）
-	var bai = Image.create(1, 1, false, Image.FORMAT_RGBA8)
-	bai.fill(Color.WHITE)
-	ye_wan_zhe_zhao.texture = ImageTexture.create_from_image(bai)
-	ye_wan_zhe_zhao.scale = get_viewport_rect().size
-	ye_wan_zhe_zhao.z_index = 500
-	ye_wan_cai_zhi = ShaderMaterial.new()
-	ye_wan_cai_zhi.shader = 夜晚遮罩_SHADER
-	ye_wan_cai_zhi.set_shader_parameter("darkness", 夜晚_外圈黑度)
-	ye_wan_cai_zhi.set_shader_parameter("tiao_se", 遮罩_色板)
-	# 预分配 86 个槽位，首帧只写英雄夜视
-	guang_yuan_huan.resize(遮罩_最大光源)
-	for i in range(遮罩_最大光源):
-		guang_yuan_huan[i] = Vector4.ZERO
-	ye_wan_zhong_xin = ge_zhong_xin_ping_mu()
-	guang_yuan_huan[0] = Vector4(ye_wan_zhong_xin.x, ye_wan_zhong_xin.y, 夜晚_半径格数 * ge_jian_ping_mu(), 0.0)
-	ye_wan_cai_zhi.set_shader_parameter("dian_guang", guang_yuan_huan)
-	ye_wan_cai_zhi.set_shader_parameter("dian_guang_shu", 1)
-	ye_wan_cai_zhi.set_shader_parameter("outer_radius", 夜晚_半径格数 * ge_jian_ping_mu())
-	ye_wan_zhe_zhao.material = ye_wan_cai_zhi
-	add_child(ye_wan_zhe_zhao)
-
-# 每帧：英雄光照中心直接跟随（瞬移同帧到位，禁止 lerp/缓动），并推送全部光源
-func _process(_delta: float) -> void:
-	if ye_wan_cai_zhi == null:
-		return
-	ye_wan_zhong_xin = ge_zhong_xin_ping_mu()
-	upd_guang_yuan()
-
-# 是否存在夜晚遮罩（供余烬系统判断太阳上限提示用两套文案）
-func ye_wan_wu() -> bool:
-	return ye_wan_cai_zhi != null
-
-# 推送光源数组：槽 0 = 英雄夜视（2.5 格），槽 1..n = 余烬系统当前光源
-func upd_guang_yuan() -> void:
-	if ye_wan_cai_zhi == null:
-		return
-	var ge_ju: float = ge_jian_ping_mu()
-	guang_yuan_huan[0] = Vector4(ye_wan_zhong_xin.x, ye_wan_zhong_xin.y, 夜晚_半径格数 * ge_ju, 0.0)
-	var n: int = 1
-	if yu_jin != null and is_instance_valid(yu_jin):
-		var lie = yu_jin.guang_yuan_ming_dan(ge_ju, get_viewport().get_canvas_transform())
-		for i in range(lie.size()):
-			if n >= 遮罩_最大光源:
-				break
-			guang_yuan_huan[n] = lie[i]
-			n += 1
-	for i in range(n, 遮罩_最大光源):
-		guang_yuan_huan[i] = Vector4.ZERO
-	ye_wan_cai_zhi.set_shader_parameter("dian_guang", guang_yuan_huan)
-	ye_wan_cai_zhi.set_shader_parameter("dian_guang_shu", n)
-	ye_wan_cai_zhi.set_shader_parameter("outer_radius", 夜晚_半径格数 * ge_ju)
-
-# 英雄所在格中心的屏幕坐标（helo_x/helo_y 从 1 开始，GZ_zhong 用 0 基索引）
-func ge_zhong_xin_ping_mu() -> Vector2:
-	if helo == null:
-		return get_viewport_rect().size / 2.0
-	var ju_bu = GZ_zhong(helo_x - 1, helo_y - 1)
-	if rong_qi != null:
-		ju_bu = rong_qi.to_global(ju_bu)
-	return get_viewport().get_canvas_transform() * ju_bu
-
-# 一格在屏幕上的像素宽度（含关卡画面比例缩放与画布变换）
-func ge_jian_ping_mu() -> float:
-	if rong_qi == null:
-		return float(GZ_size)
-	var bian_huan = get_viewport().get_canvas_transform()
-	var jichu = bian_huan * rong_qi.to_global(GZ_zhong(0, 0))
-	var lin = bian_huan * rong_qi.to_global(GZ_zhong(1, 0))
-	return (lin - jichu).length()
+	# 光照遮罩由基类创建（白天默认：不压暗、无英雄夜视）；
+	# 支线切换为夜晚：压暗 + 英雄夜视 2.5 格 + 余烬主色
+	if zhao_ming != null:
+		zhao_ming.she_zhi(1.0, true)
 
 # ---- 支线专属属性倍率 ----
 func _zhi_xian_bei_zhi() -> void:

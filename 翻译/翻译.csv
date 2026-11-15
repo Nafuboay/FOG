@@ -353,6 +353,15 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 世界不希望同时出现两个太阳！,,The world doesn't want two suns at once!,世界不希望同時出現兩個太陽！,世界は同時に二つの太陽を望まない！
 世界不希望同时出现三个太阳！,,The world doesn't want three suns at once!,世界不希望同時出現三個太陽！,世界は同時に三つの太陽を望まない！
 战斗中无法使用【%s】！,,Can't use [%s] in combat!,戰鬥中無法使用【%s】！,戦闘中は【%s】を使えない！
-使用【%s】，照亮周围%d格，持续%d秒！,,Used [%s]: lights %d tiles for %d seconds!,使用【%s】，照亮周圍%d格，持續%d秒！,【%s】を使った。周囲%dマスを%d秒照らす！
+使用【%s】，初始最大光照半径%d格，光照面积随时间减少，%d秒后完全熄灭！,,"Used [%s]: initial light radius %d tiles; the lit area shrinks over time and goes out after %d seconds!",使用【%s】，初始最大光照半徑%d格，光照面積隨時間減少，%d秒後完全熄滅！,【%s】を使用。初期の最大光照半径%dマス、光照面積は時間とともに減少し、%d秒後に完全に消える！
 支线照明，照亮周围%d格，持续%d秒,,Branch-level light: %d tiles for %d seconds,支線照明，照亮周圍%d格，持續%d秒,支線の照明。周囲%dマスを%d秒照らす
 余烬已燃尽,,The ember burned out,餘燼已燃盡,残り火は燃え尽きた
+商店\n被封印的便携式火球。,,Shop\nA sealed portable fireball.,商店\n被封印的攜帶式火球。,ショップ\n封印された携帯用火球。
+商店\n小心爆炸余波！。,,Shop\nMind the blast wave!.,商店\n小心爆炸餘波！。,ショップ\n爆発の余波に注意！。
+商店\n快看，有流星！,,"Shop\nLook, a meteor!",商店\n快看，有流星！,ショップ\n見て、流星だ！
+商店\n天哪，有人伪造了太阳！,,"Shop\nMy god, someone forged a sun!",商店\n天哪，有人偽造了太陽！,ショップ\nなんてこった、誰かが太陽を偽造した！
+"初始最大光照半径5格，光照面积随时间减少，40秒后完全熄灭",,"Initial light radius 5 tiles; the lit area shrinks over time and goes out after 40 seconds",初始最大光照半徑5格，光照面積隨時間減少，40秒後完全熄滅,初期の最大光照半径5マス。光照面積は時間とともに減少し、40秒後に完全に消える
+"初始最大光照半径10格，光照面积随时间减少，100秒后完全熄灭",,"Initial light radius 10 tiles; the lit area shrinks over time and goes out after 100 seconds",初始最大光照半徑10格，光照面積隨時間減少，100秒後完全熄滅,初期の最大光照半径10マス。光照面積は時間とともに減少し、100秒後に完全に消える
+"初始最大光照半径20格，光照面积随时间减少，250秒后完全熄灭",,"Initial light radius 20 tiles; the lit area shrinks over time and goes out after 250 seconds",初始最大光照半徑20格，光照面積隨時間減少，250秒後完全熄滅,初期の最大光照半径20マス。光照面積は時間とともに減少し、250秒後に完全に消える
+"初始最大光照半径40格，光照面积随时间减少，625秒后完全熄灭",,"Initial light radius 40 tiles; the lit area shrinks over time and goes out after 625 seconds",初始最大光照半徑40格，光照面積隨時間減少，625秒後完全熄滅,初期の最大光照半径40マス。光照面積は時間とともに減少し、625秒後に完全に消える
+余烬滤镜强度,,Ember Filter Strength,餘燼濾鏡強度,残り火フィルター強度

@@ -22,6 +22,10 @@ const JING_TOU_SU_DU_MAX: int = 7
 # 镜头跟随速度档位数值表（像素/秒，实际速度 = 档位值 × 当前缩放；0档画面不移动）
 # 设置界面显示与关卡补间共用此表，避免两处各存一份
 const JING_TOU_SU_DU_DANG_WEI: Array = [0, 18, 36, 72, 180, 360, 720, 1800]
+# 余烬滤镜强度设置（百分比，10~60，默认24；1% 一格）
+const YU_JIN_QIANG_DU_MO_REN: int = 24
+const YU_JIN_QIANG_DU_MIN: int = 10
+const YU_JIN_QIANG_DU_MAX: int = 60
 # 存档玩法模式标识字段名（与关卡用的"模式"字段 0主线/1诛邪/2支线互不复用）
 const MO_SHI_ZI_DUAN: String = "模式标识"
 # 模式标识取值：0=标准模式，1=富豪模式
@@ -35,6 +39,8 @@ var id: int = 0
 var ji_chu_zhen_lv_huan_cun: int = -1
 # 镜头跟随速度内存缓存（-1表示未加载；避免英雄每走一步都读存档文件）
 var jing_tou_su_du_huan_cun: int = -1
+# 余烬滤镜强度内存缓存（-1表示未加载；遮罩每帧只比较缓存，不读文件）
+var yu_jin_qiang_du_huan_cun: int = -1
 # 存档文件夹路径（系统用户数据目录下，Windows 为 %APPDATA%\Godot\app_userdata\FOG\迷雾存档）
 var mi_wu_json: String = ""
 
@@ -45,7 +51,7 @@ func _ready() -> void:
 	wen_jian_jia()
 	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音，语言简体中文），所有档共用
 	if not FileAccess.file_exists(get_ty_lu_jing()):
-		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN", "基础帧率": ZHEN_LV_MO_REN, "镜头跟随速度": JING_TOU_SU_DU_MO_REN})
+		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN", "基础帧率": ZHEN_LV_MO_REN, "镜头跟随速度": JING_TOU_SU_DU_MO_REN, "余烬滤镜强度": YU_JIN_QIANG_DU_MO_REN})
 	# 手动加载翻译资源（project.godot 的 [locale] 配置在含中文路径"翻译/"时可能加载失败，代码手动加载更可靠）
 	_jia_zai_fan_yi()
 	# 启动时应用存档中的语言设置
@@ -463,6 +469,30 @@ func set_jing_tou_su_du(dang: int) -> void:
 	data["镜头跟随速度"] = clampi(dang, JING_TOU_SU_DU_MIN, JING_TOU_SU_DU_MAX)
 	bao_cun_ty(data)
 	jing_tou_su_du_huan_cun = int(data["镜头跟随速度"])
+
+# 获取余烬滤镜强度（百分比，10~60，默认24；首次读档后缓存）
+func get_yu_jin_qiang_du() -> int:
+	if yu_jin_qiang_du_huan_cun < 0:
+		var v = du_qu_ty().get("余烬滤镜强度", YU_JIN_QIANG_DU_MO_REN)
+		var qiang: int = YU_JIN_QIANG_DU_MO_REN
+		# 非法/非数字一律回落默认24（不先转成0再夹紧，否则会错误落到下限10）
+		if v is int or v is float:
+			qiang = int(v)
+		elif v is String and v.is_valid_int():
+			qiang = int(v)
+		yu_jin_qiang_du_huan_cun = clampi(qiang, YU_JIN_QIANG_DU_MIN, YU_JIN_QIANG_DU_MAX)
+	return yu_jin_qiang_du_huan_cun
+
+# 保存余烬滤镜强度（夹紧10~60后写入通用存档并同步缓存）
+func set_yu_jin_qiang_du(qiang: int) -> void:
+	var data = du_qu_ty()
+	data["余烬滤镜强度"] = clampi(qiang, YU_JIN_QIANG_DU_MIN, YU_JIN_QIANG_DU_MAX)
+	bao_cun_ty(data)
+	yu_jin_qiang_du_huan_cun = int(data["余烬滤镜强度"])
+
+# 余烬滤镜强度换算成 shader 用的 0~1 浮点值
+func get_yu_jin_qiang_du_bi() -> float:
+	return float(get_yu_jin_qiang_du()) / 100.0
 
 # 获取当前镜头跟随速度数值（像素/秒；0表示画面不移动，实际速度还需乘当前缩放）
 func get_jing_tou_su_du_zhi() -> float:

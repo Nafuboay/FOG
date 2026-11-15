@@ -407,10 +407,7 @@ func suo_fang_upd(fang_da: bool) -> void:
 # xia_yi_guan_callback: 下一关按钮点击时调用的回调函数名（Callable）
 # xian_shi_an_niu: 是否显示下一关按钮
 func _C_sheng_li_jie_mian(xia_yi_guan_callback: Callable, xian_shi_an_niu: bool) -> void:
-	# 清空全部余烬（胜利后不再显示动画与光照）
-	var yj = guan_qia.get("yu_jin")
-	if yj != null and is_instance_valid(yj):
-		yj.quan_bu_qing_li()
+	# 胜利界面出现时余烬继续燃烧；仅在重开/下一关/离开关卡时随场景销毁
 	# 获取视口尺寸用于居中显示（逻辑分辨率）
 	var viewport_size = guan_qia.get_viewport_rect().size
 	# 加载胜利图片

@@ -45,7 +45,8 @@ func 建实体(ming: String, ge: Vector2i) -> bool:
 	sprite.speed_scale = _dong_hua_su_du()
 	sprite.centered = true
 	sprite.position = guan_qia.GZ_zhong(ge.x, ge.y)
-	sprite.scale = Vector2(1.5, 1.5)
+	# 整体 50×50（64×64 帧 → 基准缩放 50/64 ≈ 0.78125）
+	sprite.scale = Vector2(50.0 / 64.0, 50.0 / 64.0)
 	# 放置瞬间英雄必在同格 → 先 +1 盖住英雄；离开后由 _process 回落默认层级
 	sprite.z_index = _mo_ren_z(ge) + 1
 	sprite.play(&"燃")
@@ -76,22 +77,23 @@ func _process(delta: float) -> void:
 		var T: float = float(cfg["时长"])
 		e["已烧"] = clamp(float(e["已烧"]) + delta, 0.0, T)
 		var t: float = float(e["已烧"])
-		var k: float = sqrt(max(0.0, 1.0 - t / T))
 		var node = e["节点"]
 		if is_instance_valid(node):
-			# 动画尺寸按面积连续缩小（每帧）
-			node.scale = Vector2(1.5, 1.5) * k
 			# 层级：异格沿用默认格排序，仅同格 +1 盖住英雄
 			var ge: Vector2i = e["格"]
 			var tong_ge := false
 			if guan_qia.helo != null:
 				tong_ge = Vector2i(guan_qia.helo_x - 1, guan_qia.helo_y - 1) == ge
 			node.z_index = _mo_ren_z(ge) + (1 if tong_ge else 0)
-		# 光照半径每秒只更新一次（整秒采样；第 0~1 秒保持满半径）
+		# 光照半径与动画尺寸每秒只更新一次（整秒采样；第 0~1 秒保持满格/满尺寸）
 		var zheng: int = int(floor(t))
 		if zheng != int(e["整秒"]):
 			e["整秒"] = zheng
-			e["半径格"] = float(cfg["半径格"]) * sqrt(max(0.0, 1.0 - float(zheng) / T))
+			var k_cur: float = sqrt(max(0.0, 1.0 - float(zheng) / T))
+			e["半径格"] = float(cfg["半径格"]) * k_cur
+			if is_instance_valid(node):
+				# 动画与光圈同频跳变，基准 50×50
+				node.scale = Vector2(50.0 / 64.0, 50.0 / 64.0) * k_cur
 		# 燃尽移除
 		if t >= T:
 			if is_instance_valid(node):
@@ -164,7 +166,7 @@ func fang_zhi(ming: String) -> int:
 		if e["名"] == ming:
 			n += 1
 	if n >= int(cfg.get("上限", 0)):
-		var you_ye: bool = guan_qia.has_method("ye_wan_wu") and guan_qia.ye_wan_wu()
+		var you_ye: bool = guan_qia.zhao_ming != null and guan_qia.zhao_ming.you_ya_an()
 		提示弹幕.wen_ben(tr(余烬档位.shang_xian_ti_shi(ming, you_ye)), 0)
 		日志.打印("余烬拒绝：" + ming + " " + _ge_zi(ge) + " 原因=该档达上限")
 		return 4
@@ -187,7 +189,7 @@ func fang_zhi(ming: String) -> int:
 		提示弹幕.wen_ben(tr("保存失败，请稍后重试"), 0)
 		return 5
 	# 成功提示与刷新
-	提示弹幕.wen_ben(tr("使用【%s】，照亮周围%d格，持续%d秒！") % [tr(ming), int(cfg["半径格"]), int(cfg["时长"])], 0)
+	提示弹幕.wen_ben(tr("使用【%s】，初始最大光照半径%d格，光照面积随时间减少，%d秒后完全熄灭！") % [tr(ming), int(cfg["半径格"]), int(cfg["时长"])], 0)
 	guan_qia.guan_ui.dao_ju_upd()
 	日志.打印("余烬放置：" + ming + " " + _ge_zi(ge) + " %.2f秒" % float(cfg["时长"]))
 	return 0

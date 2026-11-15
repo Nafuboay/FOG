@@ -72,6 +72,10 @@ var qi_hua = null
 const 余烬系统_SCRIPT = preload("res://关卡/余烬系统.gd")
 # 余烬系统节点引用（由 _guan_qia_chu_shi 创建）
 var yu_jin = null
+# 光照遮罩预加载（三种模式共用：白天仅余烬主色，支线由子类切换为夜晚压暗+夜视）
+const 照明遮罩_SCRIPT = preload("res://关卡/照明遮罩.gd")
+# 光照遮罩节点引用（由 _guan_qia_chu_shi 创建）
+var zhao_ming = null
 # BOSS位置列表，存储主格(x,y)坐标
 var BOSS_xy = []
 # 战斗系统预加载
@@ -209,6 +213,9 @@ func _guan_qia_chu_shi() -> void:
 	# 创建余烬燃烧实体系统（三模式共用；支线由夜晚遮罩读取其光源，主线/诛邪仅显示动画）
 	yu_jin = 余烬系统_SCRIPT.new(self)
 	add_child(yu_jin)
+	# 创建光照遮罩（三种模式共用；白天默认不压暗、无夜视，仅余烬主色）
+	zhao_ming = 照明遮罩_SCRIPT.new(self, 0.0, false)
+	add_child(zhao_ming)
 	# 创建人物面板
 	XX.C_look_helo()
 	# 创建缩放按钮

@@ -55,6 +55,10 @@ var she_zhi_jing_tou: Control = null
 # 镜头跟随速度子界面控件
 var she_zhi_jt_lbl: Label = null
 var she_zhi_jt_slider: HSlider = null
+# 余烬滤镜强度子界面与控件
+var she_zhi_yu_jin: Control = null
+var she_zhi_yj_lbl: Label = null
+var she_zhi_yj_slider: HSlider = null
 # 支持的语言列表 {code: 语言代码, ming: 显示名称}
 const YU_YAN_LIE_BIAO: Array = [
 	{"code": "zh_CN", "ming": "简体中文"},
@@ -262,9 +266,11 @@ func chuang_jian_she_zhi() -> void:
 	she_zhi_yu_yan = C_she_zhi_yu_yan(win_x, win_y)
 	she_zhi_zhen_lv = C_she_zhi_zhen_lv(win_x, win_y)
 	she_zhi_jing_tou = C_she_zhi_jing_tou(win_x, win_y)
+	she_zhi_yu_jin = C_she_zhi_yu_jin(win_x, win_y)
 	she_zhi_yu_yan.visible = false
 	she_zhi_zhen_lv.visible = false
 	she_zhi_jing_tou.visible = false
+	she_zhi_yu_jin.visible = false
 	# 音量子界面：直接内嵌音量调节模块，其320×180面板照搬原样（屏幕居中），显隐由qie_huan_zi_jie_mian控制
 	VOL_sz = load("res://音乐/音量调节.gd").new()
 	VOL_sz.qian_ru = true
@@ -447,13 +453,14 @@ func xian_shi_mo_shi_pan() -> void:
 	if mo_shi_panel != null:
 		mo_shi_panel.visible = true
 
-# 创建三项目录面板：语言/音量/基础帧率/镜头跟随速度（高度随条目数自动调整，后续加项只需在数组里追加）
+# 创建设置目录面板：语言/音量/基础帧率/镜头跟随速度/余烬滤镜强度（高度随条目数自动调整）
 func C_she_zhi_mu_lu(win_x: float, win_y: float) -> Control:
 	return C_tiao_mu_ban("设置", [
 		["语言", qie_huan_zi_jie_mian.bind(1)],
 		["音量", qie_huan_zi_jie_mian.bind(2)],
 		["基础帧率", qie_huan_zi_jie_mian.bind(3)],
 		["镜头跟随速度", qie_huan_zi_jie_mian.bind(4)],
+		["余烬滤镜强度", qie_huan_zi_jie_mian.bind(5)],
 	], win_x, win_y)
 
 # 创建语言子界面面板：四种语言各用一条签名框条目
@@ -571,6 +578,60 @@ func C_she_zhi_jing_tou(win_x: float, win_y: float) -> Control:
 	she_zhi_panel.add_child(jie)
 	return jie
 
+# 创建余烬滤镜强度子界面：标题 + 数值文字 + 10~60 滑块，按内容定高230
+func C_she_zhi_yu_jin(win_x: float, win_y: float) -> Control:
+	var jie = Control.new()
+	var ban_pos := Vector2((win_x - 320) / 2.0, (win_y - 230) / 2.0)
+	var ban_bg = TextureRect.new()
+	ban_bg.texture = load("res://全局/图片/背包背景.png")
+	ban_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ban_bg.size = Vector2(320, 230)
+	ban_bg.position = ban_pos
+	jie.add_child(ban_bg)
+	# 面板标题
+	var tit = Label.new()
+	tit.text = tr("余烬滤镜强度")
+	tit.size = Vector2(320, 50)
+	tit.position = ban_pos + Vector2(0, 30)
+	tit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tit.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	tit.add_theme_font_size_override("font_size", 28)
+	tit.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(tit)
+	jie.add_child(tit)
+	# 当前强度数值文字（只翻译名称，数值与百分号各语言一致）
+	she_zhi_yj_lbl = Label.new()
+	she_zhi_yj_lbl.position = ban_pos + Vector2(0, 100)
+	she_zhi_yj_lbl.size = Vector2(320, 40)
+	she_zhi_yj_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	she_zhi_yj_lbl.add_theme_font_size_override("font_size", 26)
+	she_zhi_yj_lbl.add_theme_color_override("font_color", Color.BLACK)
+	she_zhi_kai_ti(she_zhi_yj_lbl)
+	jie.add_child(she_zhi_yj_lbl)
+	# 强度滑块（10~60，步长1）
+	she_zhi_yj_slider = HSlider.new()
+	she_zhi_yj_slider.position = ban_pos + Vector2(20, 165)
+	she_zhi_yj_slider.size = Vector2(280, 20)
+	she_zhi_yj_slider.min_value = 游戏存档.YU_JIN_QIANG_DU_MIN
+	she_zhi_yj_slider.max_value = 游戏存档.YU_JIN_QIANG_DU_MAX
+	she_zhi_yj_slider.step = 1
+	she_zhi_yj_slider.tick_count = 游戏存档.YU_JIN_QIANG_DU_MAX - 游戏存档.YU_JIN_QIANG_DU_MIN + 1
+	she_zhi_yj_slider.value_changed.connect(func(value):
+		# 拖动即写入通用存档；关卡内遮罩下一帧自动读取
+		if json != null:
+			json.set_yu_jin_qiang_du(int(value))
+		upd_yu_jin_lbl(int(value))
+	)
+	jie.add_child(she_zhi_yj_slider)
+	she_zhi_panel.add_child(jie)
+	return jie
+
+# 刷新余烬滤镜强度数值文字
+func upd_yu_jin_lbl(qiang: int) -> void:
+	if she_zhi_yj_lbl == null or not is_instance_valid(she_zhi_yj_lbl):
+		return
+	she_zhi_yj_lbl.text = tr("余烬滤镜强度") + "：" + str(qiang) + "%"
+
 # 刷新镜头跟随速度的数值文字（0档显示「不移动」，其余显示档位像素/秒）
 func upd_jing_tou_lbl(dang: int) -> void:
 	if she_zhi_jt_lbl == null or not is_instance_valid(she_zhi_jt_lbl):
@@ -595,6 +656,7 @@ func dakai_she_zhi(da: bool) -> void:
 		qie_huan_zi_jie_mian(0)
 		du_qu_zhen_lv()
 		du_qu_jing_tou()
+		du_qu_yu_jin()
 	elif json != null:
 		# 关闭设置后，主界面现有的存档/选角待机动画立即按新基础帧率播放
 		json.shua_xin_dong_hua_su_du()
@@ -609,6 +671,7 @@ func qie_huan_zi_jie_mian(n: int) -> void:
 		VOL_sz.P.visible = n == 2
 	she_zhi_zhen_lv.visible = n == 3
 	she_zhi_jing_tou.visible = n == 4
+	she_zhi_yu_jin.visible = n == 5
 
 # 从通用存档读取基础帧率并同步到滑块与文字
 func du_qu_zhen_lv() -> void:
@@ -628,6 +691,15 @@ func du_qu_jing_tou() -> void:
 	if she_zhi_jt_slider != null:
 		she_zhi_jt_slider.value = dang
 	upd_jing_tou_lbl(dang)
+
+# 从通用存档读取余烬滤镜强度并同步到滑块与文字
+func du_qu_yu_jin() -> void:
+	if json == null:
+		return
+	var qiang = json.get_yu_jin_qiang_du()
+	if she_zhi_yj_slider != null:
+		she_zhi_yj_slider.value = qiang
+	upd_yu_jin_lbl(qiang)
 
 # 语言选项被点击：保存到通用存档、关闭设置并重建场景让所有文本按新语言刷新
 func _on_yu_yan_xuan_ze(code: String) -> void:
