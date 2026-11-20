@@ -255,6 +255,8 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 "花精灵·沙华：""我的力量耗尽了，祝你好运。""",,"Flower Sprite · Shahua: ""My power is drained. Good luck.""",花精靈·沙華：「我的力量耗盡了，祝你好運。」,花の精霊・沙華：「力が尽きました。幸運を。」
 金条不足，供奉失败！,,Not enough gold bars. Offering failed!,金條不足，供奉失敗！,金塊が足りず、奉納失敗！
 供奉成功，【破损朱雀圣像】修复为【朱雀圣像】！,,Offering succeeded! [Broken Vermilion Bird Statue] restored to [Vermilion Bird Statue]!,供奉成功，【破損朱雀聖像】修復為【朱雀聖像】！,奉納成功！【破損した朱雀の聖像】が【朱雀の聖像】に修復されました！
+朱雀圣像已达上限（英雄等级%d）！,,Vermilion Bird Statue at limit (Hero Lv.%d)!,朱雀聖像已達上限（英雄等級%d）！,朱雀の聖像が上限に達しました（英雄レベル%d）！
+供奉成功，获得1个【朱雀圣像】！,,Offering succeeded! Gained 1 [Vermilion Bird Statue]!,供奉成功，獲得1個【朱雀聖像】！,奉納成功！【朱雀の聖像】を1個獲得！
 银币不足！只能购买%d件！,,Not enough silver! Can only buy %d!,銀幣不足！只能購買%d件！,銀貨が足りません！%d個しか買えません！
 购买并使用【%s】x%d，获得%d经验！,,"Bought and used [%s] x%d, gained %d EXP!",購買並使用【%s】x%d，獲得%d經驗！,【%s】x%dを購入・使用し、経験値%dを獲得！
 购买%sx%d，花费%d银币！,,"Bought %s x%d, spent %d silver!",購買%sx%d，花費%d銀幣！,%s x%dを購入し、銀貨%d枚を消費！

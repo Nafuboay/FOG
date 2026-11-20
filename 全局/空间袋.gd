@@ -189,15 +189,15 @@ func get_cao_zuo_png0() -> Texture2D:
 	return cao_zuo_png0
 func get_cao_zuo_png1() -> Texture2D:
 	return cao_zuo_png1
-# 是否显示操作按钮（主城场景显示；可出售物品显示出售按钮，破损朱雀圣像显示供奉按钮）
+# 是否显示操作按钮（主城场景显示；可出售物品显示出售按钮，朱雀圣像与破损朱雀圣像显示供奉按钮）
 func yao_xian_shi_cao_zuo_btn(wu_ming: String) -> bool:
-	return is_zhu and (物品信息.shi_fou_ke_chu_shou(wu_ming) or wu_ming == "破损朱雀圣像")
+	return is_zhu and (物品信息.shi_fou_ke_chu_shou(wu_ming) or wu_ming == "朱雀圣像" or wu_ming == "破损朱雀圣像")
 
-# 创建操作按钮（破损朱雀圣像只显示供奉按钮，其他物品沿用出售按钮）
+# 创建操作按钮（朱雀圣像显示供奉增殖按钮，破损朱雀圣像显示供奉修复按钮，其他物品沿用出售按钮）
 func create_cao_zuo_buttons() -> void:
-	# 当前选中物品不是破损朱雀圣像时，沿用父类出售按钮
+	# 当前选中物品不是朱雀圣像或破损朱雀圣像时，沿用父类出售按钮
 	var wu_ming = get_wu_ming(GZ_ing)
-	if wu_ming != "破损朱雀圣像":
+	if wu_ming != "朱雀圣像" and wu_ming != "破损朱雀圣像":
 		super.create_cao_zuo_buttons()
 		return
 	# 创建供奉按钮（位置沿用原第一个出售按钮位置）
@@ -231,13 +231,13 @@ func get_cao_zuo_amounts() -> Array:
 	return [1, 0, -1]
 
 # 操作按钮点击处理
-# amount 为操作模式：1=出售一件，0=出售当前数量10%向上取整，-1=出售全部，-2=供奉修复破损朱雀圣像
+# amount 为操作模式：1=出售一件，0=出售当前数量10%向上取整，-1=出售全部，-2=供奉（朱雀圣像增殖/破损圣像修复）
 func cao_zuo_3(event: InputEvent, amount: int) -> void:
 	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
 		return
-	# 供奉修复破损朱雀圣像
+	# 供奉：朱雀圣像增殖或破损朱雀圣像修复
 	if amount == -2:
-		gong_feng_xiu_fu()
+		gong_feng()
 		return
 	# 获取当前选中物品名称
 	var wu_ming = get_wu_ming(GZ_ing)
@@ -276,6 +276,64 @@ func cao_zuo_3(event: InputEvent, amount: int) -> void:
 	var S_1 = int(data.get("银币", 0))
 	# 执行批量出售
 	chu_shou_batch(wu_ming, shu_liang, shou_jia, BB, S_1, json, actual)
+
+# 供奉：朱雀圣像增殖 / 破损朱雀圣像修复
+func gong_feng() -> void:
+	var wu_ming = get_wu_ming(GZ_ing)
+	if wu_ming == "朱雀圣像":
+		gong_feng_zeng_zhi()
+	elif wu_ming == "破损朱雀圣像":
+		gong_feng_xiu_fu()
+
+# 朱雀圣像数量上限（等于英雄等级，等级缺失或非法时按1）
+func get_zhu_que_max(data = null) -> int:
+	var d: Dictionary = data if data != null else {}
+	if d.is_empty():
+		var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+		if json == null:
+			return 1
+		d = json.du_qu(json.id)
+	return int(max(int(d.get("等级", 1)), 1))
+
+# 供奉增殖：消耗1个金条，朱雀圣像数量+1，数量上限为英雄等级
+func gong_feng_zeng_zhi() -> void:
+	# 当前选中物品必须是朱雀圣像
+	var wu_ming = get_wu_ming(GZ_ing)
+	if wu_ming != "朱雀圣像":
+		return
+	# 获取存档节点
+	var json = get_node("/root/游戏存档") if has_node("/root/游戏存档") else null
+	if json == null:
+		return
+	# 读取当前存档数据
+	var data = json.du_qu(json.id)
+	var BB = data.get("背包", {})
+	# 当前数量与上限（上限=英雄等级）
+	var zhu_n = int(BB.get("朱雀圣像", 0))
+	var max_n = get_zhu_que_max(data)
+	# 已达上限：不消耗金条
+	if zhu_n >= max_n:
+		提示弹幕.wen_ben(tr("朱雀圣像已达上限（英雄等级%d）！") % max_n, 0)
+		return
+	# 校验金条数量，不足则供奉失败
+	var jin_n = int(BB.get("金条", 0))
+	if jin_n <= 0:
+		提示弹幕.wen_ben("金条不足，供奉失败！", 0)
+		return
+	# 消耗1个金条
+	BB["金条"] = jin_n - 1
+	if int(BB["金条"]) <= 0:
+		BB.erase("金条")
+	# 增加1个朱雀圣像
+	BB["朱雀圣像"] = zhu_n + 1
+	# 保存存档
+	data["背包"] = BB
+	json.bao_cun(json.id, data)
+	# 刷新背包显示
+	wu_pin_ing = BB
+	xian_shi_wu_pin(BB)
+	# 显示成功弹幕
+	提示弹幕.wen_ben(tr("供奉成功，获得1个【朱雀圣像】！"), 0)
 
 # 供奉修复：消耗1个金条，将1个破损朱雀圣像修复为1个朱雀圣像
 func gong_feng_xiu_fu() -> void:
