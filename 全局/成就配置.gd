@@ -22,7 +22,7 @@ const ACH_DATA: Array = [
 	},
 	{
 		"xu_hao": "1001", "ming": "饮虹使", "tu_biao": "饮虹使",
-		"tiao_jian": 0, "zhi": "彩虹", "wu_pin": "彩虹", "shu_liang": 1,
+		"tiao_jian": 0, "zhi": "彩虹", "wu_pin": "彩虹", "shu_liang": 7,
 		"miao_shu": "拥有【彩虹】", "ying_xiong": "",
 	},
 	{
