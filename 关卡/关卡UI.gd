@@ -16,6 +16,8 @@ var BB: Control = null
 var YL: Control = null
 # 道具容器
 var dao_ju: Control = null
+# 道具格子背景（与背包空间格子同款）
+var dao_ju_ge_png: Texture2D = null
 # 恢复符启用中
 var hui_fu_ing: TextureRect = null
 # 玄武盾符启用中
@@ -239,6 +241,7 @@ func C_dao_ju() -> void:
 	dao_ju.name = "道具"
 	dao_ju.z_index = 1000
 	dao_ju.visible = false
+	dao_ju_ge_png = load("res://全局/图片/空间格子.png")
 	guan_qia.add_child(dao_ju)
 
 # 更新道具显示
@@ -273,6 +276,16 @@ func dao_ju_upd() -> void:
 			if n > 0:
 				# 创建物品图标
 				if 物品信息.wu_pin_png.has(wu_ming):
+					# 格子背景：与背包同款，图标居中放在格子里
+					var ge = TextureRect.new()
+					ge.texture = dao_ju_ge_png
+					ge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+					ge.size = Vector2(p_2, p_2)
+					ge.position = Vector2(p_x + idx * p_2 - (p_2 - p_1) / 2.0, p_y - (p_2 - p_1) / 2.0)
+					# 格子只做背景，点击穿透，不挡图标和地图操作
+					ge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+					ge.z_index = 999
+					dao_ju.add_child(ge)
 					var wu_pin_tu = TextureRect.new()
 					wu_pin_tu.texture = load(物品信息.wu_pin_png[wu_ming])
 					wu_pin_tu.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -331,7 +344,7 @@ func dao_ju_upd() -> void:
 						wu_n.add_theme_color_override("font_color", Color.BLACK)
 						# 角标点击穿透，避免挡住道具图标的点击
 						wu_n.mouse_filter = Control.MOUSE_FILTER_IGNORE
-						wu_n.position = Vector2(p_x+idx*p_2+p_1-wu_n.get_minimum_size().x+10,p_y+p_1-wu_n.get_minimum_size().y+10)
+						wu_n.position = ge.position + Vector2(p_2 - wu_n.get_minimum_size().x - 6, p_2 - wu_n.get_minimum_size().y - 2)
 						wu_n.z_index = 1000
 						dao_ju.add_child(wu_n)
 					idx += 1

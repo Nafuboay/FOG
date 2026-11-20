@@ -8,6 +8,12 @@ static var _kai_ti_font: FontFile = null
 var time_1: float = 0.0
 # 当前弹幕间隔时间
 var time_t: float = 0.5
+# 弹幕字芯颜色
+const ZI_XIN_YAN_SE = Color(0, 0, 0)
+# 内环颜色
+const NEI_HUAN_YAN_SE = Color(0, 0, 0)
+# 外环颜色
+const WAI_HUAN_YAN_SE = Color(1, 1, 0.8, 0.8)
 
 # 显示文本内容（delay为延迟出现时间，单位秒）
 # 内部自动对文本进行国际化翻译，调用方传入中文原文即可
@@ -50,20 +56,13 @@ func dan_mu(s: String, extra_delay: float = 0.0) -> void:
 
 # 创建弹幕节点并播放动画
 func C_dan_mu(s: String, font_size: int) -> void:
-	# 创建Label节点用于显示文本
-	var label = Label.new()
-	label.text = s
-	label.add_theme_font_size_override("font_size", font_size)
-	# 设置楷体字体
-	kai_ti(label)
-	# 设置文本水平居中对齐
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	# 设置文本垂直居中对齐
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	# 设置文本颜色为纯黑色
-	label.add_theme_color_override("font_color", Color.BLACK)
-	# 设置鼠标过滤器为忽略，使鼠标事件穿透该Label，不阻挡下方UI交互
-	label.mouse_filter = MOUSE_FILTER_IGNORE
+	# 描边宽度随字号变化，小字收窄避免糊成一团
+	var nei_kuan = 2 if font_size >= 32 else 1
+	var wai_kuan = nei_kuan
+	var label = _zhi_zuo_label(s, font_size, WAI_HUAN_YAN_SE, WAI_HUAN_YAN_SE, nei_kuan + wai_kuan)
+	var zi_label = _zhi_zuo_label(s, font_size, ZI_XIN_YAN_SE, NEI_HUAN_YAN_SE, nei_kuan)
+	label.add_child(zi_label)
+	zi_label.position = Vector2(wai_kuan, wai_kuan)
 	# 设置z_index确保弹幕显示在最上层
 	label.z_index = 2000
 	# 将Label添加到管理数组中
@@ -86,6 +85,27 @@ func C_dan_mu(s: String, font_size: int) -> void:
 	tween.parallel().tween_property(label, "modulate:a", 0.0, 5.0)
 	# 动画完成后执行清理回调
 	tween.tween_callback(_wan_cheng.bind(label))
+
+# 创建一层弹幕文字，描边宽度决定这一层向外扩出的轮廓
+func _zhi_zuo_label(s: String, font_size: int, zi_se: Color, bian_se: Color, bian_kuan: int) -> Label:
+	var label = Label.new()
+	label.text = s
+	label.add_theme_font_size_override("font_size", font_size)
+	# 设置楷体字体
+	kai_ti(label)
+	# 设置文本水平居中对齐
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# 设置文本垂直居中对齐
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	# 字芯颜色
+	label.add_theme_color_override("font_color", zi_se)
+	# 描边颜色
+	label.add_theme_color_override("font_outline_color", bian_se)
+	# 描边宽度
+	label.add_theme_constant_override("outline_size", bian_kuan)
+	# 设置鼠标过滤器为忽略，使鼠标事件穿透该Label，不阻挡下方UI交互
+	label.mouse_filter = MOUSE_FILTER_IGNORE
+	return label
 
 # 获取楷体字体
 static func get_kai_ti_font() -> FontFile:
