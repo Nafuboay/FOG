@@ -6,6 +6,12 @@ var target_grid_x: int = -1
 var target_grid_y: int = -1
 # 当前正在进行的tween动画
 var current_tween: Tween = null
+# 战斗中拖动：按下左键后的待定起点（-1,-1 表示未按下）
+var zhan_dou_tuo_dong_dai_ting = Vector2(-1, -1)
+# 战斗中拖动：是否已超过阈值进入拖动
+var zhan_dou_tuo_dong_zhong: bool = false
+# 区分点击与拖动的最小屏幕位移
+const TUO_DONG_YU_ZHI: float = 4.0
 
 # 获取父节点引用并启用输入处理
 func _ready() -> void:
@@ -17,6 +23,8 @@ func _ready() -> void:
 	set_process_input(true)
 	# 添加到缩放变化监听组
 	add_to_group("suo_fang_group")
+	# 窗口失焦时结束拖动，避免鼠标在窗口外松开后画面继续跟随
+	get_window().focus_exited.connect(_zhan_dou_ting_zhi_tuo_dong)
 
 # 根据输入类型分发到不同的处理逻辑
 func _input(event: InputEvent) -> void:
@@ -30,9 +38,11 @@ func _input(event: InputEvent) -> void:
 		return
 	# 检查背包是否打开，如果打开则禁止其他操作
 	if guan_ui.BB != null and guan_ui.BB.BB_on:
+		_zhan_dou_ting_zhi_tuo_dong()
 		return
 	# 检查音量面板是否打开，如果打开则禁止其他操作
 	if guan_ui.YL != null and guan_ui.YL.is_VOL:
+		_zhan_dou_ting_zhi_tuo_dong()
 		return
 	# 获取战斗状态标志
 	var zhan_dou_ing = zhan_dou.zhan_dou_ing
@@ -42,9 +52,17 @@ func _input(event: InputEvent) -> void:
 	if zhan_dou_ing and not che_tui_ing and not guan_qia.has_method("_zhu_xie_win"):
 		if event is InputEventKey and event.pressed and event.keycode == KEY_F:
 			guan_ui.on_che_tui()
-	# 战斗中和战败时禁止其他操作
-	if zhan_dou_ing or zhan_bai:
+	# 战斗中：只放行滚轮缩放与左键拖动画面，其余操作禁止
+	if zhan_dou_ing:
+		# 战斗开始后丢弃非战斗状态遗留的拖动起点
+		guan_qia.tuo_dong = Vector2(-1, -1)
+		_zhan_dou_hua_mian_kong_zhi(event)
 		return
+	# 战败时禁止其他操作
+	if zhan_bai:
+		return
+	# 战斗结束后，复位战斗中遗留的拖动状态
+	_zhan_dou_ting_zhi_tuo_dong()
 	# 检查鼠标是否点击在GUI控件上
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var mouse_xy = guan_qia.get_global_mouse_position()
@@ -107,6 +125,54 @@ func _input(event: InputEvent) -> void:
 			var click_x = int(GZ_xy.x)
 			var click_y = int(GZ_xy.y)
 			RMB(click_x, click_y)
+
+# 战斗中画面控制：滚轮缩放 + 任意非 UI 区域左键拖动
+func _zhan_dou_hua_mian_kong_zhi(event: InputEvent) -> void:
+	# 滚轮缩放（与按钮共用同一入口）
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
+			guan_qia.guan_ui.suo_fang_upd(true)
+			return
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
+			guan_qia.guan_ui.suo_fang_upd(false)
+			return
+	# 左键按下/松开：确定拖动起止
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			var mouse_xy = guan_qia.get_global_mouse_position()
+			# 点在固定 UI 控件上不启动拖动
+			for child in guan_qia.get_children():
+				if GUI(child, mouse_xy):
+					return
+			# 点在随画面移动的撤退按钮上不启动拖动
+			var che_tui = guan_qia.guan_ui.che_tui
+			if che_tui != null and is_instance_valid(che_tui) and che_tui.visible:
+				if che_tui.get_global_rect().has_point(mouse_xy):
+					return
+			zhan_dou_tuo_dong_dai_ting = event.position
+			zhan_dou_tuo_dong_zhong = false
+		else:
+			_zhan_dou_ting_zhi_tuo_dong()
+		return
+	# 鼠标移动：超过阈值后平移画面
+	if event is InputEventMouseMotion and zhan_dou_tuo_dong_dai_ting.x >= 0:
+		if not zhan_dou_tuo_dong_zhong:
+			if event.position.distance_to(zhan_dou_tuo_dong_dai_ting) < TUO_DONG_YU_ZHI:
+				return
+			zhan_dou_tuo_dong_zhong = true
+			# 进入拖动时停止镜头补间，避免画面被拉回
+			if current_tween != null and current_tween.is_valid():
+				current_tween.kill()
+			current_tween = null
+			target_grid_x = -1
+			target_grid_y = -1
+		guan_qia.rong_qi.position += event.position - zhan_dou_tuo_dong_dai_ting
+		zhan_dou_tuo_dong_dai_ting = event.position
+
+# 结束战斗中拖动并复位状态
+func _zhan_dou_ting_zhi_tuo_dong() -> void:
+	zhan_dou_tuo_dong_dai_ting = Vector2(-1, -1)
+	zhan_dou_tuo_dong_zhong = false
 
 # 递归检查是否点击了任何GUI控件（包括嵌套控件）
 func GUI(node: Node, mouse_xy: Vector2) -> bool:
