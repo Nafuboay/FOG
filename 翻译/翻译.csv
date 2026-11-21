@@ -266,6 +266,8 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 使用【朱雀圣像】恢复%d生命，朱雀圣像破损了！,,"Used [Vermilion Bird Statue], restored %d HP. The statue broke!",使用【朱雀聖像】恢復%d生命，朱雀聖像破損了！,【朱雀の聖像】を使いHP%dを回復。聖像は壊れました！
 使用【朱雀圣像】恢复%d生命！,,Used [Vermilion Bird Statue] and restored %d HP!,使用【朱雀聖像】恢復%d生命！,【朱雀の聖像】を使いHP%dを回復！
 采摘到【%s】！受到%d点伤害。,,Picked [%s]! Took %d damage.,採摘到【%s】！受到%d點傷害。,【%s】を摘みました！%dダメージを受けた。
+采摘到【%s】！毫发无伤。,,Picked [%s]! No damage taken.,採摘到【%s】！毫髮無傷。,【%s】を摘みました！ダメージなし。
+摘花不会受伤。,,Picking flowers causes no damage.,摘花不會受傷。,花摘みではダメージを受けない。
 恭喜升到%d级！当前总强化值%d，返还金条×%d！,,Leveled up to %d! Total enhancement %d. Gold Bar ×%d returned!,恭喜升到%d級！當前總強化值%d，返還金條×%d！,レベル%dにアップ！総強化値%d、金塊×%dを返還！
 英雄等级：0,,Hero Lv.: 0,英雄等級：0,英雄レベル：0
 返还金条：0,,Returned Gold Bar: 0,返還金條：0,返還金塊：0

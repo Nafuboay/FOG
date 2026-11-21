@@ -174,18 +174,25 @@ func LMB_1(dian_x: int, dian_y: int) -> void:
 		# 1% 判定成功（randi() % 100 == 0）
 		var success = (randi() % 100) == 0
 		if success:
-			# 成功：至多 99 点非致命伤害（hp 至少剩 1）
-			var max_shang = guan_qia.helo_hp - 1
-			var shang = min(99, max_shang)
-			if shang > 0:
-				guan_qia.helo_hp -= shang
-				# 真伤灰色飘字（与战斗系统英雄受击同位置同写法）
-				guan_qia.zhan_dou.xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, shang, false, false, true)
+			# 紫锋特性：爱丽丝摘花不会受伤
+			var mian_shang = guan_qia.helo != null and is_instance_valid(guan_qia.helo) and guan_qia.helo.get_name() == "爱丽丝"
+			var shang = 0
+			if not mian_shang:
+				# 成功：至多 99 点非致命伤害（hp 至少剩 1）
+				var max_shang = guan_qia.helo_hp - 1
+				shang = min(99, max_shang)
+				if shang > 0:
+					guan_qia.helo_hp -= shang
+					# 真伤灰色飘字（与战斗系统英雄受击同位置同写法）
+					guan_qia.zhan_dou.xue_tiao_qi.piao_zi(guan_qia.helo_x - 1, guan_qia.helo_y - 1, shang, false, false, true)
 			# 采摘得花进临时背包
 			if hua_id != "":
 				guan_qia.BB_ls[hua_id] = guan_qia.BB_ls.get(hua_id, 0) + 1
 			# 提示弹幕
-			提示弹幕.wen_ben(tr("采摘到【%s】！受到%d点伤害。") % [tr(hua_id), shang], 0)
+			if mian_shang:
+				提示弹幕.wen_ben(tr("采摘到【%s】！毫发无伤。") % [tr(hua_id)], 0)
+			else:
+				提示弹幕.wen_ben(tr("采摘到【%s】！受到%d点伤害。") % [tr(hua_id), shang], 0)
 		else:
 			# 失败：恢复 1 生命（满血则不回）
 			if guan_qia.helo_hp < guan_qia.helo_shp:
