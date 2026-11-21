@@ -26,6 +26,10 @@ const JING_TOU_SU_DU_DANG_WEI: Array = [0, 18, 36, 72, 180, 360, 720, 1800]
 const YU_JIN_QIANG_DU_MO_REN: int = 24
 const YU_JIN_QIANG_DU_MIN: int = 10
 const YU_JIN_QIANG_DU_MAX: int = 60
+# 公告首读版本号：发版时只改这里（V3.1→V3.2 即对所有玩家强制弹一次公告）
+const DANG_QIAN_BAN_BEN: String = "V3.1"
+# 通用存档记录已读公告版本的字段名
+const BAN_BEN_ZI_DUAN: String = "版本"
 # 存档玩法模式标识字段名（与关卡用的"模式"字段 0主线/1诛邪/2支线互不复用）
 const MO_SHI_ZI_DUAN: String = "模式标识"
 # 模式标识取值：0=标准模式，1=富豪模式
@@ -49,9 +53,9 @@ func _ready() -> void:
 	mi_wu_json = mu_lu()
 	# 确保存档文件夹存在
 	wen_jian_jia()
-	# 启动时主动创建通用存档：不存在时写入默认值（分贝0=标准，非静音，语言简体中文），所有档共用
+	# 启动时主动创建通用存档：不存在时写入默认值，所有档共用
 	if not FileAccess.file_exists(get_ty_lu_jing()):
-		bao_cun_ty({"分贝": 0, "静音": 0, "历史成就": [], "语言": "zh_CN", "基础帧率": ZHEN_LV_MO_REN, "镜头跟随速度": JING_TOU_SU_DU_MO_REN, "余烬滤镜强度": YU_JIN_QIANG_DU_MO_REN})
+		bao_cun_ty(mo_ren_ty())
 	# 手动加载翻译资源（project.godot 的 [locale] 配置在含中文路径"翻译/"时可能加载失败，代码手动加载更可靠）
 	_jia_zai_fan_yi()
 	# 启动时应用存档中的语言设置
@@ -514,3 +518,40 @@ func shua_xin_dong_hua_su_du() -> void:
 	for dong_hua in chang_jing.find_children("*", "AnimatedSprite2D", true, false):
 		if dong_hua is AnimatedSprite2D:
 			dong_hua.speed_scale = su_du
+# 通用存档默认字段单一来源（启动建档与公告写回重建共用）
+static func mo_ren_ty() -> Dictionary:
+	return {
+		"分贝": 0,
+		"静音": 0,
+		"历史成就": [],
+		"语言": "zh_CN",
+		"基础帧率": ZHEN_LV_MO_REN,
+		"镜头跟随速度": JING_TOU_SU_DU_MO_REN,
+		"余烬滤镜强度": YU_JIN_QIANG_DU_MO_REN,
+	}
+
+# 读取通用存档记录的公告已读版本（缺失/非字符串/为空一律返回空串）
+func get_ban_ben() -> String:
+	var zhi = du_qu_ty().get(BAN_BEN_ZI_DUAN, "")
+	if zhi is String:
+		return zhi
+	if zhi != null:
+		var ri_zhi = get_node_or_null("/root/日志")
+		if ri_zhi != null:
+			ri_zhi.打印("公告：通用存档版本字段类型非法，按首次观看")
+	return ""
+
+# 当前版本是否已看过公告（严格字符串相等；旧档无字段/空值→首次观看）
+func yi_kan_gong_gao() -> bool:
+	return get_ban_ben() == DANG_QIAN_BAN_BEN
+
+# 公告首读关闭后把版本写为当前版本，保留通用存档其余字段
+func biao_ji_gong_gao_yi_kan() -> bool:
+	var data = du_qu_ty()
+	if data.is_empty():
+		data = mo_ren_ty()
+		var ri_zhi = get_node_or_null("/root/日志")
+		if ri_zhi != null:
+			ri_zhi.打印("公告：通用存档为空，按默认字段重建后写版本")
+	data[BAN_BEN_ZI_DUAN] = DANG_QIAN_BAN_BEN
+	return bao_cun_ty(data)

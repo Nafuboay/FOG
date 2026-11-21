@@ -226,7 +226,7 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 花精灵·沙华,,Flower Sprite · Shahua,花精靈·沙華,花の精霊・沙華
 爱丽丝,,Alice,愛麗絲,アリス
 玄戈,,Xuange,玄戈,玄戈
-秤干戚,,Scale Ganqi,秤干戚,秤の干戚
+秤干戚,,Scale Ganqi,秤干戚,秤干戚
 魔法树,,Magic Tree,魔法樹,魔法の樹
 未知,,Unknown,未知,不明
 获得%s×%d！,,Gained %s ×%d!,獲得%s×%d！,%s×%dを獲得！
@@ -369,3 +369,4 @@ A16富豪,,A16 Fortune,A16富豪,A16富豪
 "初始最大光照半径20格，光照面积随时间减少，250秒后完全熄灭",,"Initial light radius 20 tiles; the lit area shrinks over time and goes out after 250 seconds",初始最大光照半徑20格，光照面積隨時間減少，250秒後完全熄滅,初期の最大光照半径20マス。光照面積は時間とともに減少し、250秒後に完全に消える
 "初始最大光照半径40格，光照面积随时间减少，625秒后完全熄灭",,"Initial light radius 40 tiles; the lit area shrinks over time and goes out after 625 seconds",初始最大光照半徑40格，光照面積隨時間減少，625秒後完全熄滅,初期の最大光照半径40マス。光照面積は時間とともに減少し、625秒後に完全に消える
 余烬滤镜强度,,Ember Filter Strength,餘燼濾鏡強度,残り火フィルター強度
+"请认真查看，以免游戏中遇到障碍，可于%d秒后关闭。",,Please read carefully to avoid any trouble in game. You can close this in %d seconds.,請認真查看，以免遊戲中遇到障礙，可於%d秒後關閉。,ゲーム内で困らないよう、よく確認してください。%d秒後に閉じられます。

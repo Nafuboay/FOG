@@ -77,7 +77,9 @@ func look_helo_upd() -> void:
 	if exp_pct == 100:
 		exp_str = "MAX"
 	else:
-		exp_str = "%s(%d%%)" % [ge_shi_zl(exp_0), exp_pct]
+		# 升到下一级的累计经验需求，显示为 当前/所需(百分比)
+		var exp_need = 游戏存档.get_exp_need(lv + 1)
+		exp_str = "%s/%s(%d%%)" % [ge_shi_zl(exp_0), ge_shi_zl(exp_need), exp_pct]
 	# 组装显示文本
 	var text = "\n" + tr("【英雄】") + tr(helo_name)
 	text += "\n" + tr("【战力】") + ge_shi_zl(helo_zl)

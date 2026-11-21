@@ -1,5 +1,18 @@
 extends Node2D
-
+# 公告框脚本
+const 公告框_SCRIPT = preload("res://主界面/公告框.gd")
+# 公告复看按钮（设置按钮正下方，仅开始主界面显示）
+var fu_kan: Button = null
+# 当前打开的公告框节点（非 null 表示公告打开中）
+var gong_gao_kuang: Control = null
+# 本次公告打开是否首读（关闭时据此写版本）
+var gong_gao_shou_du: bool = false
+# 公告打开前的设置/复看可见性快照（关闭后恢复）
+var gong_gao_she_zhi_ke_jian: bool = true
+var gong_gao_fu_kan_ke_jian: bool = false
+var gong_gao_fan_hui_ke_jian: bool = false
+# 本次运行是否自动弹过公告（写档失败兜底，避免反复弹）
+var gong_gao_hui_hua_yi_tan: bool = false
 # 按钮节点引用
 @onready var an_niu = $按钮
 @onready var bg = $游戏开始0
@@ -7,7 +20,6 @@ extends Node2D
 var an_niu_normal: Texture2D
 # 按钮悬停状态图片
 var an_niu_hover: Texture2D
-
 # 人物选择面板
 @onready var helo_xuan_ze = $人物选择面板
 @onready var Alice = $人物选择面板/爱丽丝按钮
@@ -78,7 +90,6 @@ var mo_shi_xuan: int = 游戏存档.MO_SHI_BIAO_ZHUN
 var zheng_jian_zhong: bool = false
 # 存档数量
 const cao_wei: int = 15
-
 # 存档槽位按钮数组（在_ready中按节点名动态获取）
 var an_nius: Array = []
 # 存档槽位删除按钮数组
@@ -232,6 +243,8 @@ func _ready() -> void:
 	chuang_jian_she_zhi()
 	# 创建存档模式选择面板（初始隐藏）
 	chuang_jian_mo_shi_pan()
+	# 创建公告复看按钮（设置齿轮正下方）
+	chuang_jian_fu_kan()
 
 # 创建设置齿轮按钮与设置面板（替代原来的语言按钮）
 func chuang_jian_she_zhi() -> void:
@@ -279,6 +292,9 @@ func chuang_jian_she_zhi() -> void:
 
 # 齿轮按钮的点击与悬停在_input中直接判定（不依赖控件信号，保证设置开/关后依然生效）
 func _input(event: InputEvent) -> void:
+	# 公告打开期间拦截齿轮的悬停/点击，只允许操作公告框
+	if gong_gao_kuang != null:
+		return
 	if she_zhi_btn == null or not she_zhi_btn.visible:
 		return
 	# 悬停：按鼠标是否在齿轮64×64区域内切换图标
@@ -653,12 +669,18 @@ func dakai_she_zhi(da: bool) -> void:
 		return
 	she_zhi_panel.visible = da
 	if da:
+		# 设置遮罩期间不显示复看按钮
+		if fu_kan != null:
+			fu_kan.visible = false
 		qie_huan_zi_jie_mian(0)
 		du_qu_zhen_lv()
 		du_qu_jing_tou()
 		du_qu_yu_jin()
 	elif json != null:
-		# 关闭设置后，主界面现有的存档/选角待机动画立即按新基础帧率播放
+		# 关闭设置回到开始界面时恢复复看按钮（槽位列表不显示）
+		if fu_kan != null and an_niu.visible:
+			fu_kan.visible = true
+		# 主界面现有的存档/选角待机动画立即按新基础帧率播放
 		json.shua_xin_dong_hua_su_du()
 
 # 切换设置内的子界面并记录当前层级：0=三项目录 1=语言 2=音量 3=基础帧率 4=镜头跟随速度
@@ -710,16 +732,25 @@ func _on_yu_yan_xuan_ze(code: String) -> void:
 
 # 当鼠标移动到按钮上时，显示悬停图片并将画面调亮
 func _on_mouse_entered() -> void:
+	# 公告打开期间开始按钮不高亮
+	if gong_gao_kuang != null:
+		return
 	an_niu.texture = an_niu_hover
 	bg.modulate = Color(2, 2, 2, 1)
 
 # 当鼠标离开按钮时，恢复普通图片和正常亮度
 func _on_mouse_exited() -> void:
+	# 公告打开期间开始按钮不高亮
+	if gong_gao_kuang != null:
+		return
 	an_niu.texture = an_niu_normal
 	bg.modulate = Color(1, 1, 1, 1)
 
 # 当点击开始游戏按钮，显示遮挡层和存档按钮
 func _on_button_input(_viewport, event, _shape_idx):
+	# 公告打开期间点击开始按钮无效
+	if gong_gao_kuang != null:
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			# 隐藏开始游戏按钮
@@ -729,7 +760,12 @@ func _on_button_input(_viewport, event, _shape_idx):
 			# 隐藏设置齿轮按钮（如果设置面板开着也一并关闭）
 			dakai_she_zhi(false)
 			she_zhi_btn.visible = false
+			# 进入槽位列表后不显示复看按钮
+			if fu_kan != null:
+				fu_kan.visible = false
 			an_niu_upd()
+			# 槽位列表刷新完成后，同帧压上公告（版本未读或本版本首次进入时）
+			gong_gao_open(true)
 
 # 存档槽位悬停：应用该槽位对应的颜色
 func _on_cao_wei_hover(idx: int) -> void:
@@ -1031,3 +1067,97 @@ func on_json_fan_hui() -> void:
 	an_niu.visible = true
 	# 恢复显示设置齿轮按钮
 	she_zhi_btn.visible = true
+	# 恢复显示公告复看按钮
+	if fu_kan != null:
+		fu_kan.visible = true
+
+# 创建公告复看按钮：设置齿轮正下方 64×64，两态贴图
+func chuang_jian_fu_kan() -> void:
+	var size = get_viewport_rect().size
+	var win_x = size.x
+	fu_kan = Button.new()
+	fu_kan.position = Vector2(win_x - 96, 104)
+	fu_kan.size = Vector2(64, 64)
+	fu_kan.custom_minimum_size = Vector2(64, 64)
+	fu_kan.z_index = 1001
+	fu_kan.focus_mode = Control.FOCUS_NONE
+	var pu_tong = load("res://主界面/图片/公告0.png")
+	var xuan_ting = load("res://主界面/图片/公告1.png")
+	if pu_tong != null and xuan_ting != null:
+		var st_0 = StyleBoxTexture.new()
+		st_0.texture = pu_tong
+		var st_1 = StyleBoxTexture.new()
+		st_1.texture = xuan_ting
+		fu_kan.add_theme_stylebox_override("normal", st_0)
+		fu_kan.add_theme_stylebox_override("hover", st_1)
+		fu_kan.add_theme_stylebox_override("pressed", st_1)
+	else:
+		# 贴图缺失时降级为文字按钮
+		fu_kan.text = tr("公告")
+		fu_kan.add_theme_color_override("font_color", Color.BLACK)
+	fu_kan.pressed.connect(_on_fu_kan)
+	add_child(fu_kan)
+
+# 打开公告：auto=true 为点开始游戏自动触发，false 为复看按钮打开
+# 版本未读（旧档无字段/为空/版本不同）才显示 3 秒倒计时；复看打开也走同一判定
+func gong_gao_open(auto: bool) -> void:
+	if gong_gao_kuang != null:
+		return
+	if auto and gong_gao_hui_hua_yi_tan:
+		return
+	var wen_an = 公告框_SCRIPT.jia_zai_wen_an()
+	if wen_an == null or wen_an.KUAI.is_empty():
+		日志.打印("公告：文案为空，跳过弹出")
+		return
+	var yi_du: bool = json.yi_kan_gong_gao()
+	if auto and yi_du:
+		return
+	gong_gao_hui_hua_yi_tan = true
+	# 记录打开前的显隐，关闭后按原样恢复
+	gong_gao_she_zhi_ke_jian = she_zhi_btn != null and she_zhi_btn.visible
+	gong_gao_fu_kan_ke_jian = fu_kan != null and fu_kan.visible
+	gong_gao_fan_hui_ke_jian = json_fan_hui != null and json_fan_hui.visible
+	if she_zhi_btn != null:
+		she_zhi_btn.visible = false
+	if fu_kan != null:
+		fu_kan.visible = false
+	if json_fan_hui != null:
+		json_fan_hui.visible = false
+	# 复看打开时开始按钮可能仍在悬停高亮，先复位
+	an_niu.texture = an_niu_normal
+	bg.modulate = Color(1, 1, 1, 1)
+	gong_gao_shou_du = not yi_du
+	var kuang = 公告框_SCRIPT.new()
+	kuang.name = "公告框"
+	add_child(kuang)
+	kuang.guan_bi.connect(_on_gong_gao_guan_bi)
+	kuang.kai_chuang(gong_gao_shou_du)
+	gong_gao_kuang = kuang
+	日志.打印("公告：打开 首读=%s 版本=%s" % [str(gong_gao_shou_du), 游戏存档.DANG_QIAN_BAN_BEN])
+
+# 复看按钮：不推进存档流程，关闭后回到打开前的开始主界面
+func _on_fu_kan() -> void:
+	if gong_gao_kuang != null:
+		return
+	gong_gao_open(false)
+
+# 公告关闭：首读写版本，释放节点并恢复设置/复看的显隐
+func _on_gong_gao_guan_bi() -> void:
+	if gong_gao_kuang == null:
+		return
+	var shou_du = gong_gao_shou_du
+	if shou_du and json != null:
+		if not json.biao_ji_gong_gao_yi_kan():
+			日志.打印("公告：版本写入失败（不阻断关闭）")
+	if is_instance_valid(gong_gao_kuang):
+		gong_gao_kuang.visible = false
+		gong_gao_kuang.queue_free()
+	gong_gao_kuang = null
+	if she_zhi_btn != null:
+		she_zhi_btn.visible = gong_gao_she_zhi_ke_jian
+		she_zhi_btn.texture = load("res://主界面/图片/齿轮0.png")
+	if fu_kan != null:
+		fu_kan.visible = gong_gao_fu_kan_ke_jian
+	if json_fan_hui != null:
+		json_fan_hui.visible = gong_gao_fan_hui_ke_jian
+	日志.打印("公告：关闭 首读=%s" % str(shou_du))
